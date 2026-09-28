@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
 
 import {
   FaHome,
@@ -19,10 +21,9 @@ import "../css/dosen/DosenSidebar.css";
 
 import logoPAPASCI from "../assets/logo-papasci.png";
 
-function DosenSidebar({
-  showMobileSidebar,
-  closeMobileSidebar,
-}) {
+function DosenSidebar({ showMobileSidebar, closeMobileSidebar }) {
+  const navigate = useNavigate();
+
   return (
     <>
       {/* =================================================
@@ -50,10 +51,7 @@ function DosenSidebar({
         ================================================= */}
 
         <div className="dosen-sidebar-logo">
-          <img
-            src={logoPAPASCI}
-            alt="PAPASCI"
-          />
+          <img src={logoPAPASCI} alt="PAPASCI" />
 
           <button
             type="button"
@@ -87,9 +85,7 @@ function DosenSidebar({
             to="/dosen"
             end
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -101,18 +97,14 @@ function DosenSidebar({
               PEMBELAJARAN
           ================================================= */}
 
-          <div className="dosen-menu-title">
-            PEMBELAJARAN
-          </div>
+          <div className="dosen-menu-title">PEMBELAJARAN</div>
 
           {/* MODULE */}
 
           <NavLink
             to="/dosen/module"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -125,9 +117,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/pretest"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -140,9 +130,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/quiz"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -155,9 +143,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/labsimulasi"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -169,18 +155,14 @@ function DosenSidebar({
               MICROTEACHING
           ================================================= */}
 
-          <div className="dosen-menu-title">
-            MICROTEACHING
-          </div>
+          <div className="dosen-menu-title">MICROTEACHING</div>
 
           {/* VIDEO PEMBELAJARAN */}
 
           <NavLink
             to="/dosen/video-pembelajaran"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -193,9 +175,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/tugas"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -208,9 +188,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/pengumpulan"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -222,18 +200,14 @@ function DosenSidebar({
               PENILAIAN
           ================================================= */}
 
-          <div className="dosen-menu-title">
-            PENILAIAN
-          </div>
+          <div className="dosen-menu-title">PENILAIAN</div>
 
           {/* NILAI MAHASISWA */}
 
           <NavLink
             to="/dosen/nilai"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -246,9 +220,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/kompetensi-pedagogik"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -267,9 +239,7 @@ function DosenSidebar({
           <NavLink
             to="/dosen/profil"
             className={({ isActive }) =>
-              `dosen-nav-link ${
-                isActive ? "active" : ""
-              }`
+              `dosen-nav-link ${isActive ? "active" : ""}`
             }
             onClick={closeMobileSidebar}
           >
@@ -282,6 +252,7 @@ function DosenSidebar({
           <button
             type="button"
             className="dosen-logout-btn"
+            onClick={() => logout(navigate)}
           >
             <FaSignOutAlt />
             <span>Logout</span>

@@ -1,4 +1,7 @@
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
+
 import {
   FaHome,
   FaBookOpen,
@@ -14,6 +17,7 @@ import logoPapascI from "../assets/logo-papasci.png";
 import "../css/SideBar.css";
 
 function Sidebar({ showMobileSidebar, closeMobileSidebar }) {
+  const navigate = useNavigate();
   return (
     <aside
       className={`sidebar ${showMobileSidebar ? "sidebar-mobile-show" : ""}`}
@@ -103,10 +107,7 @@ function Sidebar({ showMobileSidebar, closeMobileSidebar }) {
         <button
           type="button"
           className="sidebar-logout"
-          onClick={() => {
-            console.log("Logout");
-            closeMobileSidebar();
-          }}
+          onClick={() => logout(navigate)}
         >
           <FaSignOutAlt />
           <span>Logout</span>

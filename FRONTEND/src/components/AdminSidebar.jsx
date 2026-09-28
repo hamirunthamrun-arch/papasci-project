@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
 
 import {
   FaHome,
@@ -13,6 +15,7 @@ import "../css/AdminSidebar.css";
 import logoPapascI from "../assets/logo-papasci.png";
 
 const AdminSidebar = ({ showMobileSidebar, closeMobileSidebar }) => {
+  const navigate = useNavigate();
   return (
     <>
       {/* =================================================
@@ -136,6 +139,7 @@ const AdminSidebar = ({ showMobileSidebar, closeMobileSidebar }) => {
           {/* LOGOUT */}
 
           <button type="button" className="admin-logout-btn">
+            onClick={() => logout(navigate)}
             <FaSignOutAlt />
             <span>Logout</span>
           </button>
