@@ -1,0 +1,86 @@
+.admin-layout {
+  min-height: 100vh;
+
+  background: #f6f9fc;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.admin-content {
+  min-height: 100vh;
+
+  margin-left: 260px;
+
+  padding: 30px;
+}
+
+/* =========================
+   MOBILE HEADER
+========================= */
+
+.admin-mobile-header {
+  display: none;
+}
+
+/* =========================
+   TABLET & MOBILE
+========================= */
+
+@media (max-width: 991px) {
+  .admin-content {
+    margin-left: 0;
+
+    padding: 85px 20px 30px;
+  }
+
+  .admin-mobile-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 0 20px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e7edf5;
+
+    z-index: 1000;
+  }
+
+  .admin-mobile-header strong {
+    font-size: 17px;
+
+    color: #1769aa;
+  }
+
+  .admin-mobile-menu-btn {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #e8f3ff;
+
+    color: #1769aa;
+
+    font-size: 18px;
+
+    cursor: pointer;
+  }
+}

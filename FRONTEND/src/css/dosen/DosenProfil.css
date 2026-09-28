@@ -1,0 +1,469 @@
+/* =========================================================
+   DOSEN PROFILE PAGE
+========================================================= */
+
+.dosen-profile-page {
+  min-height: 100vh;
+
+  padding: 30px;
+
+  background: #f6f9fc;
+
+  color: #243746;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dosen-profile-header {
+  margin-bottom: 25px;
+}
+
+.dosen-profile-label {
+  display: inline-block;
+
+  margin-bottom: 7px;
+
+  color: #1769aa;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.dosen-profile-header h1 {
+  margin: 0 0 6px;
+  font-family: "Baloo 2", sans-serif;
+  color: #173b57;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.dosen-profile-header p {
+  margin: 0;
+
+  color: #81909e;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   MAIN PROFILE CARD
+========================================================= */
+
+.dosen-profile-main-card {
+  margin-bottom: 25px;
+
+  border: none;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 5px 20px rgba(29, 70, 100, 0.07);
+}
+
+.dosen-profile-main-card .card-body {
+  padding: 25px;
+}
+
+/* =========================================================
+   USER HEADER
+========================================================= */
+
+.dosen-profile-user-header {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
+
+.dosen-profile-avatar {
+  width: 75px;
+  height: 75px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #e8f4fc;
+
+  color: #1769aa;
+
+  font-size: 65px;
+
+  overflow: hidden;
+}
+
+.dosen-profile-avatar svg {
+  width: 75px;
+  height: 75px;
+}
+
+.dosen-profile-user-info h2 {
+  margin: 0 0 8px;
+  font-family: "Baloo 2", sans-serif;
+  color: #173b57;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.dosen-profile-role {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  color: #1769aa;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   GENERAL PROFILE CARD
+========================================================= */
+
+.dosen-profile-card {
+  width: 100%;
+
+  border: none;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 5px 20px rgba(29, 70, 100, 0.06);
+}
+
+.dosen-profile-card .card-body {
+  padding: 25px;
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.dosen-profile-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 25px;
+}
+
+.dosen-profile-card-header h3 {
+  margin: 0 0 5px;
+  font-family: "Baloo 2", sans-serif;
+  color: #173b57;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.dosen-profile-card-header p {
+  margin: 0;
+
+  color: #8a99a6;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+.dosen-profile-edit-btn {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 8px 14px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #e9f4fc;
+
+  color: #1769aa;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dosen-profile-edit-btn:hover {
+  background: #dceef9;
+
+  color: #125a92;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.dosen-profile-card .form-label {
+  margin-bottom: 7px;
+
+  color: #4d6476;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dosen-profile-input-wrapper {
+  position: relative;
+}
+
+.dosen-profile-input-wrapper > svg {
+  position: absolute;
+
+  top: 50%;
+  left: 13px;
+
+  z-index: 2;
+
+  transform: translateY(-50%);
+
+  color: #8da0af;
+
+  font-size: 14px;
+}
+
+.dosen-profile-input-wrapper .form-control {
+  min-height: 44px;
+
+  padding-left: 39px;
+
+  border: 1px solid #dfe8ef;
+  border-radius: 9px;
+
+  color: #334e60;
+
+  font-size: 13px;
+
+  box-shadow: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dosen-profile-input-wrapper .form-control:focus {
+  border-color: #4d9ed0;
+
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.08);
+}
+
+.dosen-profile-input-wrapper .form-control:disabled {
+  background: #f7f9fb;
+
+  color: #687b89;
+
+  cursor: default;
+}
+
+.dosen-profile-card .form-text {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #9aa8b3;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   FORM ACTION
+========================================================= */
+
+.dosen-profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 25px;
+  padding-top: 20px;
+
+  border-top: 1px solid #edf2f6;
+}
+
+.dosen-profile-cancel-btn,
+.dosen-profile-save-btn {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 8px 15px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dosen-profile-cancel-btn {
+  border: 1px solid #dce4ea;
+
+  background: #ffffff;
+
+  color: #6c7d89;
+}
+
+.dosen-profile-cancel-btn:hover {
+  border-color: #ccd7df;
+
+  background: #f5f7f9;
+
+  color: #536672;
+}
+
+.dosen-profile-save-btn {
+  border: none;
+
+  background: #1769aa;
+
+  color: #ffffff;
+}
+
+.dosen-profile-save-btn:hover {
+  background: #125a92;
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+  .dosen-profile-page {
+    padding: 25px 20px;
+  }
+
+  .dosen-profile-header h1 {
+    font-size: 25px;
+  }
+
+  .dosen-profile-main-card .card-body,
+  .dosen-profile-card .card-body {
+    padding: 22px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+  .dosen-profile-page {
+    padding: 20px 15px;
+  }
+
+  .dosen-profile-header {
+    margin-bottom: 20px;
+  }
+
+  .dosen-profile-header h1 {
+    font-size: 23px;
+  }
+
+  .dosen-profile-header p {
+    font-size: 12px;
+
+    line-height: 1.6;
+  }
+
+  .dosen-profile-main-card {
+    margin-bottom: 20px;
+  }
+
+  .dosen-profile-main-card .card-body,
+  .dosen-profile-card .card-body {
+    padding: 18px;
+  }
+
+  .dosen-profile-user-header {
+    align-items: flex-start;
+
+    gap: 13px;
+  }
+
+  .dosen-profile-avatar {
+    width: 58px;
+    height: 58px;
+
+    font-size: 50px;
+  }
+
+  .dosen-profile-avatar svg {
+    width: 58px;
+    height: 58px;
+  }
+
+  .dosen-profile-user-info h2 {
+    font-size: 16px;
+
+    line-height: 1.4;
+  }
+
+  .dosen-profile-role {
+    font-size: 11px;
+  }
+
+  .dosen-profile-card-header {
+    flex-direction: column;
+
+    margin-bottom: 20px;
+  }
+
+  .dosen-profile-edit-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .dosen-profile-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .dosen-profile-cancel-btn,
+  .dosen-profile-save-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .dosen-profile-page {
+    padding: 18px 12px;
+  }
+
+  .dosen-profile-user-header {
+    gap: 10px;
+  }
+
+  .dosen-profile-user-info h2 {
+    font-size: 14px;
+  }
+
+  .dosen-profile-role {
+    font-size: 10px;
+  }
+}

@@ -1,0 +1,1557 @@
+/* =========================================================
+   MICROTEACHING PAGE
+========================================================= */
+
+.micro-page {
+  min-height: 100vh;
+
+  background: #f8fbff;
+
+  color: #172033;
+
+  font-family: "Nunito", sans-serif;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.micro-hero {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 65px 0 70px;
+
+  background: linear-gradient(135deg, #eff8ff 0%, #f9fcff 50%, #f0fcf7 100%);
+}
+
+.micro-hero::before {
+  content: "";
+
+  position: absolute;
+
+  width: 300px;
+
+  height: 300px;
+
+  top: -160px;
+
+  right: 8%;
+
+  border-radius: 50%;
+
+  background: rgba(47, 128, 237, 0.07);
+}
+
+.micro-hero::after {
+  content: "";
+
+  position: absolute;
+
+  width: 230px;
+
+  height: 230px;
+
+  bottom: -150px;
+
+  left: 3%;
+
+  border-radius: 50%;
+
+  background: rgba(46, 203, 145, 0.07);
+}
+
+.micro-hero-content {
+  position: relative;
+
+  z-index: 2;
+
+  display: grid;
+
+  grid-template-columns: 1.1fr 0.9fr;
+
+  align-items: center;
+
+  gap: 50px;
+}
+
+/* =========================================================
+   HERO TEXT
+========================================================= */
+
+.micro-hero-text {
+  max-width: 600px;
+}
+
+.micro-eyebrow {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+
+  color: #2f80ed;
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.2px;
+}
+
+.micro-hero h1 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: clamp(45px, 5vw, 65px);
+
+  font-weight: 800;
+
+  line-height: 0.98;
+}
+
+.micro-hero h1 span {
+  display: block;
+
+  color: #2f80ed;
+}
+
+.micro-hero-text > p {
+  max-width: 520px;
+
+  margin: 20px 0 28px;
+
+  color: #667085;
+
+  font-size: 12px;
+
+  line-height: 1.8;
+}
+
+/* =========================================================
+   HERO VISUAL
+========================================================= */
+
+.micro-hero-visual {
+  position: relative;
+
+  width: 350px;
+
+  height: 350px;
+
+  margin: auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.micro-circle {
+  position: absolute;
+
+  border-radius: 50%;
+
+  border: 1px dashed rgba(47, 128, 237, 0.25);
+}
+
+.circle-one {
+  width: 285px;
+
+  height: 285px;
+}
+
+.circle-two {
+  width: 210px;
+
+  height: 210px;
+
+  border-style: solid;
+
+  border-color: rgba(46, 203, 145, 0.15);
+}
+
+.micro-student {
+  position: relative;
+
+  z-index: 3;
+
+  width: 145px;
+
+  height: 145px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 42px;
+
+  background: #ffffff;
+
+  font-size: 78px;
+
+  box-shadow: 0 20px 45px rgba(31, 41, 55, 0.1);
+
+  animation: studentFloat 4s ease-in-out infinite;
+}
+
+@keyframes studentFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+.micro-floating {
+  position: absolute;
+
+  z-index: 4;
+
+  width: 55px;
+
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  font-size: 26px;
+
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+
+  animation: floating 4s ease-in-out infinite;
+}
+
+.float-one {
+  top: 30px;
+
+  left: 38px;
+}
+
+.float-two {
+  top: 35px;
+
+  right: 30px;
+
+  animation-delay: 0.6s;
+}
+
+.float-three {
+  right: 5px;
+
+  bottom: 70px;
+
+  animation-delay: 1s;
+}
+
+.float-four {
+  left: 42px;
+
+  bottom: 25px;
+
+  animation-delay: 1.4s;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* =========================================================
+   INSTRUCTION
+========================================================= */
+
+.micro-instruction {
+  padding: 30px 0 5px;
+}
+
+.instruction-card {
+  display: grid;
+
+  grid-template-columns: auto 1fr;
+
+  gap: 20px;
+
+  padding: 22px 25px;
+
+  border: 1px solid #e4edf5;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 30px rgba(31, 41, 55, 0.04);
+}
+
+.instruction-icon {
+  width: 58px;
+
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: #fff8df;
+
+  font-size: 27px;
+}
+
+.instruction-content h3 {
+  margin: 0 0 14px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 18px;
+
+  font-weight: 800;
+}
+
+.instruction-steps {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 15px;
+}
+
+.instruction-step {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 8px;
+}
+
+.instruction-step span {
+  width: 23px;
+
+  height: 23px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #edf7ff;
+
+  color: #2f80ed;
+
+  font-size: 15px;
+
+  font-weight: 900;
+}
+
+.instruction-step p {
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   TASK SECTION
+========================================================= */
+
+.micro-tasks {
+  padding: 55px 0 80px;
+}
+
+.micro-section-header {
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 25px;
+
+  margin-bottom: 20px;
+}
+
+.micro-section-header > div:first-child > span {
+  color: #2f80ed;
+
+  font-size: 12px;
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+}
+
+.micro-section-header h2 {
+  margin: 4px 0 2px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 30px;
+
+  font-weight: 800;
+}
+
+.micro-section-header p {
+  margin: 0;
+
+  color: #98a2b3;
+
+  font-size: 15px;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.micro-search {
+  width: 230px;
+
+  height: 40px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #98a2b3;
+}
+
+.micro-search input {
+  width: 100%;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  font-family: inherit;
+
+  font-size: 12px;
+}
+
+.micro-search input::placeholder {
+  color: #98a2b3;
+}
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+.micro-filter {
+  display: flex;
+
+  gap: 8px;
+
+  margin-bottom: 25px;
+
+  overflow-x: auto;
+
+  padding-bottom: 3px;
+}
+
+.micro-filter button {
+  flex-shrink: 0;
+
+  padding: 8px 12px;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #667085;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.micro-filter button:hover {
+  border-color: #b9d9fa;
+
+  color: #2f80ed;
+}
+
+.micro-filter button.active {
+  border-color: #2f80ed;
+
+  background: #2f80ed;
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   TASK GRID
+========================================================= */
+
+.micro-task-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+/* =========================================================
+   TASK CARD
+========================================================= */
+
+.micro-task-card {
+  overflow: hidden;
+
+  border: 1px solid #e7edf2;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 25px rgba(31, 41, 55, 0.045);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.micro-task-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow: 0 15px 35px rgba(31, 41, 55, 0.09);
+}
+
+/* =========================================================
+   TASK VISUAL - IMAGE
+========================================================= */
+
+.task-visual {
+  position: relative;
+
+  width: 100%;
+  height: 200px;
+
+  overflow: hidden;
+
+  background: #eaf4ff;
+}
+
+.task-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.45s ease;
+}
+
+.micro-task-card:hover .task-image {
+  transform: scale(1.05);
+}
+
+/* Overlay */
+
+.task-image-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.03) 0%,
+    rgba(0, 0, 0, 0.02) 45%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   PDF BADGE
+========================================================= */
+
+.task-pdf {
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  z-index: 3;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  color: #e53935;
+
+  font-size: 17px;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+
+  backdrop-filter: blur(6px);
+}
+
+/* =========================================================
+   DECORATION
+========================================================= */
+
+.task-decoration span {
+  position: absolute;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.task-decoration span:nth-child(1) {
+  width: 100px;
+
+  height: 100px;
+
+  top: -45px;
+
+  right: -35px;
+}
+
+.task-decoration span:nth-child(2) {
+  width: 55px;
+
+  height: 55px;
+
+  bottom: -20px;
+
+  right: 30px;
+}
+
+.task-decoration span:nth-child(3) {
+  width: 25px;
+
+  height: 25px;
+
+  top: 25px;
+
+  left: 75px;
+}
+
+/* =========================================================
+   TASK BODY
+========================================================= */
+
+.task-body {
+  padding: 17px;
+}
+
+.task-status {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 9px;
+}
+
+.task-status > span {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 5px 7px;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+
+  font-weight: 900;
+}
+
+.status-belum {
+  background: #fff5d9;
+
+  color: #a76a00;
+}
+
+.status-dikumpulkan {
+  background: #eaf4ff;
+
+  color: #2f80ed;
+}
+
+.status-dinilai {
+  background: #eaf9f1;
+
+  color: #1b9b62;
+}
+
+.task-score {
+  background: #fff8df;
+
+  color: #a76a00;
+}
+
+.task-body h3 {
+  min-height: 43px;
+
+  margin: 0 0 8px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 19px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.task-body > p {
+  min-height: 55px;
+
+  margin: 0 0 14px;
+
+  color: #667085;
+
+  font-size: 12px;
+
+  line-height: 1.65;
+}
+
+/* =========================================================
+   DEADLINE
+========================================================= */
+
+.task-deadline {
+  display: grid;
+
+  grid-template-columns: auto 1fr;
+
+  column-gap: 7px;
+
+  margin-bottom: 14px;
+
+  padding: 9px 10px;
+
+  border-radius: 9px;
+
+  background: #f8fafc;
+}
+
+.task-deadline svg {
+  grid-row: span 2;
+
+  align-self: center;
+
+  color: #98a2b3;
+
+  font-size: 20px;
+}
+
+.task-deadline span {
+  color: #98a2b3;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.task-deadline strong {
+  color: #475467;
+
+  font-size: 10px;
+
+  font-weight: 900;
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.task-button {
+  width: 100%;
+
+  display: flex !important;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 10px !important;
+
+  border: none !important;
+
+  border-radius: 9px !important;
+
+  background: #edf7ff !important;
+
+  color: #2f80ed !important;
+
+  font-family: inherit;
+
+  font-size: 12px !important;
+
+  font-weight: 900 !important;
+
+  transition: all 0.2s ease;
+}
+
+.task-button:hover {
+  background: linear-gradient(135deg, #1684d5, #075aa1) !important;
+
+  color: #ffffff !important;
+}
+
+.task-button svg {
+  font-size: 10px;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.micro-empty {
+  padding: 60px 20px;
+
+  text-align: center;
+}
+
+.micro-empty > div {
+  font-size: 35px;
+}
+
+.micro-empty h3 {
+  margin: 10px 0 5px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 20px;
+}
+
+.micro-empty p {
+  margin: 0;
+
+  color: #98a2b3;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .micro-hero-content {
+    grid-template-columns: 1fr;
+
+    text-align: center;
+  }
+
+  .micro-hero-text {
+    max-width: 650px;
+
+    margin: auto;
+  }
+
+  .micro-hero-text > p {
+    margin-left: auto;
+
+    margin-right: auto;
+  }
+
+  .micro-hero-info {
+    justify-content: center;
+  }
+
+  .micro-hero-visual {
+    width: 310px;
+
+    height: 310px;
+  }
+
+  .instruction-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .micro-task-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+  .micro-hero {
+    padding: 50px 0 55px;
+  }
+
+  .micro-hero h1 {
+    font-size: 45px;
+  }
+
+  .micro-hero-text > p {
+    font-size: 12px;
+  }
+
+  .micro-hero-info {
+    flex-wrap: wrap;
+  }
+
+  .micro-hero-info > div {
+    flex: 1;
+
+    min-width: 120px;
+  }
+
+  .micro-hero-visual {
+    width: 280px;
+
+    height: 280px;
+  }
+
+  .micro-student {
+    width: 120px;
+
+    height: 120px;
+
+    border-radius: 35px;
+
+    font-size: 65px;
+  }
+
+  .micro-circle.circle-one {
+    width: 235px;
+
+    height: 235px;
+  }
+
+  .micro-circle.circle-two {
+    width: 175px;
+
+    height: 175px;
+  }
+
+  .micro-floating {
+    width: 47px;
+
+    height: 47px;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+  }
+
+  .float-one {
+    left: 20px;
+  }
+
+  .float-two {
+    right: 20px;
+  }
+
+  .float-three {
+    right: 0;
+
+    bottom: 55px;
+  }
+
+  .float-four {
+    left: 25px;
+
+    bottom: 15px;
+  }
+
+  .instruction-card {
+    grid-template-columns: 1fr;
+
+    text-align: center;
+  }
+
+  .instruction-icon {
+    margin: auto;
+  }
+
+  .instruction-steps {
+    grid-template-columns: 1fr;
+
+    text-align: left;
+  }
+
+  .micro-section-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .micro-search {
+    width: 100%;
+  }
+
+  .micro-task-grid {
+    grid-template-columns: 1fr;
+  }
+  .task-visual {
+    height: 175px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .micro-hero h1 {
+    font-size: 39px;
+  }
+
+  .micro-hero-info {
+    flex-direction: column;
+  }
+
+  .micro-hero-info > div {
+    width: 100%;
+  }
+
+  .task-visual {
+    height: 165px;
+  }
+  .task-visual {
+    height: 165px;
+  }
+}
+
+/* =========================================================
+   VIDEO MENGAJAR DOSEN
+   ========================================================= */
+
+.micro-lecturer-video {
+  padding: 75px 0;
+
+  background: #f7fbff;
+}
+
+/* =========================================================
+   VIDEO SECTION HEADER
+   ========================================================= */
+
+.video-section-header {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 30px;
+}
+
+.video-section-header > div:first-child {
+  max-width: 760px;
+}
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+
+.video-section-label {
+  display: inline-block;
+
+  margin-bottom: 8px;
+
+  color: #2f80ed;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+}
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.video-section-header h2 {
+  margin: 0 0 8px;
+
+  color: #172033;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 30px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.video-section-header p {
+  max-width: 680px;
+
+  margin: 0;
+
+  color: #6b7c8f;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   HEADER ICON
+   ========================================================= */
+
+.video-header-icon {
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: #eaf4ff;
+
+  color: #2f80ed;
+
+  font-size: 17px;
+
+  box-shadow: 0 8px 20px rgba(47, 128, 237, 0.08);
+}
+
+/* =========================================================
+   VIDEO GRID
+   ========================================================= */
+
+.lecturer-video-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 22px;
+}
+
+/* =========================================================
+   VIDEO CARD
+   ========================================================= */
+
+.lecturer-video-card {
+  overflow: hidden;
+
+  border: 1px solid #e2eaf2;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 28px rgba(31, 41, 55, 0.05);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.lecturer-video-card:hover {
+  transform: translateY(-5px);
+
+  border-color: #d4e5f5;
+
+  box-shadow: 0 15px 35px rgba(31, 41, 55, 0.09);
+}
+
+/* =========================================================
+   VIDEO WRAPPER
+   ========================================================= */
+
+.lecturer-video-wrapper {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  overflow: hidden;
+
+  background: #172033;
+}
+
+/* =========================================================
+   YOUTUBE IFRAME
+   ========================================================= */
+
+.lecturer-video-wrapper iframe {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  border: none;
+}
+
+/* =========================================================
+   VIDEO DURATION
+   ========================================================= */
+
+.video-duration {
+  position: absolute;
+
+  right: 10px;
+  bottom: 10px;
+
+  padding: 5px 8px;
+
+  border-radius: 6px;
+
+  background: rgba(0, 0, 0, 0.75);
+
+  color: #ffffff;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   VIDEO CONTENT
+   ========================================================= */
+
+.lecturer-video-content {
+  padding: 20px;
+}
+
+/* =========================================================
+   VIDEO META
+   ========================================================= */
+
+.video-meta {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 9px;
+}
+
+.video-category,
+.video-subject {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border-radius: 6px;
+
+  font-size: 8px;
+
+  font-weight: 900;
+}
+
+.video-category {
+  background: #eaf4ff;
+
+  color: #2f80ed;
+}
+
+.video-subject {
+  background: #f1f5f9;
+
+  color: #718096;
+}
+
+/* =========================================================
+   VIDEO TITLE
+   ========================================================= */
+
+.lecturer-video-content h3 {
+  margin: 0 0 8px;
+
+  color: #26384a;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 18px;
+
+  font-weight: 900;
+
+  line-height: 1.45;
+}
+
+/* =========================================================
+   VIDEO DESCRIPTION
+   ========================================================= */
+
+.lecturer-video-content > p {
+  margin: 0 0 17px;
+
+  color: #718096;
+
+  font-size: 10px;
+
+  line-height: 1.65;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 3;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   LECTURER
+   ========================================================= */
+
+.video-lecturer {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding-top: 13px;
+
+  border-top: 1px solid #edf1f5;
+}
+
+/* =========================================================
+   LECTURER AVATAR
+   ========================================================= */
+
+.lecturer-avatar {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eaf4ff;
+
+  color: #2f80ed;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   LECTURER TEXT
+   ========================================================= */
+
+.video-lecturer span {
+  display: block;
+
+  margin-bottom: 1px;
+
+  color: #98a5b3;
+
+  font-size: 8px;
+}
+
+.video-lecturer strong {
+  display: block;
+
+  color: #405468;
+
+  font-size: 10px;
+
+  font-weight: 900;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+  .micro-lecturer-video {
+    padding: 60px 0;
+  }
+
+  .video-section-header h2 {
+    font-size: 27px;
+  }
+
+  .video-section-header p {
+    font-size: 12px;
+  }
+
+  .lecturer-video-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+  .micro-lecturer-video {
+    padding: 50px 0;
+  }
+
+  /* HEADER */
+
+  .video-section-header {
+    display: block;
+
+    margin-bottom: 23px;
+  }
+
+  .video-section-label {
+    font-size: 9px;
+
+    letter-spacing: 1.2px;
+  }
+
+  .video-section-header h2 {
+    font-size: 24px;
+
+    line-height: 1.2;
+  }
+
+  .video-section-header p {
+    font-size: 11px;
+
+    line-height: 1.65;
+  }
+
+  .video-header-icon {
+    display: none;
+  }
+
+  /* GRID */
+
+  .lecturer-video-grid {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+  /* CARD */
+
+  .lecturer-video-card {
+    border-radius: 16px;
+  }
+
+  /* CONTENT */
+
+  .lecturer-video-content {
+    padding: 17px;
+  }
+
+  .lecturer-video-content h3 {
+    font-size: 13px;
+  }
+
+  .lecturer-video-content > p {
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 390px) {
+  .micro-lecturer-video {
+    padding: 42px 0;
+  }
+
+  .video-section-header h2 {
+    font-size: 22px;
+  }
+
+  .lecturer-video-content {
+    padding: 15px;
+  }
+
+  .lecturer-video-content h3 {
+    font-size: 17px;
+  }
+}

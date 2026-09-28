@@ -1,0 +1,232 @@
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 260px;
+  height: 100vh;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e7edf5;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 1200;
+
+  transition: transform 0.3s ease;
+
+  overflow-y: auto;
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.admin-sidebar-logo {
+  height: 90px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  border-bottom: 1px solid #eef2f7;
+}
+
+.admin-sidebar-logo img {
+  width: 150px;
+  height: auto;
+
+  object-fit: contain;
+}
+
+.admin-sidebar-close {
+  display: none;
+
+  position: absolute;
+  right: 15px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 20px;
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+/* =========================
+   ROLE
+========================= */
+
+.admin-sidebar-role {
+  padding: 22px 20px 15px;
+}
+
+.admin-sidebar-role span {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  color: #1769aa;
+
+  letter-spacing: 0.5px;
+}
+
+.admin-sidebar-role small {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 12px;
+
+  color: #94a3b8;
+}
+
+/* =========================
+   MENU
+========================= */
+
+.admin-sidebar-menu {
+  padding: 5px 15px;
+
+  flex: 1;
+}
+
+.admin-menu-title {
+  margin: 22px 10px 9px;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  color: #94a3b8;
+
+  letter-spacing: 1px;
+}
+
+/* =========================
+   NAV LINK
+========================= */
+
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  width: 100%;
+
+  padding: 12px 14px;
+
+  margin-bottom: 5px;
+
+  border-radius: 10px;
+
+  color: #475569;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.admin-nav-link svg {
+  width: 17px;
+  min-width: 17px;
+}
+
+.admin-nav-link:hover {
+  background: #f0f7ff;
+  color: #1769aa;
+}
+
+.admin-nav-link.active {
+  background: #e8f3ff;
+  color: #1769aa;
+
+  font-weight: 700;
+}
+
+/* =========================
+   BOTTOM
+========================= */
+
+.admin-sidebar-bottom {
+  padding: 15px;
+
+  border-top: 1px solid #eef2f7;
+}
+
+.admin-logout-btn {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 12px 14px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.admin-logout-btn:hover {
+  background: #fff1f2;
+  color: #dc2626;
+}
+
+/* =========================
+   OVERLAY
+========================= */
+
+.admin-sidebar-overlay {
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(15, 23, 42, 0.45);
+
+  z-index: 1100;
+}
+
+/* =========================
+   TABLET & MOBILE
+========================= */
+
+@media (max-width: 991px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar.admin-sidebar-show {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-close {
+    display: block;
+  }
+
+  .admin-sidebar-overlay {
+    display: block;
+  }
+}

@@ -1,0 +1,157 @@
+/* =========================
+   MAIN
+========================= */
+
+.main-layout {
+  min-height: 100vh;
+}
+
+.main-content {
+  min-height: 100vh;
+
+  margin-left: 270px;
+
+  background-color: #f7fbff;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content-container {
+  width: 100%;
+
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  padding: 35px;
+}
+
+/* =========================
+   MOBILE HEADER
+========================= */
+
+.mobile-header {
+  display: none;
+}
+
+/* =========================
+   OVERLAY
+========================= */
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 991.98px) {
+  .content-container {
+    padding: 25px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+/* =========================================================
+   MOBILE HEADER - FIXED
+========================================================= */
+
+.mobile-header {
+  display: none;
+}
+
+@media (max-width: 991px) {
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 18px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e8edf2;
+
+    z-index: 1000;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  }
+
+  .mobile-menu-button {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #1684d5;
+    color: #ffffff;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .mobile-menu-button:hover {
+    background: #075aa1;
+  }
+
+  .mobile-menu-button:active {
+    transform: scale(0.95);
+  }
+
+  .mobile-header-logo {
+    display: flex;
+    align-items: center;
+
+    height: 42px;
+  }
+
+  .mobile-header-logo img {
+    width: 115px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+  }
+
+  /*
+    Karena header fixed, konten harus diberi
+    jarak agar tidak tertutup header.
+  */
+
+  .content-container {
+    padding-top: 65px;
+  }
+}

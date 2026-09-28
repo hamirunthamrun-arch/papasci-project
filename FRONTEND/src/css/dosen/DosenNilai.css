@@ -1,0 +1,1390 @@
+/* =========================================================
+   DOSEN NILAI MAHASISWA
+========================================================= */
+
+.dosen-nilai-page {
+  width: 100%;
+  min-height: 100vh;
+
+  padding: 30px;
+
+  background: #f5f9ff;
+
+  font-family: "Nunito", sans-serif;
+
+  color: #24364b;
+
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dosen-nilai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 28px;
+}
+
+.dosen-nilai-title {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+}
+
+.dosen-nilai-title-icon {
+  width: 58px;
+  height: 58px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #2f80ed,
+    #1769c2
+  );
+
+  color: #ffffff;
+
+  font-size: 24px;
+
+  box-shadow:
+    0 8px 20px rgba(47, 128, 237, 0.2);
+}
+
+.dosen-nilai-title h1 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #183b63;
+}
+
+.dosen-nilai-title p {
+  margin: 5px 0 0;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #7890a8;
+}
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.dosen-nilai-stats {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
+
+.dosen-nilai-stat-card {
+  min-height: 100px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5edf7;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 5px 18px rgba(35, 76, 120, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dosen-nilai-stat-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 22px rgba(35, 76, 120, 0.1);
+}
+
+.dosen-nilai-stat-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  font-size: 19px;
+}
+
+.dosen-nilai-stat-icon.blue {
+  background: #e8f2ff;
+  color: #2776d2;
+}
+
+.dosen-nilai-stat-icon.green {
+  background: #e9f8ef;
+  color: #2e9b61;
+}
+
+.dosen-nilai-stat-icon.orange {
+  background: #fff4e5;
+  color: #e89024;
+}
+
+.dosen-nilai-stat-card span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #8094a9;
+}
+
+.dosen-nilai-stat-card strong {
+  display: block;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 27px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  color: #1d4169;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.dosen-nilai-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  margin-bottom: 22px;
+}
+
+.dosen-nilai-search {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
+
+  display: flex;
+  align-items: center;
+}
+
+.dosen-nilai-search > svg {
+  position: absolute;
+
+  left: 16px;
+
+  color: #8ba0b6;
+
+  font-size: 15px;
+
+  pointer-events: none;
+}
+
+.dosen-nilai-search input {
+  width: 100%;
+  height: 46px;
+
+  padding: 0 45px 0 43px;
+
+  border: 1px solid #dce7f3;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #30485f;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dosen-nilai-search input::placeholder {
+  color: #a0afbf;
+}
+
+.dosen-nilai-search input:focus {
+  border-color: #4b91e8;
+
+  box-shadow:
+    0 0 0 3px rgba(75, 145, 232, 0.1);
+}
+
+.dosen-nilai-search-clear {
+  position: absolute;
+
+  right: 10px;
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #8ba0b6;
+
+  cursor: pointer;
+}
+
+.dosen-nilai-search-clear:hover {
+  background: #eef4fa;
+
+  color: #2f80ed;
+}
+
+.dosen-nilai-result-count {
+  flex-shrink: 0;
+
+  padding: 9px 14px;
+
+  border-radius: 10px;
+
+  background: #eaf3ff;
+
+  color: #2776d2;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.dosen-nilai-content {
+  background: #ffffff;
+
+  border: 1px solid #e5edf7;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 20px rgba(35, 76, 120, 0.06);
+
+  overflow: hidden;
+}
+
+.dosen-nilai-list-header {
+  padding: 23px 25px;
+
+  border-bottom: 1px solid #edf2f7;
+}
+
+.dosen-nilai-list-header h2 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  color: #1e4168;
+}
+
+.dosen-nilai-list-header p {
+  margin: 3px 0 0;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #8a9bad;
+}
+
+/* =========================================================
+   STUDENT LIST
+========================================================= */
+
+.dosen-nilai-student-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dosen-nilai-student-card {
+  display: grid;
+
+  grid-template-columns: minmax(250px, 1.5fr) minmax(220px, 1fr) auto;
+
+  align-items: center;
+
+  gap: 25px;
+
+  padding: 19px 25px;
+
+  border-bottom: 1px solid #edf2f7;
+
+  transition: background 0.2s ease;
+}
+
+.dosen-nilai-student-card:last-child {
+  border-bottom: none;
+}
+
+.dosen-nilai-student-card:hover {
+  background: #f9fbfe;
+}
+
+/* =========================================================
+   STUDENT INFO
+========================================================= */
+
+.dosen-nilai-student-info {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+}
+
+.dosen-nilai-avatar {
+  width: 45px;
+  height: 45px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #dcecff,
+    #c9e1ff
+  );
+
+  color: #2776d2;
+
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.dosen-nilai-student-info h3 {
+  margin: 0 0 3px;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  color: #274761;
+}
+
+.dosen-nilai-student-info span {
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #91a1b1;
+}
+
+/* =========================================================
+   STUDENT SUMMARY
+========================================================= */
+
+.dosen-nilai-student-summary {
+  display: flex;
+  align-items: center;
+
+  gap: 35px;
+}
+
+.dosen-nilai-student-summary > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.dosen-nilai-student-summary span {
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #91a0af;
+}
+
+.dosen-nilai-student-summary strong {
+  font-size: 15px;
+  font-weight: 800;
+
+  color: #31506d;
+}
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.dosen-nilai-view-button {
+  min-width: 110px;
+  height: 36px;
+
+  padding: 0 15px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #2f80ed;
+
+  color: #ffffff;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dosen-nilai-view-button:hover {
+  background: #176bc9;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.dosen-nilai-empty {
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px;
+
+  text-align: center;
+}
+
+.dosen-nilai-empty > svg {
+  margin-bottom: 14px;
+
+  color: #9bb4ce;
+
+  font-size: 38px;
+}
+
+.dosen-nilai-empty h3 {
+  margin: 0 0 5px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 21px;
+
+  color: #49647d;
+}
+
+.dosen-nilai-empty p {
+  max-width: 430px;
+
+  margin: 0 0 18px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  line-height: 1.6;
+
+  color: #8b9cac;
+}
+
+.dosen-nilai-empty button {
+  padding: 9px 16px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #eaf3ff;
+
+  color: #2876cf;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.dosen-nilai-empty button:hover {
+  background: #dcecff;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.dosen-nilai-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+
+  background: rgba(18, 42, 68, 0.52);
+
+  backdrop-filter: blur(3px);
+
+  overflow-y: auto;
+}
+
+/* =========================================================
+   DETAIL MODAL
+========================================================= */
+
+.dosen-nilai-detail-modal {
+  width: 100%;
+  max-width: 850px;
+
+  max-height: calc(100vh - 50px);
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 20px 60px rgba(22, 52, 82, 0.22);
+
+  overflow: hidden;
+
+  animation: dosenNilaiModalIn 0.2s ease;
+}
+
+@keyframes dosenNilaiModalIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(10px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.dosen-nilai-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 21px 24px;
+
+  border-bottom: 1px solid #e9eff5;
+
+  background: #ffffff;
+}
+
+.dosen-nilai-modal-student {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+}
+
+.dosen-nilai-avatar.large {
+  width: 50px;
+  height: 50px;
+
+  font-size: 18px;
+}
+
+.dosen-nilai-modal-student span {
+  display: block;
+
+  margin-bottom: 2px;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.8px;
+
+  color: #4389d5;
+}
+
+.dosen-nilai-modal-student h2 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 23px;
+
+  line-height: 1.1;
+
+  color: #1f4165;
+}
+
+.dosen-nilai-modal-student p {
+  margin: 3px 0 0;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #899bab;
+}
+
+.dosen-nilai-close-button {
+  width: 35px;
+  height: 35px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #f1f5f9;
+
+  color: #7f91a3;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.dosen-nilai-close-button:hover {
+  background: #e8f0f8;
+
+  color: #2f80ed;
+}
+
+/* =========================================================
+   MODAL BODY
+========================================================= */
+
+.dosen-nilai-modal-body {
+  flex: 1;
+
+  padding: 24px;
+
+  overflow-y: auto;
+
+  background: #f8fbff;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.dosen-nilai-section {
+  margin-bottom: 25px;
+}
+
+.dosen-nilai-section:last-child {
+  margin-bottom: 0;
+}
+
+.dosen-nilai-section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.dosen-nilai-section-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  font-size: 16px;
+}
+
+.dosen-nilai-section-icon.blue {
+  background: #e8f2ff;
+
+  color: #2776d2;
+}
+
+.dosen-nilai-section-icon.orange {
+  background: #fff4e5;
+
+  color: #e89024;
+}
+
+.dosen-nilai-section-title h3 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 19px;
+
+  color: #234565;
+}
+
+.dosen-nilai-section-title p {
+  margin: 1px 0 0;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #8a9aaa;
+}
+
+/* =========================================================
+   MODULE LIST
+========================================================= */
+
+.dosen-nilai-module-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.dosen-nilai-module-card {
+  display: grid;
+
+  grid-template-columns: 1fr auto;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 15px 17px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4edf6;
+
+  border-radius: 12px;
+}
+
+.dosen-nilai-module-name {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.dosen-nilai-module-name strong {
+  font-size: 13px;
+  font-weight: 800;
+
+  color: #2c4a65;
+}
+
+.dosen-nilai-module-name span {
+  font-size: 10px;
+  font-weight: 600;
+
+  color: #9aa8b6;
+}
+
+.dosen-nilai-module-scores {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.dosen-nilai-module-scores > div {
+  min-width: 85px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding: 8px 10px;
+
+  border-radius: 8px;
+
+  background: #f5f9fd;
+}
+
+.dosen-nilai-module-scores span {
+  font-size: 10px;
+  font-weight: 700;
+
+  color: #8b9baa;
+}
+
+.dosen-nilai-module-scores strong {
+  font-size: 14px;
+  font-weight: 900;
+
+  color: #2f80ed;
+}
+
+/* =========================================================
+   TASK LIST
+========================================================= */
+
+.dosen-nilai-task-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.dosen-nilai-task-card {
+  display: grid;
+
+  grid-template-columns: 36px 1fr auto;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px 15px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4edf6;
+
+  border-radius: 11px;
+}
+
+.dosen-nilai-task-number {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #fff4e5;
+
+  color: #dc8b22;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.dosen-nilai-task-name {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.dosen-nilai-task-name strong {
+  font-size: 13px;
+  font-weight: 800;
+
+  color: #2c4a65;
+}
+
+.dosen-nilai-task-name span {
+  font-size: 10px;
+  font-weight: 600;
+
+  color: #9aa8b6;
+}
+
+.dosen-nilai-task-score {
+  min-width: 90px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 1px;
+}
+
+.dosen-nilai-task-score strong {
+  font-size: 20px;
+  font-weight: 900;
+
+  line-height: 1;
+
+  color: #2f80ed;
+}
+
+.dosen-nilai-task-score > span {
+  font-size: 9px;
+  font-weight: 700;
+
+  color: #9aa8b6;
+}
+
+.dosen-nilai-task-score .not-graded {
+  color: #dc8b22;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+.dosen-nilai-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 15px 24px;
+
+  border-top: 1px solid #e7eef5;
+
+  background: #ffffff;
+}
+
+.dosen-nilai-modal-footer > div {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #8a9aaa;
+}
+
+.dosen-nilai-modal-footer svg {
+  flex-shrink: 0;
+
+  color: #f2b632;
+
+  font-size: 14px;
+}
+
+.dosen-nilai-modal-footer span {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.dosen-nilai-modal-footer button {
+  min-width: 75px;
+  height: 34px;
+
+  padding: 0 13px;
+
+  border: 1px solid #dce5ee;
+
+  border-radius: 8px;
+
+  background: #f7f9fb;
+
+  color: #71869a;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.dosen-nilai-modal-footer button:hover {
+  background: #edf2f7;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .dosen-nilai-page {
+    padding: 25px 22px;
+  }
+
+  .dosen-nilai-stats {
+    gap: 14px;
+  }
+
+  .dosen-nilai-stat-card {
+    padding: 16px;
+  }
+
+  .dosen-nilai-title h1 {
+    font-size: 27px;
+  }
+
+  .dosen-nilai-student-card {
+    grid-template-columns:
+      minmax(220px, 1fr)
+      minmax(180px, auto)
+      auto;
+
+    gap: 15px;
+
+    padding: 17px 20px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .dosen-nilai-page {
+    padding: 20px 15px;
+  }
+
+  /* HEADER */
+
+  .dosen-nilai-title {
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+  .dosen-nilai-title-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 13px;
+
+    font-size: 20px;
+  }
+
+  .dosen-nilai-title h1 {
+    font-size: 24px;
+  }
+
+  .dosen-nilai-title p {
+    max-width: 300px;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+  }
+
+  /* STATS */
+
+  .dosen-nilai-stats {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+  }
+
+  .dosen-nilai-stat-card {
+    min-height: auto;
+
+    padding: 14px 16px;
+  }
+
+  .dosen-nilai-stat-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .dosen-nilai-stat-card strong {
+    font-size: 24px;
+  }
+
+  /* TOOLBAR */
+
+  .dosen-nilai-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+  }
+
+  .dosen-nilai-search {
+    max-width: none;
+  }
+
+  .dosen-nilai-result-count {
+    align-self: flex-start;
+  }
+
+  /* CONTENT */
+
+  .dosen-nilai-content {
+    border-radius: 14px;
+  }
+
+  .dosen-nilai-list-header {
+    padding: 18px;
+  }
+
+  .dosen-nilai-list-header h2 {
+    font-size: 19px;
+  }
+
+  .dosen-nilai-list-header p {
+    font-size: 12px;
+  }
+
+  /* STUDENT CARD */
+
+  .dosen-nilai-student-card {
+    grid-template-columns: 1fr;
+
+    gap: 13px;
+
+    padding: 17px 18px;
+  }
+
+  .dosen-nilai-student-summary {
+    gap: 30px;
+  }
+
+  .dosen-nilai-view-button {
+    width: 100%;
+  }
+
+  /* MODAL */
+
+  .dosen-nilai-modal-overlay {
+    align-items: flex-start;
+
+    padding: 15px;
+  }
+
+  .dosen-nilai-detail-modal {
+    max-height: calc(100vh - 30px);
+
+    margin-top: 10px;
+
+    border-radius: 15px;
+  }
+
+  .dosen-nilai-modal-header {
+    padding: 17px;
+  }
+
+  .dosen-nilai-modal-student h2 {
+    font-size: 20px;
+  }
+
+  .dosen-nilai-modal-body {
+    padding: 17px;
+  }
+
+  /* MODULE */
+
+  .dosen-nilai-module-card {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .dosen-nilai-module-scores {
+    width: 100%;
+  }
+
+  .dosen-nilai-module-scores > div {
+    flex: 1;
+  }
+
+  /* TASK */
+
+  .dosen-nilai-task-card {
+    grid-template-columns: 34px 1fr auto;
+
+    gap: 9px;
+
+    padding: 11px;
+  }
+
+  .dosen-nilai-task-score {
+    min-width: 70px;
+  }
+
+  /* FOOTER */
+
+  .dosen-nilai-modal-footer {
+    align-items: stretch;
+
+    flex-direction: column;
+
+    padding: 14px 17px;
+  }
+
+  .dosen-nilai-modal-footer button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (max-width: 420px) {
+  .dosen-nilai-page {
+    padding: 16px 12px;
+  }
+
+  .dosen-nilai-title-icon {
+    width: 44px;
+    height: 44px;
+
+    font-size: 18px;
+  }
+
+  .dosen-nilai-title h1 {
+    font-size: 21px;
+  }
+
+  .dosen-nilai-title p {
+    font-size: 11px;
+  }
+
+  .dosen-nilai-search input {
+    height: 43px;
+
+    font-size: 12px;
+  }
+
+  .dosen-nilai-list-header {
+    padding: 16px;
+  }
+
+  .dosen-nilai-student-card {
+    padding: 15px;
+  }
+
+  .dosen-nilai-modal-header {
+    padding: 15px;
+  }
+
+  .dosen-nilai-modal-student h2 {
+    font-size: 18px;
+  }
+
+  .dosen-nilai-modal-body {
+    padding: 14px;
+  }
+
+  .dosen-nilai-section-title h3 {
+    font-size: 17px;
+  }
+
+  .dosen-nilai-module-scores {
+    gap: 7px;
+  }
+
+  .dosen-nilai-module-scores > div {
+    min-width: 0;
+
+    padding: 7px 8px;
+  }
+
+  .dosen-nilai-module-scores span {
+    font-size: 9px;
+  }
+
+  .dosen-nilai-module-scores strong {
+    font-size: 13px;
+  }
+
+  .dosen-nilai-task-card {
+    grid-template-columns: 32px 1fr;
+
+    position: relative;
+
+    padding-right: 70px;
+  }
+
+  .dosen-nilai-task-score {
+    position: absolute;
+
+    right: 11px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    min-width: auto;
+  }
+
+  .dosen-nilai-task-score strong {
+    font-size: 17px;
+  }
+}

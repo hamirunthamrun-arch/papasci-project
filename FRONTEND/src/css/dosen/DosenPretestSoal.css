@@ -1,0 +1,1105 @@
+/* =========================================================
+   DOSEN PRETEST SOAL
+========================================================= */
+
+.dosen-pretest-soal-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 45px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dosen-pretest-soal-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.dosen-pretest-soal-header > div {
+  min-width: 0;
+}
+
+.dosen-pretest-soal-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 17px;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #1769aa;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.dosen-pretest-soal-back-btn:hover {
+  color: #125789;
+}
+
+.dosen-pretest-soal-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #1769aa;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+}
+
+.dosen-pretest-soal-eyebrow svg {
+  font-size: 12px;
+}
+
+.dosen-pretest-soal-header h1 {
+  margin: 6px 0 4px;
+  font-family: "Baloo 2", sans-serif;
+  color: #183b56;
+
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.dosen-pretest-soal-header p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 13px;
+}
+
+.dosen-pretest-soal-add-btn {
+  min-height: 44px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 17px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #1769aa;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 6px 15px rgba(23, 105, 170, 0.18);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dosen-pretest-soal-add-btn:hover {
+  background: #125789;
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.dosen-pretest-soal-summary {
+  display: grid;
+
+  grid-template-columns:
+    160px
+    160px
+    160px
+    minmax(0, 1fr);
+
+  gap: 12px;
+
+  margin-bottom: 24px;
+}
+
+.dosen-pretest-soal-summary-item,
+.dosen-pretest-soal-summary-note {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+
+  border: 1px solid #e3ebf2;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.dosen-pretest-soal-summary-item {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dosen-pretest-soal-summary-item span {
+  margin-bottom: 4px;
+
+  color: #8a9aaa;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.dosen-pretest-soal-summary-item strong {
+  color: #1769aa;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.dosen-pretest-soal-summary-note {
+  gap: 10px;
+
+  padding: 0 16px;
+
+  background: #f3f9fd;
+
+  border-color: #dcecf8;
+
+  color: #637b8e;
+
+  font-size: 12px;
+}
+
+.dosen-pretest-soal-summary-note svg {
+  flex-shrink: 0;
+
+  color: #1769aa;
+
+  font-size: 18px;
+}
+
+/* =========================================================
+   QUESTION LIST
+========================================================= */
+
+.dosen-pretest-soal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* =========================================================
+   QUESTION CARD
+========================================================= */
+
+.dosen-pretest-soal-card {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e2eaf1;
+  border-radius: 15px;
+
+  box-shadow: 0 5px 18px rgba(28, 70, 100, 0.05);
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.dosen-pretest-soal-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #edf1f5;
+
+  background: #fbfdff;
+}
+
+.dosen-pretest-soal-number {
+  color: #1769aa;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.6px;
+}
+
+.dosen-pretest-soal-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.dosen-pretest-soal-edit-btn,
+.dosen-pretest-soal-delete-btn {
+  min-height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 10px;
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.dosen-pretest-soal-edit-btn {
+  background: #eef6ff;
+  color: #1769aa;
+}
+
+.dosen-pretest-soal-edit-btn:hover {
+  background: #dceeff;
+}
+
+.dosen-pretest-soal-delete-btn {
+  background: #fff1f2;
+  color: #dc3545;
+}
+
+.dosen-pretest-soal-delete-btn:hover {
+  background: #ffe1e4;
+}
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+.dosen-pretest-soal-question {
+  padding: 20px 20px 0;
+}
+
+.dosen-pretest-soal-question h3 {
+  margin: 0;
+  font-family: "Baloo 2", sans-serif;
+  color: #243b53;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  line-height: 1.65;
+}
+
+/* =========================================================
+   QUESTION IMAGE
+========================================================= */
+
+.dosen-pretest-soal-image {
+  width: 100%;
+  max-width: 620px;
+
+  margin-top: 16px;
+
+  overflow: hidden;
+
+  border: 1px solid #e1e9f0;
+  border-radius: 11px;
+
+  background: #f5f8fa;
+}
+
+.dosen-pretest-soal-image img {
+  display: block;
+
+  width: 100%;
+  max-height: 330px;
+
+  object-fit: contain;
+}
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.dosen-pretest-soal-options {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  padding: 18px 20px;
+}
+
+.dosen-pretest-soal-option {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-height: 48px;
+
+  padding: 8px 10px;
+
+  border: 1px solid #e2e8ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.dosen-pretest-soal-option.correct {
+  border-color: #b8e4ca;
+  background: #f1fbf5;
+}
+
+.dosen-pretest-soal-option-letter {
+  width: 28px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: #f1f5f9;
+  color: #64748b;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dosen-pretest-soal-option.correct .dosen-pretest-soal-option-letter {
+  background: #198754;
+  color: #ffffff;
+}
+
+.dosen-pretest-soal-option-text {
+  min-width: 0;
+  flex: 1;
+
+  color: #475569;
+
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dosen-pretest-soal-correct {
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  color: #198754;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   CARD FOOTER
+========================================================= */
+
+.dosen-pretest-soal-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 12px 20px;
+
+  border-top: 1px solid #edf1f5;
+
+  background: #fbfdff;
+
+  color: #8292a2;
+
+  font-size: 10px;
+}
+
+.dosen-pretest-soal-card-footer strong {
+  color: #1769aa;
+}
+
+.dosen-pretest-soal-image-badge,
+.dosen-pretest-soal-no-image {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dosen-pretest-soal-image-badge {
+  color: #1769aa;
+}
+
+.dosen-pretest-soal-no-image {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.dosen-pretest-soal-empty {
+  padding: 65px 20px;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border: 1px dashed #d7e1eb;
+  border-radius: 15px;
+}
+
+.dosen-pretest-soal-empty > svg {
+  color: #9aafc0;
+
+  font-size: 38px;
+}
+
+.dosen-pretest-soal-empty h3 {
+  margin: 13px 0 5px;
+
+  color: #183b56;
+
+  font-size: 18px;
+}
+
+.dosen-pretest-soal-empty p {
+  margin: 0 0 17px;
+
+  color: #718096;
+
+  font-size: 12px;
+}
+
+.dosen-pretest-soal-empty button {
+  min-height: 39px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #1769aa;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.dosen-pretest-soal-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 3000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.58);
+
+  backdrop-filter: blur(3px);
+}
+
+.dosen-pretest-soal-modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: 94vh;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border-radius: 17px;
+
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.25);
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.dosen-pretest-soal-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 21px 23px;
+
+  border-bottom: 1px solid #edf1f5;
+}
+
+.dosen-pretest-soal-modal-header span {
+  color: #1769aa;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 0.9px;
+}
+
+.dosen-pretest-soal-modal-header h2 {
+  margin: 5px 0 0;
+  font-family: "Baloo 2", sans-serif;
+  color: #183b56;
+
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.dosen-pretest-soal-modal-close {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #f1f5f9;
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+.dosen-pretest-soal-modal-close:hover {
+  background: #e2e8f0;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.dosen-pretest-soal-modal form {
+  padding: 21px 23px;
+}
+
+.dosen-pretest-soal-field {
+  margin-bottom: 16px;
+}
+
+.dosen-pretest-soal-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #334155;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dosen-pretest-soal-field input,
+.dosen-pretest-soal-field textarea,
+.dosen-pretest-soal-field select {
+  box-sizing: border-box;
+
+  width: 100%;
+
+  border: 1px solid #dce4ec;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dosen-pretest-soal-field input,
+.dosen-pretest-soal-field select {
+  height: 42px;
+
+  padding: 0 11px;
+}
+
+.dosen-pretest-soal-field textarea {
+  min-height: 105px;
+
+  padding: 11px;
+
+  resize: vertical;
+}
+
+.dosen-pretest-soal-field input:focus,
+.dosen-pretest-soal-field textarea:focus,
+.dosen-pretest-soal-field select:focus {
+  border-color: #1769aa;
+
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.08);
+}
+
+/* =========================================================
+   IMAGE FIELD
+========================================================= */
+
+.dosen-pretest-soal-image-field {
+  margin-bottom: 19px;
+}
+
+.dosen-pretest-soal-image-field-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 8px;
+}
+
+.dosen-pretest-soal-image-field-header label {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #334155;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dosen-pretest-soal-image-field-header small {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.dosen-pretest-soal-remove-image {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  border: none;
+  background: transparent;
+
+  color: #dc3545;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.dosen-pretest-soal-remove-image:hover {
+  color: #b02a37;
+}
+
+/* =========================================================
+   UPLOAD BOX
+========================================================= */
+
+.dosen-pretest-soal-upload-box {
+  min-height: 145px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border: 1.5px dashed #cbd9e5;
+  border-radius: 11px;
+
+  background: #f9fbfd;
+
+  color: #1769aa;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.dosen-pretest-soal-upload-box:hover {
+  border-color: #1769aa;
+  background: #f1f8fd;
+}
+
+.dosen-pretest-soal-upload-box svg {
+  font-size: 25px;
+}
+
+.dosen-pretest-soal-upload-box strong {
+  color: #334155;
+
+  font-size: 12px;
+}
+
+.dosen-pretest-soal-upload-box span {
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+.dosen-pretest-soal-upload-box input,
+.dosen-pretest-soal-change-image input {
+  display: none;
+}
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+.dosen-pretest-soal-image-preview {
+  position: relative;
+
+  overflow: hidden;
+
+  width: 100%;
+  max-height: 280px;
+
+  border: 1px solid #dce5ec;
+  border-radius: 11px;
+
+  background: #f4f7f9;
+}
+
+.dosen-pretest-soal-image-preview img {
+  display: block;
+
+  width: 100%;
+  max-height: 280px;
+
+  object-fit: contain;
+}
+
+.dosen-pretest-soal-image-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 9px 12px;
+
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.dosen-pretest-soal-change-image {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 8px;
+
+  color: #1769aa;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.dosen-pretest-soal-change-image:hover {
+  color: #125789;
+}
+
+/* =========================================================
+   OPTIONS FORM
+========================================================= */
+
+.dosen-pretest-soal-options-form {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  column-gap: 15px;
+}
+
+/* =========================================================
+   FORM ROW
+========================================================= */
+
+.dosen-pretest-soal-form-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+/* =========================================================
+   NOTE
+========================================================= */
+
+.dosen-pretest-soal-note {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  margin: 2px 0 18px;
+  padding: 11px 12px;
+
+  border-radius: 9px;
+
+  background: #f3f9fd;
+
+  color: #1769aa;
+}
+
+.dosen-pretest-soal-note svg {
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  font-size: 13px;
+}
+
+.dosen-pretest-soal-note p {
+  margin: 0;
+
+  color: #647b8d;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.dosen-pretest-soal-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 9px;
+}
+
+.dosen-pretest-soal-cancel-btn,
+.dosen-pretest-soal-save-btn {
+  min-height: 41px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 15px;
+
+  border: none;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.dosen-pretest-soal-cancel-btn {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.dosen-pretest-soal-cancel-btn:hover {
+  background: #e2e8f0;
+}
+
+.dosen-pretest-soal-save-btn {
+  background: #1769aa;
+  color: #ffffff;
+
+  box-shadow: 0 5px 13px rgba(23, 105, 170, 0.18);
+}
+
+.dosen-pretest-soal-save-btn:hover {
+  background: #125789;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .dosen-pretest-soal-summary {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .dosen-pretest-soal-summary-note {
+    grid-column: 1 / -1;
+  }
+
+  .dosen-pretest-soal-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+  .dosen-pretest-soal-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dosen-pretest-soal-header h1 {
+    font-size: 25px;
+  }
+
+  .dosen-pretest-soal-add-btn {
+    width: 100%;
+  }
+
+  .dosen-pretest-soal-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dosen-pretest-soal-card-actions {
+    width: 100%;
+  }
+
+  .dosen-pretest-soal-edit-btn,
+  .dosen-pretest-soal-delete-btn {
+    flex: 1;
+  }
+
+  .dosen-pretest-soal-question {
+    padding: 17px 16px 0;
+  }
+
+  .dosen-pretest-soal-question h3 {
+    font-size: 14px;
+  }
+
+  .dosen-pretest-soal-options {
+    padding: 15px 16px;
+  }
+
+  .dosen-pretest-soal-card-footer {
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding: 11px 16px;
+  }
+
+  .dosen-pretest-soal-modal-overlay {
+    padding: 10px;
+  }
+
+  .dosen-pretest-soal-modal-header {
+    padding: 18px;
+  }
+
+  .dosen-pretest-soal-modal form {
+    padding: 18px;
+  }
+
+  .dosen-pretest-soal-options-form {
+    grid-template-columns: 1fr;
+  }
+
+  .dosen-pretest-soal-form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .dosen-pretest-soal-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .dosen-pretest-soal-cancel-btn,
+  .dosen-pretest-soal-save-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .dosen-pretest-soal-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .dosen-pretest-soal-summary-note {
+    grid-column: auto;
+  }
+
+  .dosen-pretest-soal-header h1 {
+    font-size: 22px;
+  }
+
+  .dosen-pretest-soal-summary-item {
+    min-height: 65px;
+  }
+
+  .dosen-pretest-soal-image-field-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,812 @@
+/* =========================================================
+   KOMPETENSI PEDAGOGIK
+   PAPASCI - BLUE THEME
+   ========================================================= */
+
+.pedagogik-page {
+  width: 100%;
+  min-height: 100vh;
+
+  background: #f7fbff;
+
+  font-family: "Nunito", sans-serif;
+
+  color: #1f2937;
+
+  overflow-x: hidden;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.pedagogik-container {
+  width: 100%;
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  padding: 30px 22px 50px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.pedagogik-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   HEADER CONTENT
+   ========================================================= */
+
+.pedagogik-header-content {
+  min-width: 0;
+}
+
+.pedagogik-label {
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: #6f8aa3;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.pedagogik-header h1 {
+  margin: 0 0 8px;
+
+  color: #172033;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 30px;
+
+  font-weight: 800;
+
+  line-height: 1.15;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.pedagogik-header p {
+  max-width: 820px;
+
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   RUBRIC BUTTON
+   ========================================================= */
+
+.rubric-button {
+  display: inline-flex !important;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  margin-top: 2px;
+
+  padding: 5px 0 !important;
+
+  border: none !important;
+
+  background: transparent !important;
+
+  color: #2f80ed !important;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 13px !important;
+
+  font-weight: 900 !important;
+
+  white-space: nowrap;
+
+  box-shadow: none !important;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.rubric-button:hover {
+  color: #2474dc !important;
+
+  transform: translateX(3px);
+}
+
+.rubric-button svg {
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.competency-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  border: 1px solid #e1eaf2;
+
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 7px 28px rgba(31, 41, 55, 0.05);
+
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.competency-table {
+  width: 100%;
+
+  min-width: 1100px;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.competency-table-head {
+  display: grid;
+
+  grid-template-columns:
+    60px
+    minmax(310px, 1.8fr)
+    minmax(240px, 1.35fr)
+    minmax(190px, 1.05fr)
+    minmax(175px, 0.95fr)
+    110px;
+
+  align-items: center;
+
+  min-height: 44px;
+
+  padding: 0 16px;
+
+  background: #eef6ff;
+
+  color: #718096;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.65px;
+}
+
+
+/* =========================================================
+   TABLE ROW
+   ========================================================= */
+
+.competency-row {
+  display: grid;
+
+  grid-template-columns:
+    60px
+    minmax(310px, 1.8fr)
+    minmax(240px, 1.35fr)
+    minmax(190px, 1.05fr)
+    minmax(175px, 0.95fr)
+    110px;
+
+  align-items: start;
+
+  padding: 18px 16px;
+
+  border-top: 1px solid #e8eef4;
+
+  background: #ffffff;
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.competency-row:hover {
+  background: #fbfdff;
+
+  box-shadow:
+    inset 3px 0 0 #2f80ed;
+}
+
+
+/* =========================================================
+   COLUMN
+   ========================================================= */
+
+.col-no,
+.col-cakupan,
+.col-indikator,
+.col-bukti,
+.col-teknik,
+.col-skor {
+  min-width: 0;
+}
+
+.col-cakupan {
+  padding-right: 22px;
+}
+
+.col-indikator {
+  padding-right: 20px;
+}
+
+.col-bukti {
+  padding-right: 20px;
+}
+
+.col-teknik {
+  padding-right: 15px;
+}
+
+
+/* =========================================================
+   COMPETENCY NUMBER
+   ========================================================= */
+
+.competency-number {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #eaf4ff;
+
+  color: #2f80ed;
+
+  font-size: 12px;
+
+  font-weight: 900;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.competency-row:hover .competency-number {
+  background: #dcecff;
+
+  transform: scale(1.04);
+}
+
+
+/* =========================================================
+   COMPETENCY TITLE
+   ========================================================= */
+
+.col-cakupan h3 {
+  margin: 0 0 9px;
+
+  color: #34495e;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   GENERAL TEXT
+   ========================================================= */
+
+.col-cakupan p,
+.col-indikator p,
+.col-bukti p {
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 10px;
+
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   PEMAHAMAN
+   ========================================================= */
+
+.understanding strong {
+  color: #2f80ed;
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   TECHNIQUE BADGE
+   ========================================================= */
+
+.technique-badge {
+  display: inline-block;
+
+  max-width: 100%;
+
+  padding: 8px 10px;
+
+  border-radius: 9px;
+
+  background: #eaf4ff;
+
+  color: #3979b9;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   SCORE
+   ========================================================= */
+
+.score-wrapper {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+}
+
+
+/* =========================================================
+   SCORE TOP
+   ========================================================= */
+
+.score-top {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.score-top strong {
+  min-width: 28px;
+
+  color: #2f80ed;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  text-align: left;
+}
+
+
+/* =========================================================
+   SCORE LINE
+   ========================================================= */
+
+.score-line {
+  flex: 1;
+
+  height: 6px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #e5edf5;
+}
+
+.score-line span {
+  display: block;
+
+  width: 0%;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #2f80ed;
+}
+
+
+/* =========================================================
+   SCORE BUTTON
+   ========================================================= */
+
+.score-button {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 9px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #f1f6fb;
+
+  color: #8da2b5;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.score-button:hover {
+  background: #eaf4ff;
+
+  color: #2f80ed;
+
+  transform: translateX(3px);
+}
+
+.score-button svg {
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   MOBILE INFO
+   ========================================================= */
+
+.mobile-score-info {
+  display: none;
+}
+
+
+/* =========================================================
+   TABLET
+   768px - 991px
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+  .pedagogik-container {
+    padding: 26px 18px 45px;
+  }
+
+  .pedagogik-header {
+    gap: 20px;
+
+    margin-bottom: 24px;
+  }
+
+  .pedagogik-header h1 {
+    font-size: 27px;
+  }
+
+  .pedagogik-header p {
+    font-size: 12px;
+  }
+
+  .competency-table {
+    min-width: 1080px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+  .pedagogik-container {
+    padding: 22px 15px 35px;
+  }
+
+
+  /* HEADER */
+
+  .pedagogik-header {
+    display: block;
+
+    margin-bottom: 20px;
+  }
+
+  .pedagogik-label {
+    margin-bottom: 7px;
+
+    font-size: 10px;
+
+    letter-spacing: 1.2px;
+  }
+
+  .pedagogik-header h1 {
+    margin-bottom: 8px;
+
+    font-size: 25px;
+
+    line-height: 1.15;
+  }
+
+  .pedagogik-header p {
+    font-size: 12px;
+
+    line-height: 1.65;
+  }
+
+
+  /* BUTTON */
+
+  .rubric-button {
+    margin-top: 14px;
+
+    font-size: 12px !important;
+  }
+
+
+  /* TABLE */
+
+  .competency-table-wrapper {
+    border-radius: 14px;
+
+    box-shadow:
+      0 5px 20px rgba(31, 41, 55, 0.04);
+  }
+
+  .competency-table {
+    min-width: 1050px;
+  }
+
+
+  /* HEADER TABLE */
+
+  .competency-table-head {
+    min-height: 42px;
+
+    padding: 0 14px;
+
+    font-size: 9px;
+  }
+
+
+  /* ROW */
+
+  .competency-row {
+    padding: 16px 14px;
+  }
+
+
+  /* NUMBER */
+
+  .competency-number {
+    width: 37px;
+    height: 37px;
+
+    border-radius: 11px;
+
+    font-size: 11px;
+  }
+
+
+  /* TITLE */
+
+  .col-cakupan h3 {
+    font-size: 12px;
+
+    line-height: 1.4;
+  }
+
+
+  /* TEXT */
+
+  .col-cakupan p,
+  .col-indikator p,
+  .col-bukti p {
+    font-size: 9px;
+
+    line-height: 1.6;
+  }
+
+
+  /* BADGE */
+
+  .technique-badge {
+    padding: 7px 9px;
+
+    font-size: 8px;
+  }
+
+
+  /* MOBILE INFO */
+
+  .mobile-score-info {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    border: 1px solid #dceaf7;
+
+    border-radius: 13px;
+
+    background: #eef6ff;
+  }
+
+  .mobile-score-icon {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #2f80ed;
+
+    font-size: 14px;
+  }
+
+  .mobile-score-info strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #244b70;
+
+    font-size: 12px;
+
+    font-weight: 900;
+  }
+
+  .mobile-score-info p {
+    margin: 0;
+
+    color: #6c8193;
+
+    font-size: 10px;
+
+    line-height: 1.55;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+  .pedagogik-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+
+  .pedagogik-header h1 {
+    font-size: 23px;
+  }
+
+  .pedagogik-header p {
+    font-size: 11px;
+  }
+
+  .pedagogik-label {
+    font-size: 9px;
+  }
+
+
+  .rubric-button {
+    font-size: 11px !important;
+  }
+
+
+  .competency-table {
+    min-width: 1030px;
+  }
+
+
+  .competency-table-head {
+    font-size: 8px;
+  }
+
+
+  .competency-row {
+    padding: 14px 12px;
+  }
+
+
+  .competency-number {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 10px;
+
+    font-size: 10px;
+  }
+
+
+  .col-cakupan h3 {
+    font-size: 11px;
+  }
+
+
+  .col-cakupan p,
+  .col-indikator p,
+  .col-bukti p {
+    font-size: 8px;
+  }
+
+
+  .technique-badge {
+    font-size: 7.5px;
+  }
+
+}

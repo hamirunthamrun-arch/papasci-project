@@ -1,0 +1,437 @@
+/* =========================================================
+   DOSEN SIDEBAR
+========================================================= */
+
+.dosen-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+
+  width: 260px;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  border-right: 1px solid #e5edf4;
+
+  box-shadow: 4px 0 18px rgba(31, 60, 86, 0.05);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  transition: transform 0.3s ease;
+}
+
+/* Scrollbar */
+
+.dosen-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dosen-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dosen-sidebar::-webkit-scrollbar-thumb {
+  background: #d5e0e9;
+  border-radius: 10px;
+}
+
+.dosen-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #b8c8d6;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.dosen-sidebar-logo {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 92px;
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #edf2f7;
+}
+
+.dosen-sidebar-logo img {
+  display: block;
+
+  width: 150px;
+  height: auto;
+
+  object-fit: contain;
+}
+
+/* Tombol close hanya untuk mobile */
+
+.dosen-sidebar-close {
+  display: none;
+
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f1f5f8;
+  color: #60758a;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.dosen-sidebar-close:hover {
+  background: #e5ebf0;
+  color: #1769aa;
+}
+
+/* =========================================================
+   ROLE
+========================================================= */
+
+.dosen-sidebar-role {
+  padding: 18px 20px 14px;
+}
+
+.dosen-sidebar-role span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #1769aa;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+}
+
+.dosen-sidebar-role small {
+  display: block;
+
+  color: #8a9bad;
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   MENU
+========================================================= */
+
+.dosen-sidebar-menu {
+  flex: 1;
+
+  padding: 5px 13px 20px;
+}
+
+/* =========================================================
+   MENU TITLE
+========================================================= */
+
+.dosen-menu-title {
+  padding: 18px 12px 8px;
+
+  color: #9aa8b5;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   NAV LINK
+========================================================= */
+
+.dosen-nav-link {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: 100%;
+
+  padding: 11px 13px;
+  margin-bottom: 4px;
+
+  border-radius: 9px;
+
+  color: #526779;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Icon */
+
+.dosen-nav-link svg {
+  width: 17px;
+  min-width: 17px;
+
+  color: #71869a;
+
+  font-size: 15px;
+
+  transition: color 0.2s ease;
+}
+
+/* Hover */
+
+.dosen-nav-link:hover {
+  background: #eef6fc;
+  color: #1769aa;
+
+  text-decoration: none;
+}
+
+.dosen-nav-link:hover svg {
+  color: #1769aa;
+}
+
+/* Active */
+
+.dosen-nav-link.active {
+  background: #1769aa;
+  color: #ffffff;
+
+  box-shadow: 0 4px 10px rgba(23, 105, 170, 0.15);
+}
+
+.dosen-nav-link.active svg {
+  color: #ffffff;
+}
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.dosen-sidebar-bottom {
+  padding: 12px 13px 16px;
+
+  border-top: 1px solid #edf2f7;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.dosen-logout-btn {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: 100%;
+
+  padding: 11px 13px;
+  margin-top: 4px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #d9534f;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.dosen-logout-btn svg {
+  width: 17px;
+  min-width: 17px;
+
+  font-size: 15px;
+}
+
+.dosen-logout-btn:hover {
+  background: #fff1f1;
+  color: #c03935;
+}
+
+/* =========================================================
+   MOBILE OVERLAY
+========================================================= */
+
+.dosen-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1040;
+
+  background: rgba(16, 35, 52, 0.45);
+
+  animation: dosenOverlayFade 0.2s ease;
+}
+
+@keyframes dosenOverlayFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+  .dosen-sidebar {
+    transform: translateX(-100%);
+
+    box-shadow: 8px 0 25px rgba(31, 60, 86, 0.15);
+  }
+
+  .dosen-sidebar.dosen-sidebar-show {
+    transform: translateX(0);
+  }
+
+  .dosen-sidebar-close {
+    display: flex;
+  }
+
+  .dosen-sidebar-logo {
+    min-height: 82px;
+
+    justify-content: flex-start;
+
+    padding-left: 22px;
+    padding-right: 55px;
+  }
+
+  .dosen-sidebar-logo img {
+    width: 135px;
+  }
+
+  .dosen-nav-link {
+    padding: 12px 14px;
+
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+  .dosen-sidebar {
+    width: 280px;
+    max-width: 85vw;
+  }
+
+  .dosen-sidebar-logo {
+    min-height: 78px;
+  }
+
+  .dosen-sidebar-logo img {
+    width: 130px;
+  }
+
+  .dosen-sidebar-role {
+    padding: 16px 19px 12px;
+  }
+
+  .dosen-sidebar-role span {
+    font-size: 11px;
+  }
+
+  .dosen-sidebar-role small {
+    font-size: 10px;
+  }
+
+  .dosen-sidebar-menu {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .dosen-menu-title {
+    padding-top: 16px;
+    padding-left: 12px;
+  }
+
+  .dosen-nav-link {
+    min-height: 43px;
+
+    padding: 11px 13px;
+
+    font-size: 13px;
+  }
+
+  .dosen-nav-link svg {
+    width: 17px;
+    min-width: 17px;
+  }
+
+  .dosen-sidebar-bottom {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+  .dosen-sidebar {
+    width: 265px;
+  }
+
+  .dosen-sidebar-logo img {
+    width: 120px;
+  }
+
+  .dosen-nav-link {
+    gap: 10px;
+
+    padding: 10px 12px;
+
+    font-size: 12px;
+  }
+
+  .dosen-menu-title {
+    font-size: 9px;
+  }
+}

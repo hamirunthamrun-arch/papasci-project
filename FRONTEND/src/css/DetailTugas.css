@@ -1,0 +1,912 @@
+/* =========================================================
+   DETAIL TASK PAGE
+========================================================= */
+
+.detail-task-page {
+  min-height: 100vh;
+  background: #f7faff;
+  color: #172033;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.detail-task-header {
+  padding: 35px 0 40px;
+
+  background: linear-gradient(135deg, #eef7ff 0%, #f8fcff 55%, #effcf7 100%);
+
+  border-bottom: 1px solid #e8eef5;
+}
+
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #667085;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.detail-back:hover {
+  color: #2f80ed;
+}
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.detail-heading {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  margin-top: 25px;
+}
+
+.detail-heading-icon {
+  width: 72px;
+  height: 72px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  font-size: 38px;
+
+  box-shadow: 0 10px 30px rgba(31, 41, 55, 0.07);
+}
+
+.detail-label {
+  display: inline-block;
+
+  margin-bottom: 4px;
+
+  color: #2f80ed;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 1.1px;
+}
+
+.detail-heading h1 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: clamp(28px, 4vw, 42px);
+
+  font-weight: 800;
+
+  line-height: 1.05;
+}
+
+.detail-heading p {
+  margin: 7px 0 0;
+
+  color: #667085;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.detail-task-content {
+  padding: 35px 0 70px;
+}
+
+.detail-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(280px, 0.75fr);
+
+  gap: 25px;
+
+  align-items: start;
+}
+
+/* =========================================================
+   PDF SECTION
+========================================================= */
+
+.pdf-section {
+  overflow: hidden;
+
+  border: 1px solid #e4eaf0;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 28px rgba(31, 41, 55, 0.045);
+}
+
+.pdf-header {
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #edf0f3;
+}
+
+.pdf-title {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.pdf-title > svg {
+  color: #e74c3c;
+
+  font-size: 30px;
+}
+
+.pdf-title h2 {
+  margin: 0;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.pdf-title span {
+  color: #98a2b3;
+
+  font-size: 12px;
+}
+
+.open-pdf {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 8px 11px;
+
+  border-radius: 8px;
+
+  background: #edf7ff;
+
+  color: #2f80ed;
+
+  text-decoration: none;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  transition: all 0.2s ease;
+}
+
+.open-pdf:hover {
+  background: #2f80ed;
+  color: #ffffff;
+}
+
+.open-pdf svg {
+  font-size: 9px;
+}
+
+/* =========================================================
+   PDF VIEWER
+========================================================= */
+
+.pdf-viewer {
+  width: 100%;
+
+  height: 650px;
+
+  background: #eef1f5;
+}
+
+.pdf-viewer iframe {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  border: none;
+}
+
+.pdf-note {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 15px;
+
+  background: #fafbfc;
+
+  color: #98a2b3;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.pdf-note svg {
+  flex-shrink: 0;
+
+  color: #e74c3c;
+}
+
+.pdf-note strong {
+  color: #667085;
+}
+
+/* =========================================================
+   RIGHT INFORMATION
+========================================================= */
+
+.task-information {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+
+  position: sticky;
+
+  top: 20px;
+}
+
+/* =========================================================
+   INFORMATION CARD
+========================================================= */
+
+.info-card {
+  padding: 18px;
+
+  border: 1px solid #e4eaf0;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 25px rgba(31, 41, 55, 0.04);
+}
+
+.info-card-title {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding-bottom: 13px;
+
+  border-bottom: 1px solid #edf0f3;
+
+  color: #344054;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.info-card-title svg {
+  color: #2f80ed;
+
+  font-size: 13px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.info-item:last-child {
+  padding-bottom: 0;
+
+  border-bottom: none;
+}
+
+.info-item span {
+  color: #98a2b3;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.info-item strong {
+  color: #475467;
+
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.info-item strong.deadline {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color: #e08a00;
+}
+
+.info-item strong.deadline svg {
+  font-size: 9px;
+}
+
+/* =========================================================
+   SUBMISSION CARD
+========================================================= */
+
+.submission-card {
+  padding: 19px;
+
+  border: 1px solid #dcecfb;
+
+  border-radius: 16px;
+
+  background: linear-gradient(145deg, #f4faff, #ffffff);
+
+  box-shadow: 0 8px 25px rgba(47, 128, 237, 0.05);
+}
+
+.submission-heading {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-bottom: 17px;
+}
+
+.submission-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #e9f5ff;
+
+  font-size: 20px;
+}
+
+.submission-heading h2 {
+  margin: 1px 0 3px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.submission-heading p {
+  margin: 0;
+
+  color: #98a2b3;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.submission-form label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #475467;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.link-input {
+  width: 100%;
+
+  min-height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 0 11px;
+
+  border: 1px solid #dfe5eb;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.link-input:focus-within {
+  border-color: #2f80ed;
+
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.08);
+}
+
+.link-input svg {
+  flex-shrink: 0;
+
+  color: #98a2b3;
+
+  font-size: 15px;
+}
+
+.link-input input {
+  width: 100%;
+
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #344054;
+
+  font-family: inherit;
+
+  font-size: 12px;
+}
+
+.link-input input::placeholder {
+  color: #b1bac5;
+}
+
+.link-input.input-error {
+  border-color: #e74c3c;
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 6px;
+
+  color: #e74c3c;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+}
+
+.link-hint {
+  margin: 9px 0 15px;
+
+  color: #98a2b3;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.submit-task-button {
+  width: 100%;
+
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #2f80ed;
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.submit-task-button:hover {
+  background: #1769d1;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 15px rgba(47, 128, 237, 0.2);
+}
+
+.submit-task-button svg {
+  font-size: 10-px;
+}
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.submission-success {
+  text-align: center;
+}
+
+.success-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 12px;
+
+  border-radius: 50%;
+
+  background: #e9f9f1;
+
+  color: #1ca968;
+
+  font-size: 30px;
+}
+
+.submission-success h2 {
+  margin: 0 0 6px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.submission-success > p {
+  margin: 0 0 13px;
+
+  color: #98a2b3;
+
+  font-size: 10px;
+}
+
+.submitted-link {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 9px 10px;
+
+  border: 1px solid #e3e8ed;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  color: #2f80ed;
+
+  font-size: 12px;
+}
+
+.submitted-link svg {
+  flex-shrink: 0;
+}
+
+.submitted-link span {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.success-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  margin-top: 10px;
+
+  padding: 7px;
+
+  border-radius: 7px;
+
+  background: #f1faf5;
+
+  color: #1b9b62;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.success-status svg {
+  font-size: 9px;
+}
+
+.success-actions {
+  display: flex;
+
+  gap: 7px;
+
+  margin-top: 13px;
+}
+
+.view-link-button,
+.edit-link-button {
+  flex: 1;
+
+  min-height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.view-link-button {
+  border: none;
+
+  background: #2f80ed;
+
+  color: #ffffff;
+}
+
+.view-link-button:hover {
+  background: #1769d1;
+
+  color: #ffffff;
+}
+
+.edit-link-button {
+  border: 1px solid #dfe5eb;
+
+  background: #ffffff;
+
+  color: #667085;
+}
+
+.edit-link-button:hover {
+  border-color: #2f80ed;
+
+  color: #2f80ed;
+}
+
+/* =========================================================
+   NOT FOUND
+========================================================= */
+
+.task-not-found {
+  min-height: 70vh;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.not-found-icon {
+  font-size: 50px;
+}
+
+.task-not-found h2 {
+  margin: 15px 0 5px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.task-not-found p {
+  margin: 0 0 20px;
+
+  color: #98a2b3;
+
+  font-size: 10px;
+}
+
+.back-button {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+
+  padding: 9px 13px !important;
+
+  border: none !important;
+
+  border-radius: 8px !important;
+
+  background: #2f80ed !important;
+
+  font-family: inherit;
+
+  font-size: 9px !important;
+  font-weight: 900 !important;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .task-information {
+    position: static;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    align-items: start;
+  }
+
+  .pdf-viewer {
+    height: 650px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+  .detail-task-header {
+    padding: 25px 0 30px;
+  }
+
+  .detail-heading {
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 20px;
+  }
+
+  .detail-heading-icon {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 15px;
+
+    font-size: 29px;
+  }
+
+  .detail-heading h1 {
+    font-size: 27px;
+  }
+
+  .detail-heading p {
+    font-size: 9px;
+  }
+
+  .detail-task-content {
+    padding: 20px 0 50px;
+  }
+
+  .pdf-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    padding: 13px;
+  }
+
+  .open-pdf {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .pdf-viewer {
+    height: 550px;
+  }
+
+  .task-information {
+    grid-template-columns: 1fr;
+  }
+
+  .submission-card,
+  .info-card {
+    padding: 15px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .detail-heading {
+    flex-direction: column;
+  }
+
+  .detail-heading-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .detail-heading h1 {
+    font-size: 25px;
+  }
+
+  .pdf-viewer {
+    height: 500px;
+  }
+
+  .success-actions {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,1575 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+.home-page {
+  width: 100%;
+  overflow-x: hidden;
+
+  font-family: "Nunito", sans-serif;
+
+  color: #1f2937;
+}
+
+.home-page section {
+  width: 100%;
+  padding: 90px 0;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.section-heading {
+  max-width: 700px;
+  margin: 0 auto 50px;
+
+  text-align: center;
+}
+
+.section-heading > span {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: #2f80ed;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.section-heading h2 {
+  margin-bottom: 15px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  color: #172033;
+
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 800;
+
+  line-height: 1.1;
+}
+
+.section-heading p {
+  margin-bottom: 0;
+
+  color: #667085;
+
+  font-size: 15px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   HERO SECTION - PAPASCI
+   ========================================================= */
+
+.home-hero {
+  position: relative;
+
+  min-height: 650px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 !important;
+
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   HERO OVERLAY
+   ========================================================= */
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 25, 20, 0.90) 0%,
+      rgba(5, 25, 20, 0.78) 32%,
+      rgba(5, 25, 20, 0.48) 58%,
+      rgba(5, 25, 20, 0.18) 100%
+    );
+
+  z-index: 1;
+}
+
+
+/* Efek gelap bagian bawah */
+
+.home-hero::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 130px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(5, 25, 20, 0.42),
+      transparent
+    );
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   HERO CONTAINER
+   ========================================================= */
+
+.hero-container {
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   HERO ROW
+   ========================================================= */
+
+.hero-row {
+  min-height: 650px;
+
+  align-items: center;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+   ========================================================= */
+
+.hero-content {
+  max-width: 700px;
+
+  padding: 40px 0;
+}
+
+
+/* =========================================================
+   HERO BADGE
+   ========================================================= */
+
+.hero-badge {
+  width: fit-content;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 9px 15px;
+
+  margin-bottom: 24px;
+
+  border: 1px solid rgba(255, 255, 255, 0.30);
+
+  border-radius: 50px;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+.hero-badge-icon {
+  font-size: 15px;
+}
+
+
+.hero-badge-line {
+  width: 1px;
+  height: 13px;
+
+  background: rgba(255, 255, 255, 0.45);
+}
+
+
+/* =========================================================
+   HERO TITLE
+   ========================================================= */
+
+.hero-content h1 {
+  margin: 0 0 22px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  color: #ffffff;
+
+  font-size: clamp(40px, 5.5vw, 60px);
+
+  font-weight: 800;
+
+  line-height: 0.98;
+
+  letter-spacing: -1.5px;
+}
+
+
+.hero-content h1 span {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #4da3ff;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   HERO DESCRIPTION
+   ========================================================= */
+
+.hero-content p {
+  max-width: 650px;
+
+  margin: 0 0 30px;
+
+  color: rgba(255, 255, 255, 0.90);
+
+  font-size: 15px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   HERO ACTION
+   ========================================================= */
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+}
+
+
+/* =========================================================
+   HERO BUTTON
+   ========================================================= */
+
+.hero-button {
+  display: inline-flex !important;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 11px 20px !important;
+
+  border: none !important;
+
+  border-radius: 12px !important;
+
+  background: linear-gradient(135deg, #1684d5, #075aa1) !important;
+
+  color: #ffffff !important;
+
+  font-size: 15px !important;
+
+  font-weight: 800 !important;
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.22);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+
+.hero-button:hover {
+  background: #2474dc !important;
+
+  color: #ffffff !important;
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================================
+   HERO BOTTOM INFORMATION
+   ========================================================= */
+
+.hero-bottom-info {
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 25px;
+
+  transform: translateX(-50%);
+
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  color: rgba(255, 255, 255, 0.70);
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+  .home-hero {
+    min-height: 600px;
+  }
+
+  .hero-row {
+    min-height: 600px;
+  }
+
+  .hero-content {
+    max-width: 680px;
+
+    margin: 0 auto;
+
+    padding: 40px 20px;
+
+    text-align: center;
+  }
+
+  .hero-badge {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-overlay {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(5, 25, 20, 0.62) 0%,
+        rgba(5, 25, 20, 0.78) 55%,
+        rgba(5, 25, 20, 0.86) 100%
+      );
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+  .home-hero {
+    min-height: 620px;
+
+    background-position: center;
+  }
+
+  .hero-row {
+    min-height: 620px;
+  }
+
+  .hero-content {
+    padding: 35px 12px 70px;
+
+    text-align: center;
+  }
+
+  .hero-badge {
+    gap: 7px;
+
+    padding: 8px 12px;
+
+    margin-bottom: 20px;
+
+    font-size: 9px;
+
+    letter-spacing: 0.5px;
+  }
+
+  .hero-badge-icon {
+    font-size: 13px;
+  }
+
+  .hero-badge-line {
+    height: 11px;
+  }
+
+  .hero-content h1 {
+    margin-bottom: 20px;
+
+    font-size: 40px;
+
+    line-height: 1.02;
+
+    letter-spacing: -0.7px;
+  }
+
+  .hero-content h1 span {
+    margin-top: 5px;
+  }
+
+  .hero-content p {
+    max-width: 350px;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 26px;
+
+    font-size: 13px;
+
+    line-height: 1.75;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-button {
+    min-height: 48px;
+
+    padding: 11px 17px !important;
+
+    font-size: 13px !important;
+  }
+
+  .hero-bottom-info {
+    bottom: 18px;
+
+    gap: 8px;
+
+    font-size: 9px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+  .home-hero {
+    min-height: 600px;
+  }
+
+  .hero-row {
+    min-height: 600px;
+  }
+
+  .hero-content h1 {
+    font-size: 35px;
+  }
+
+  .hero-content p {
+    font-size: 12px;
+  }
+
+  .hero-bottom-info {
+    font-size: 8px;
+
+    gap: 6px;
+  }
+}
+
+/* =========================================================
+   OBJECTIVE SECTION
+========================================================= */
+
+.objective-section {
+  background: #f7fbff;
+}
+
+
+/* =========================================================
+   OBJECTIVE CARD
+========================================================= */
+
+.objective-card {
+  height: 100%;
+
+  padding: 30px 24px;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  box-shadow:
+    0 6px 25px rgba(31, 41, 55, 0.05);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.objective-card:hover {
+  transform: translateY(-7px);
+
+  box-shadow:
+    0 15px 35px rgba(31, 41, 55, 0.09);
+}
+
+
+/* =========================================================
+   OBJECTIVE ICON
+========================================================= */
+
+.objective-icon {
+  width: 62px;
+  height: 62px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 20px;
+
+  border-radius: 18px;
+
+  background: #eaf4ff;
+
+  color: #2f80ed;
+
+  font-size: 22px;
+}
+
+
+/* =========================================================
+   OBJECTIVE TITLE
+========================================================= */
+
+.objective-card h4 {
+  margin-bottom: 10px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  color: #172033;
+
+  font-size: 21px;
+
+  font-weight: 800;
+
+  line-height: 1.15;
+}
+
+
+/* =========================================================
+   OBJECTIVE TEXT
+========================================================= */
+
+.objective-card p {
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   JELAJAHI PAPASCI
+========================================================= */
+
+.explore-section {
+  position: relative;
+  padding: 90px 0 100px;
+  background: #f7fafc;
+  overflow: hidden;
+}
+
+/* Decorative background */
+
+.explore-section::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  top: -220px;
+  right: -150px;
+  border-radius: 50%;
+  background: rgba(22, 132, 213, 0.06);
+  pointer-events: none;
+}
+
+.explore-section::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  bottom: -180px;
+  left: -120px;
+  border-radius: 50%;
+  background: rgba(17, 164, 124, 0.05);
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.explore-heading {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto 50px;
+  text-align: center;
+}
+
+.explore-heading > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+
+  color: #1684d5;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.explore-heading h2 {
+  margin: 0 0 12px;
+
+  font-family: "Baloo 2", sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  color: #183b56;
+}
+
+.explore-heading p {
+  max-width: 650px;
+  margin: 0 auto;
+
+  color: #6c7a83;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.explore-grid {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.explore-card {
+  position: relative;
+
+  min-height: 390px;
+  padding: 28px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+  border: 1px solid #e5edf4;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 10px 30px rgba(31, 41, 55, 0.05);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.explore-card:hover {
+  transform: translateY(-8px);
+
+  box-shadow:
+    0 20px 45px rgba(31, 41, 55, 0.10);
+}
+
+
+/* =========================================================
+   TOP CARD
+========================================================= */
+
+.explore-card-top {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 35px;
+}
+
+.explore-number {
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 0.9;
+
+  color: #e8f1f8;
+
+  transition: color 0.3s ease;
+}
+
+.explore-card:hover .explore-number {
+  color: #dcecf8;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.explore-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 17px;
+
+  font-size: 22px;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.explore-card:hover .explore-icon {
+  transform: rotate(-4deg) scale(1.06);
+}
+
+
+/* MODULE */
+
+.explore-module .explore-icon {
+  background: #eaf5ff;
+  color: #1684d5;
+
+  box-shadow:
+    0 8px 20px rgba(22, 132, 213, 0.10);
+}
+
+
+/* LAB */
+
+.explore-lab .explore-icon {
+  background: #eaf9f4;
+  color: #13a77c;
+
+  box-shadow:
+    0 8px 20px rgba(19, 167, 124, 0.10);
+}
+
+
+/* MICROTEACHING */
+
+.explore-micro .explore-icon {
+  background: #fff5e8;
+  color: #ed9b32;
+
+  box-shadow:
+    0 8px 20px rgba(237, 155, 50, 0.10);
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.explore-content {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+}
+
+.explore-label {
+  margin-bottom: 8px;
+
+  color: #1684d5;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  letter-spacing: 1.2px;
+}
+
+.explore-lab .explore-label {
+  color: #13a77c;
+}
+
+.explore-micro .explore-label {
+  color: #ed9b32;
+}
+
+
+.explore-content h3 {
+  margin: 0 0 12px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  color: #183b56;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+.explore-content p {
+  margin: 0 0 25px;
+
+  color: #6c7a83;
+
+  font-size: 14px;
+  line-height: 1.75;
+
+  max-width: 340px;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.explore-button {
+  width: fit-content;
+
+  margin-top: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 10px 16px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #1684d5;
+
+  color: #ffffff;
+
+  font-family: "Nunito", sans-serif;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.explore-button:hover {
+  background: #075aa1;
+  color: #ffffff;
+
+  transform: translateX(4px);
+}
+
+
+.explore-lab .explore-button {
+  background: #13a77c;
+}
+
+.explore-lab .explore-button:hover {
+  background: #0c8c69;
+}
+
+
+.explore-micro .explore-button {
+  background: #ed9b32;
+}
+
+.explore-micro .explore-button:hover {
+  background: #d6841c;
+}
+
+
+.explore-button svg {
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   DECORATION
+========================================================= */
+
+.explore-decoration {
+  position: absolute;
+
+  width: 130px;
+  height: 130px;
+
+  right: -55px;
+  bottom: -55px;
+
+  border-radius: 50%;
+
+  background: rgba(22, 132, 213, 0.06);
+
+  transition:
+    transform 0.4s ease,
+    background 0.4s ease;
+}
+
+.explore-card:hover .explore-decoration {
+  transform: scale(1.25);
+}
+
+.explore-lab .explore-decoration {
+  background: rgba(19, 167, 124, 0.06);
+}
+
+.explore-micro .explore-decoration {
+  background: rgba(237, 155, 50, 0.07);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+  .explore-section {
+    padding: 75px 0 80px;
+  }
+
+  .explore-heading {
+    margin-bottom: 40px;
+  }
+
+  .explore-heading h2 {
+    font-size: 34px;
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .explore-card {
+    min-height: 370px;
+    padding: 25px;
+  }
+
+  /*
+    Card ketiga memenuhi baris berikutnya
+  */
+  .explore-card:last-child {
+    grid-column: span 2;
+  }
+
+  .explore-card:last-child .explore-content p {
+    max-width: 600px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+  .explore-section {
+    padding: 60px 0 65px;
+  }
+
+  .explore-section .container {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .explore-heading {
+    margin-bottom: 32px;
+  }
+
+  .explore-heading > span {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .explore-heading h2 {
+    font-size: 29px;
+    line-height: 1.25;
+  }
+
+  .explore-heading p {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+
+  .explore-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+
+  .explore-card {
+    min-height: 0;
+
+    padding: 22px;
+
+    border-radius: 19px;
+  }
+
+
+  .explore-card:last-child {
+    grid-column: auto;
+  }
+
+
+  .explore-card-top {
+    margin-bottom: 28px;
+  }
+
+
+  .explore-number {
+    font-size: 44px;
+  }
+
+
+  .explore-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 15px;
+
+    font-size: 20px;
+  }
+
+
+  .explore-content h3 {
+    font-size: 25px;
+  }
+
+
+  .explore-content p {
+    max-width: none;
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    margin-bottom: 22px;
+  }
+
+
+  .explore-button {
+    width: 100%;
+
+    padding: 11px 15px;
+
+    font-size: 12px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 390px) {
+
+  .explore-section {
+    padding: 50px 0 55px;
+  }
+
+  .explore-heading h2 {
+    font-size: 26px;
+  }
+
+  .explore-card {
+    padding: 20px;
+  }
+
+  .explore-number {
+    font-size: 40px;
+  }
+
+  .explore-icon {
+    width: 48px;
+    height: 48px;
+
+    font-size: 18px;
+  }
+
+  .explore-content h3 {
+    font-size: 23px;
+  }
+
+  .explore-content p {
+    font-size: 12.5px;
+  }
+}
+
+/* =========================================================
+   MODULE TITLE
+========================================================= */
+
+.module-card-content h3 {
+  margin: 0 0 8px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  color: #2f80ed;
+
+  font-size: 25px;
+
+  font-weight: 800;
+
+  line-height: 1.1;
+}
+
+
+/* Different module title colors */
+
+.module-card:nth-child(2) .module-card-content h3 {
+  color: #27ae60;
+}
+
+.module-card:nth-child(3) .module-card-content h3 {
+  color: #e67e22;
+}
+
+
+/* =========================================================
+   MODULE DESCRIPTION
+========================================================= */
+
+.module-card-content p {
+  margin: 0 0 15px;
+
+  color: #667085;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   MODULE BUTTON
+========================================================= */
+
+.main-button {
+  display: inline-flex !important;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 8px 14px !important;
+
+  border: 1px solid #2f80ed !important;
+
+  border-radius: 10px !important;
+
+  background: #ffffff !important;
+
+  color: #2f80ed !important;
+
+  font-size: 12px !important;
+
+  font-weight: 800 !important;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.main-button:hover {
+  background: #2f80ed !important;
+
+  color: #ffffff !important;
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+@media (max-width: 991px) {
+
+  .adventure-section {
+    padding: 65px 0;
+  }
+
+  .module-image {
+    height: 155px;
+
+    font-size: 52px;
+  }
+
+  .module-card-content {
+    padding: 22px;
+  }
+
+  .module-card-content h3 {
+    font-size: 23px;
+  }
+
+}
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+  .home-page section {
+    padding: 60px 0;
+  }
+
+
+  /* =====================================================
+     HERO MOBILE
+  ===================================================== */
+
+  .home-hero {
+    min-height: 620px;
+
+    background-position: center;
+  }
+
+  .hero-row {
+    min-height: 620px;
+  }
+
+  .hero-content {
+    padding: 35px 12px 60px;
+
+    text-align: center;
+  }
+
+
+  /* Badge */
+
+  .hero-badge {
+    padding: 8px 13px;
+
+    margin-bottom: 18px;
+
+    font-size: 9px;
+  }
+
+
+  /* Title */
+
+  .hero-content h1 {
+    margin-bottom: 18px;
+
+    font-size: 39px;
+
+    line-height: 1.05;
+
+    letter-spacing: -0.5px;
+  }
+
+
+  /* Paragraph */
+
+  .hero-content p {
+    max-width: 340px;
+
+    margin-bottom: 25px;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+  }
+
+
+  /* Button */
+
+  .hero-button {
+    padding: 11px 17px !important;
+
+    font-size: 13px !important;
+  }
+
+
+  /* Mobile overlay */
+
+  .home-hero::before {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(8, 25, 45, 0.65) 0%,
+        rgba(8, 25, 45, 0.72) 55%,
+        rgba(8, 25, 45, 0.80) 100%
+      );
+  }
+
+
+  /* Decorations */
+
+  .hero-decoration {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 14px;
+
+    font-size: 20px;
+  }
+
+  .decoration-one {
+    top: 25px;
+    right: 18px;
+  }
+
+  .decoration-two {
+    right: 15px;
+    bottom: 25px;
+  }
+
+  .decoration-three {
+    left: 15px;
+    right: auto;
+    bottom: 30px;
+  }
+
+
+  /* =====================================================
+     SECTION HEADING
+  ===================================================== */
+
+  .section-heading {
+    margin-bottom: 35px;
+
+    padding: 0 15px;
+  }
+
+  .section-heading h2 {
+    font-size: 32px;
+
+    line-height: 1.15;
+  }
+
+  .section-heading p {
+    font-size: 14px;
+
+    line-height: 1.7;
+  }
+
+
+  /* =====================================================
+     OBJECTIVE
+  ===================================================== */
+
+  .objective-card {
+    padding: 25px 20px;
+  }
+
+  .objective-icon {
+    width: 56px;
+    height: 56px;
+
+    margin-bottom: 16px;
+
+    border-radius: 16px;
+
+    font-size: 20px;
+  }
+
+  .objective-card h4 {
+    font-size: 20px;
+  }
+
+  .objective-card p {
+    font-size: 13px;
+  }
+
+
+  /* =====================================================
+     MODULE
+  ===================================================== */
+
+  .module-card {
+    display: flex;
+
+    align-items: center;
+  }
+
+  .module-image {
+    width: 100px;
+    min-width: 100px;
+
+    height: 100px;
+
+    margin: 15px;
+
+    font-size: 43px;
+  }
+
+  .module-card-content {
+    padding: 18px 15px 18px 0;
+  }
+
+  .module-number {
+    font-size: 9px;
+
+    margin-bottom: 5px;
+  }
+
+  .module-card-content h3 {
+    margin-bottom: 6px;
+
+    font-size: 22px;
+  }
+
+  .module-card-content p {
+    margin-bottom: 12px;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+  }
+
+  .main-button {
+    padding: 7px 11px !important;
+
+    font-size: 11px !important;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 390px) {
+
+  .home-hero {
+    min-height: 600px;
+  }
+
+  .hero-row {
+    min-height: 600px;
+  }
+
+  .hero-content {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .hero-content h1 {
+    font-size: 35px;
+  }
+
+  .hero-content p {
+    font-size: 13px;
+  }
+
+
+  /* Module */
+
+  .module-image {
+    width: 82px;
+    min-width: 82px;
+
+    height: 82px;
+
+    margin: 12px;
+
+    font-size: 35px;
+  }
+
+  .module-card-content {
+    padding-right: 12px;
+  }
+
+  .module-card-content h3 {
+    font-size: 20px;
+  }
+
+  .module-card-content p {
+    font-size: 11px;
+  }
+
+}

@@ -1,0 +1,430 @@
+.admin-dashboard {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.admin-dashboard-header {
+  margin-bottom: 28px;
+}
+
+.admin-dashboard-header h1 {
+  margin: 0;
+
+  color: #17324d;
+
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.admin-dashboard-header p {
+  margin: 7px 0 0;
+
+  color: #718096;
+
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* =========================
+   STATISTICS
+========================= */
+
+.admin-stat-grid {
+  display: grid;
+
+  /* Sekarang hanya 2 statistik */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 38px;
+}
+
+.admin-stat-card {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  min-height: 105px;
+
+  padding: 22px;
+
+  background: #ffffff;
+
+  border: 1px solid #e7edf5;
+
+  border-radius: 16px;
+
+  box-shadow: 0 5px 18px rgba(23, 50, 77, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 9px 24px rgba(23, 50, 77, 0.08);
+}
+
+.admin-stat-icon {
+  width: 54px;
+  height: 54px;
+
+  min-width: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #e8f3ff;
+
+  color: #1769aa;
+
+  font-size: 21px;
+}
+
+.admin-stat-card span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #718096;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-stat-card h2 {
+  margin: 0;
+
+  color: #17324d;
+
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.admin-management-section {
+  margin-top: 5px;
+}
+
+.admin-section-title {
+  margin-bottom: 18px;
+}
+
+.admin-section-title h2 {
+  margin: 0;
+
+  color: #17324d;
+
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.admin-section-title p {
+  margin: 5px 0 0;
+
+  color: #718096;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================
+   MANAGEMENT CARDS
+========================= */
+
+.admin-management-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+.admin-management-card {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 18px;
+
+  min-height: 165px;
+
+  padding: 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e7edf5;
+
+  border-radius: 16px;
+
+  box-shadow: 0 5px 18px rgba(23, 50, 77, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.admin-management-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 10px 25px rgba(23, 50, 77, 0.09);
+}
+
+.admin-management-icon {
+  width: 50px;
+  height: 50px;
+
+  min-width: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #e8f3ff;
+
+  color: #1769aa;
+
+  font-size: 20px;
+}
+
+.admin-management-content {
+  flex: 1;
+}
+
+.admin-management-content h3 {
+  margin: 0 0 7px;
+
+  color: #17324d;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.admin-management-content p {
+  margin: 0 0 15px;
+
+  color: #718096;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+.admin-management-content a {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #1769aa;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  transition: color 0.2s ease;
+}
+
+.admin-management-content a svg {
+  font-size: 11px;
+
+  transition: transform 0.2s ease;
+}
+
+.admin-management-content a:hover {
+  color: #0f4f82;
+}
+
+.admin-management-content a:hover svg {
+  transform: translateX(3px);
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 991px) {
+  .admin-dashboard-header h1 {
+    font-size: 27px;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+  }
+
+  .admin-management-grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 576px) {
+  .admin-dashboard {
+    width: 100%;
+  }
+
+  .admin-dashboard-header {
+    margin-bottom: 20px;
+  }
+
+  .admin-dashboard-header h1 {
+    font-size: 23px;
+  }
+
+  .admin-dashboard-header p {
+    margin-top: 6px;
+
+    font-size: 13px;
+  }
+
+  /* Statistik tetap 2 kolom di HP */
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 28px;
+  }
+
+  .admin-stat-card {
+    min-height: 105px;
+
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 16px;
+  }
+
+  .admin-stat-icon {
+    width: 40px;
+    height: 40px;
+
+    min-width: 40px;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+  }
+
+  .admin-stat-card span {
+    margin-bottom: 4px;
+
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .admin-stat-card h2 {
+    font-size: 22px;
+  }
+
+  .admin-management-section {
+    margin-top: 0;
+  }
+
+  .admin-section-title {
+    margin-bottom: 14px;
+  }
+
+  .admin-section-title h2 {
+    font-size: 19px;
+  }
+
+  .admin-section-title p {
+    font-size: 13px;
+  }
+
+  .admin-management-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .admin-management-card {
+    min-height: auto;
+
+    gap: 14px;
+
+    padding: 18px;
+  }
+
+  .admin-management-icon {
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+
+    border-radius: 11px;
+
+    font-size: 17px;
+  }
+
+  .admin-management-content h3 {
+    font-size: 16px;
+  }
+
+  .admin-management-content p {
+    margin-bottom: 12px;
+
+    font-size: 12px;
+  }
+
+  .admin-management-content a {
+    font-size: 12px;
+  }
+}
+
+/* =========================
+   VERY SMALL PHONE
+========================= */
+
+@media (max-width: 380px) {
+  .admin-stat-grid {
+    gap: 8px;
+  }
+
+  .admin-stat-card {
+    padding: 13px;
+  }
+
+  .admin-stat-card h2 {
+    font-size: 20px;
+  }
+
+  .admin-stat-card span {
+    font-size: 10px;
+  }
+
+  .admin-management-card {
+    padding: 15px;
+  }
+}
