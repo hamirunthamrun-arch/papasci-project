@@ -1,38 +1,130 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+
+import {
+  fetchWithAuth,
+  clearSession,
+} from "../service/authService";
 
 const ProtectedRoute = ({ allowedRoles }) => {
-  const accessToken =
-    localStorage.getItem("access_token") ||
-    sessionStorage.getItem("access_token");
+  const location = useLocation();
 
-  const userData =
-    localStorage.getItem("user") ||
-    sessionStorage.getItem("user");
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [user, setUser] = useState(null);
 
-  // Belum login
-  if (!accessToken || !userData) {
-    return <Navigate to="/login" replace />;
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkSession = async () => {
+      try {
+        const response = await fetchWithAuth(
+          "http://localhost:5000/api/auth/me"
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message || "Session tidak valid."
+          );
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
+        const currentUser = result.user;
+
+        /*
+         * Simpan data user terbaru.
+         *
+         * Kita pertahankan storage yang sedang digunakan.
+         */
+        const storage = localStorage.getItem("refresh_token")
+          ? localStorage
+          : sessionStorage;
+
+        storage.setItem(
+          "user",
+          JSON.stringify(currentUser)
+        );
+
+        /*
+         * Cek role.
+         */
+        if (
+          allowedRoles &&
+          !allowedRoles.includes(currentUser.role)
+        ) {
+          setUser(currentUser);
+          setAuthorized(false);
+          setLoading(false);
+          return;
+        }
+
+        setUser(currentUser);
+        setAuthorized(true);
+        setLoading(false);
+      } catch (error) {
+        console.error(
+          "Session validation error:",
+          error
+        );
+
+        if (!isMounted) {
+          return;
+        }
+
+        clearSession();
+
+        setAuthorized(false);
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [allowedRoles]);
+
+  /*
+   * Jangan langsung redirect sebelum
+   * pemeriksaan session selesai.
+   */
+  if (loading) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+      </div>
+    );
   }
 
-  let user;
-
-  try {
-    user = JSON.parse(userData);
-  } catch (error) {
-    console.error("Data user tidak valid:", error);
-
-    localStorage.removeItem("user");
-    sessionStorage.removeItem("user");
-
-    return <Navigate to="/login" replace />;
+  /*
+   * Session tidak valid.
+   */
+  if (!authorized && !user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      />
+    );
   }
 
-  // Jika role tidak diperbolehkan
-  if (
-    allowedRoles &&
-    !allowedRoles.includes(user.role)
-  ) {
-    // Arahkan kembali ke halaman sesuai role
+  /*
+   * User login tetapi role tidak sesuai.
+   */
+  if (!authorized && user) {
     if (user.role === "admin") {
       return <Navigate to="/admin" replace />;
     }
@@ -48,7 +140,6 @@ const ProtectedRoute = ({ allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Akses diperbolehkan
   return <Outlet />;
 };
 

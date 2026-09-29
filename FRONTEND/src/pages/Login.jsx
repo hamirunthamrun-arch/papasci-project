@@ -64,8 +64,8 @@ const Login = () => {
     const { email, password } = formData;
 
     /* =========================================
-     VALIDASI
-  ========================================== */
+       VALIDASI
+    ========================================== */
 
     if (!email || !password) {
       setErrorMessage("Email dan password wajib diisi.");
@@ -76,8 +76,8 @@ const Login = () => {
       setLoading(true);
 
       /* =========================================
-       REQUEST KE BACKEND
-    ========================================== */
+         REQUEST KE BACKEND
+      ========================================== */
 
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
@@ -95,29 +95,31 @@ const Login = () => {
       const result = await response.json();
 
       /* =========================================
-       CEK RESPONSE
-    ========================================== */
+         CEK RESPONSE
+      ========================================== */
 
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Login gagal.");
       }
 
       /* =========================================
-       SIMPAN SESSION
-    ========================================== */
+         SIMPAN SESSION
+      ========================================== */
 
       const storage = rememberMe ? localStorage : sessionStorage;
 
+      /* Simpan access token */
       storage.setItem("access_token", result.session.access_token);
 
+      /* Simpan refresh token */
       storage.setItem("refresh_token", result.session.refresh_token);
 
       /* Simpan data user + role */
       storage.setItem("user", JSON.stringify(result.user));
 
       /* =========================================
-       REDIRECT BERDASARKAN ROLE
-    ========================================== */
+         REDIRECT BERDASARKAN ROLE
+      ========================================== */
 
       if (result.user.role === "admin") {
         navigate("/admin");
@@ -136,6 +138,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="auth-page">
       {/* =========================================

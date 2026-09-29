@@ -138,8 +138,11 @@ const AdminSidebar = ({ showMobileSidebar, closeMobileSidebar }) => {
 
           {/* LOGOUT */}
 
-          <button type="button" className="admin-logout-btn">
+          <button
+            type="button"
+            className="admin-logout-btn"
             onClick={() => logout(navigate)}
+          >
             <FaSignOutAlt />
             <span>Logout</span>
           </button>
