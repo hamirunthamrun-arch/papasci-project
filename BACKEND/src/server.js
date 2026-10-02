@@ -13,7 +13,8 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 
 app.use("/api/test", require("./routes/testRoutes"));
-// app.use('/api/modules', require('./routes/moduleRoutes'));
+app.use('/api/modules', require('./routes/moduleRoutes'));
+app.use("/api/module-materials", require("./routes/moduleMaterialRoutes"));
 // app.use('/api/quiz', require('./routes/quizRoutes'));
 // app.use('/api/tasks', require('./routes/taskRoutes'));
 // app.use('/api/users', require('./routes/userRoutes'));

@@ -1,17 +1,13 @@
 const createSupabaseUserClient = require("../config/supabaseUserClient");
 
 // =========================================================
-// MENGAMBIL ACCESS TOKEN DARI REQUEST
+// MENGAMBIL ACCESS TOKEN
 // =========================================================
 
 const getAccessToken = (req) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    return null;
-  }
-
-  if (!authHeader.startsWith("Bearer ")) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return null;
   }
 
@@ -19,10 +15,10 @@ const getAccessToken = (req) => {
 };
 
 // =========================================================
-// GET SEMUA MODULE
+// GET SEMUA MATERI DALAM MODUL
 // =========================================================
 
-const getAllModules = async (req, res) => {
+const getMaterialsByModule = async (req, res) => {
   try {
     const accessToken = getAccessToken(req);
 
@@ -33,27 +29,25 @@ const getAllModules = async (req, res) => {
       });
     }
 
+    const { module_id } = req.params;
     const supabase = createSupabaseUserClient(accessToken);
 
     const { data, error } = await supabase
-      .from("modules")
+      .from("module_materials")
       .select("*")
-      .order("order_number", {
-        ascending: true,
-      });
+      .eq("module_id", module_id)
+      .order("order_number", { ascending: true });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data,
     });
   } catch (err) {
-    console.error("Get all modules error:", err);
+    console.error("Get materials error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -61,10 +55,10 @@ const getAllModules = async (req, res) => {
 };
 
 // =========================================================
-// GET MODULE BERDASARKAN ID
+// GET MATERI BERDASARKAN ID
 // =========================================================
 
-const getModuleById = async (req, res) => {
+const getMaterialById = async (req, res) => {
   try {
     const accessToken = getAccessToken(req);
 
@@ -76,34 +70,24 @@ const getModuleById = async (req, res) => {
     }
 
     const { id } = req.params;
-
     const supabase = createSupabaseUserClient(accessToken);
 
     const { data, error } = await supabase
-      .from("modules")
+      .from("module_materials")
       .select("*")
       .eq("id", id)
       .single();
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    if (!data) {
-      return res.status(404).json({
-        success: false,
-        message: "Module tidak ditemukan.",
-      });
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data,
     });
   } catch (err) {
-    console.error("Get module by id error:", err);
+    console.error("Get material by id error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -111,10 +95,10 @@ const getModuleById = async (req, res) => {
 };
 
 // =========================================================
-// CREATE MODULE
+// CREATE MATERI
 // =========================================================
 
-const createModule = async (req, res) => {
+const createMaterial = async (req, res) => {
   try {
     const accessToken = getAccessToken(req);
 
@@ -126,42 +110,49 @@ const createModule = async (req, res) => {
     }
 
     const {
+      module_id,
       title,
-      description,
+      subtitle,
       image_url,
+      content,
       order_number,
-      status,
     } = req.body;
+
+    if (!module_id || !title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "module_id, title, dan content wajib diisi.",
+      });
+    }
 
     const supabase = createSupabaseUserClient(accessToken);
 
     const { data, error } = await supabase
-      .from("modules")
+      .from("module_materials")
       .insert([
         {
+          module_id,
           title,
-          description,
+          subtitle,
           image_url,
+          content,
           order_number,
-          status,
         },
       ])
       .select()
       .single();
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: "Module berhasil ditambahkan.",
+      message: "Materi berhasil ditambahkan.",
       data,
     });
   } catch (err) {
-    console.error("Create module error:", err);
+    console.error("Create material error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -169,10 +160,10 @@ const createModule = async (req, res) => {
 };
 
 // =========================================================
-// UPDATE MODULE
+// UPDATE MATERI
 // =========================================================
 
-const updateModule = async (req, res) => {
+const updateMaterial = async (req, res) => {
   try {
     const accessToken = getAccessToken(req);
 
@@ -186,49 +177,51 @@ const updateModule = async (req, res) => {
     const { id } = req.params;
 
     const {
+      module_id,
       title,
-      description,
+      subtitle,
       image_url,
+      content,
       order_number,
-      status,
     } = req.body;
+
+    const updateData = {
+      module_id,
+      title,
+      subtitle,
+      image_url,
+      content,
+      order_number,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Hapus properti yang tidak dikirim agar nilainya tidak tertimpa null
+    Object.keys(updateData).forEach((key) => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
 
     const supabase = createSupabaseUserClient(accessToken);
 
     const { data, error } = await supabase
-      .from("modules")
-      .update({
-        title,
-        description,
-        image_url,
-        order_number,
-        status,
-        updated_at: new Date().toISOString(),
-      })
+      .from("module_materials")
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    if (!data) {
-      return res.status(404).json({
-        success: false,
-        message: "Module tidak ditemukan.",
-      });
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Module berhasil diperbarui.",
+      message: "Materi berhasil diperbarui.",
       data,
     });
   } catch (err) {
-    console.error("Update module error:", err);
+    console.error("Update material error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -236,10 +229,10 @@ const updateModule = async (req, res) => {
 };
 
 // =========================================================
-// DELETE MODULE
+// DELETE MATERI
 // =========================================================
 
-const deleteModule = async (req, res) => {
+const deleteMaterial = async (req, res) => {
   try {
     const accessToken = getAccessToken(req);
 
@@ -251,36 +244,26 @@ const deleteModule = async (req, res) => {
     }
 
     const { id } = req.params;
-
     const supabase = createSupabaseUserClient(accessToken);
 
     const { data, error } = await supabase
-      .from("modules")
+      .from("module_materials")
       .delete()
       .eq("id", id)
       .select()
       .single();
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    if (!data) {
-      return res.status(404).json({
-        success: false,
-        message: "Module tidak ditemukan.",
-      });
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Module berhasil dihapus.",
+      message: "Materi berhasil dihapus.",
       data,
     });
   } catch (err) {
-    console.error("Delete module error:", err);
+    console.error("Delete material error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -292,9 +275,9 @@ const deleteModule = async (req, res) => {
 // =========================================================
 
 module.exports = {
-  getAllModules,
-  getModuleById,
-  createModule,
-  updateModule,
-  deleteModule,
+  getMaterialsByModule,
+  getMaterialById,
+  createMaterial,
+  updateMaterial,
+  deleteMaterial,
 };

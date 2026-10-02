@@ -124,7 +124,7 @@ function App() {
 
           <Route
             path="/dosen/module/:moduleId/materi"
-            element={<DosenMateri />}
+            element={<DosenMateri/>}
           />
 
           <Route
