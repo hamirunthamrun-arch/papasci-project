@@ -33,7 +33,6 @@ import DosenVideoPembelajaran from "./pages/dosen/DosenVideoPembelajaran";
 import DosenTugas from "./pages/dosen/DosenTugas";
 import DosenPengumpulan from "./pages/dosen/DosenPengumpulan";
 import DosenNilai from "./pages/dosen/DosenNilai";
-import DosenKompetensiPedagogik from "./pages/dosen/DosenKompetensiPedagogik";
 import DosenProfil from "./pages/dosen/DosenProfil";
 import AdminDosen from "./pages/admin/AdminDosen";
 import DosenMateri from "./pages/dosen/DosenMateri";
@@ -213,15 +212,6 @@ function App() {
             element={
               <DosenLayout>
                 <DosenNilai />
-              </DosenLayout>
-            }
-          />
-
-          <Route
-            path="/dosen/kompetensi-pedagogik"
-            element={
-              <DosenLayout>
-                <DosenKompetensiPedagogik />
               </DosenLayout>
             }
           />
