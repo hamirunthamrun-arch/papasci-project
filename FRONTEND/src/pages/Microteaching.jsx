@@ -23,6 +23,46 @@ import { getSubmissionByStudent } from "../service/assignmentSubmissionService";
 import "../css/Microteaching.css";
 
 /* =========================================================
+   KONFIGURASI STORAGE
+========================================================= */
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+
+const STORAGE_BUCKET = "media-storage";
+
+/* =========================================================
+   HELPER URL GAMBAR
+========================================================= */
+
+const getPublicUrl = (path) => {
+  if (!path || !SUPABASE_URL) {
+    return "";
+  }
+
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
+};
+
+/* =========================================================
+   NORMALISASI ASSIGNMENT
+========================================================= */
+
+const normalizeAssignment = (assignment) => ({
+  ...assignment,
+
+  title: assignment.title || "",
+
+  description: assignment.description || "",
+
+  image_path: assignment.image_path || "",
+
+  image_url: assignment.image_path ? getPublicUrl(assignment.image_path) : "",
+
+  deadline: assignment.deadline || "",
+});
+
+/* =========================================================
    STATUS
 ========================================================= */
 
@@ -50,21 +90,12 @@ const statusConfig = {
 const getCurrentUser = () => {
   let userData = null;
 
-  /*
-   * Prioritaskan localStorage
-   * jika pasangan token lengkap tersedia.
-   */
-
   if (
     localStorage.getItem("access_token") &&
     localStorage.getItem("refresh_token")
   ) {
     userData = localStorage.getItem("user");
   }
-
-  /*
-   * Jika tidak ada, gunakan sessionStorage.
-   */
 
   if (!userData) {
     userData = sessionStorage.getItem("user");
@@ -115,38 +146,20 @@ const getYoutubeId = (url) => {
 
   try {
     const parsedUrl = new URL(url);
-
     const hostname = parsedUrl.hostname.replace(/^www\./, "");
-
-    /* -----------------------------------------------------
-       https://youtu.be/VIDEO_ID
-    ----------------------------------------------------- */
 
     if (hostname === "youtu.be") {
       return parsedUrl.pathname.split("/").filter(Boolean)[0] || "";
     }
-
-    /* -----------------------------------------------------
-       youtube.com
-    ----------------------------------------------------- */
 
     if (
       hostname === "youtube.com" ||
       hostname === "m.youtube.com" ||
       hostname === "youtube-nocookie.com"
     ) {
-      /* -----------------------------------------------
-         https://www.youtube.com/watch?v=VIDEO_ID
-      ----------------------------------------------- */
-
       if (parsedUrl.pathname === "/watch") {
         return parsedUrl.searchParams.get("v") || "";
       }
-
-      /* -----------------------------------------------
-         https://www.youtube.com/embed/VIDEO_ID
-         https://www.youtube.com/shorts/VIDEO_ID
-      ----------------------------------------------- */
 
       const match = parsedUrl.pathname.match(/^\/(?:embed|shorts)\/([^/?]+)/);
 
@@ -166,17 +179,9 @@ const getYoutubeId = (url) => {
 const getYoutubeThumbnail = (url) => {
   const youtubeId = getYoutubeId(url);
 
-  /*
-   * Jika link YouTube tidak valid
-   */
-
   if (!youtubeId) {
     return "https://placehold.co/800x450/eaf4ff/1769aa?text=Video+Pembelajaran";
   }
-
-  /*
-   * Gunakan HQ Default
-   */
 
   return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
 };
@@ -224,10 +229,6 @@ function Microteaching() {
         setLoadingAssignments(true);
         setAssignmentError("");
 
-        /* =================================================
-           USER LOGIN
-        ================================================= */
-
         const currentUser = getCurrentUser();
 
         if (!currentUser?.id) {
@@ -242,9 +243,9 @@ function Microteaching() {
 
         const assignmentData = await getAssignments();
 
-        const assignmentList = Array.isArray(assignmentData)
-          ? assignmentData
-          : [];
+        const assignmentList = (
+          Array.isArray(assignmentData) ? assignmentData : []
+        ).map(normalizeAssignment);
 
         /* =================================================
            AMBIL SUBMISSION SETIAP TUGAS
@@ -264,11 +265,6 @@ function Microteaching() {
                 submission: submission || null,
               };
             } catch (error) {
-              /*
-               * Jika mahasiswa belum mengumpulkan
-               * tugas, dianggap belum dikerjakan.
-               */
-
               console.log(
                 `Belum ada submission untuk tugas ${assignment.id}:`,
                 error.message,
@@ -297,30 +293,12 @@ function Microteaching() {
           return {
             ...assignment,
 
-            /*
-             * STATUS DIAMBIL DARI
-             * assignment_submissions.status
-             *
-             * Jika belum ada submission,
-             * status = belum.
-             */
-
             status: submission?.status || "belum",
-
-            /*
-             * NILAI DIAMBIL DARI
-             * assignment_submissions.score
-             */
 
             score:
               submission?.score !== null && submission?.score !== undefined
                 ? submission.score
                 : null,
-
-            /*
-             * Simpan ID submission
-             * jika nantinya diperlukan.
-             */
 
             submission_id: submission?.id || null,
           };
@@ -350,18 +328,6 @@ function Microteaching() {
         setVideoError("");
 
         const data = await getVideoPembelajaran();
-
-        /*
-         * -------------------------------------------------
-         * DATA DARI API DOSEN
-         *
-         * API mengembalikan:
-         * id
-         * judul
-         * deskripsi
-         * link
-         * -------------------------------------------------
-         */
 
         const formattedVideos = (Array.isArray(data) ? data : []).map(
           (video) => ({
@@ -394,16 +360,9 @@ function Microteaching() {
 
   const filteredTugas = useMemo(() => {
     return assignments.filter((tugas) => {
-      /*
-       * Status sudah berasal dari
-       * assignment_submissions.
-       */
-
       const status = tugas.status || "belum";
 
-      const matchFilter = activeFilter === "semua" || status === activeFilter;
-
-      return matchFilter;
+      return activeFilter === "semua" || status === activeFilter;
     });
   }, [assignments, activeFilter]);
 
@@ -455,8 +414,6 @@ function Microteaching() {
               </div>
             </div>
 
-            {/* ILLUSTRATION */}
-
             <div className="micro-hero-visual">
               <div className="micro-circle circle-one" />
 
@@ -482,10 +439,6 @@ function Microteaching() {
 
       <section className="micro-lecturer-video">
         <Container>
-          {/* =================================================
-              HEADER VIDEO
-          ================================================= */}
-
           <div className="video-section-header">
             <div>
               <span className="video-section-label">
@@ -505,10 +458,6 @@ function Microteaching() {
             </div>
           </div>
 
-          {/* =================================================
-              LOADING VIDEO
-          ================================================= */}
-
           {loadingVideos && (
             <div className="micro-loading">
               <FaSpinner className="loading-spinner" />
@@ -516,10 +465,6 @@ function Microteaching() {
               <span>Memuat video pembelajaran...</span>
             </div>
           )}
-
-          {/* =================================================
-              ERROR VIDEO
-          ================================================= */}
 
           {!loadingVideos && videoError && (
             <div className="micro-error">
@@ -532,10 +477,6 @@ function Microteaching() {
               </div>
             </div>
           )}
-
-          {/* =================================================
-              VIDEO LIST
-          ================================================= */}
 
           {!loadingVideos && !videoError && videos.length > 0 && (
             <div className="lecturer-video-grid">
@@ -570,10 +511,6 @@ function Microteaching() {
                       }
                     }}
                   >
-                    {/* ===================================
-                          THUMBNAIL
-                      =================================== */}
-
                     <div className="lecturer-video-wrapper">
                       {youtubeUrl ? (
                         <img
@@ -589,21 +526,15 @@ function Microteaching() {
                         </div>
                       )}
 
-                      {/* DARK OVERLAY */}
-
                       {youtubeUrl && (
                         <div className="youtube-thumbnail-overlay" />
                       )}
-
-                      {/* PLAY BUTTON */}
 
                       {youtubeUrl && (
                         <div className="youtube-play-button">
                           <FaPlay />
                         </div>
                       )}
-
-                      {/* YOUTUBE BADGE */}
 
                       {youtubeUrl && (
                         <div className="youtube-badge">
@@ -612,16 +543,10 @@ function Microteaching() {
                       )}
                     </div>
 
-                    {/* ===================================
-                          CONTENT
-                      =================================== */}
-
                     <div className="lecturer-video-content">
                       <h3>{title}</h3>
 
                       <p>{description}</p>
-
-                      {/* WATCH LABEL */}
 
                       {youtubeUrl && (
                         <div className="watch-youtube">
@@ -638,10 +563,6 @@ function Microteaching() {
               })}
             </div>
           )}
-
-          {/* =================================================
-              EMPTY VIDEO
-          ================================================= */}
 
           {!loadingVideos && !videoError && videos.length === 0 && (
             <div className="micro-empty video-empty">
@@ -705,10 +626,6 @@ function Microteaching() {
 
       <section className="micro-tasks">
         <Container>
-          {/* =================================================
-              HEADER
-          ================================================= */}
-
           <div className="micro-section-header">
             <div>
               <span>DAFTAR TUGAS</span>
@@ -719,9 +636,7 @@ function Microteaching() {
             </div>
           </div>
 
-          {/* =================================================
-              FILTER
-          ================================================= */}
+          {/* FILTER */}
 
           <div className="micro-filter">
             <button
@@ -757,9 +672,7 @@ function Microteaching() {
             </button>
           </div>
 
-          {/* =================================================
-              LOADING
-          ================================================= */}
+          {/* LOADING */}
 
           {loadingAssignments && (
             <div className="micro-loading">
@@ -769,9 +682,7 @@ function Microteaching() {
             </div>
           )}
 
-          {/* =================================================
-              ERROR
-          ================================================= */}
+          {/* ERROR */}
 
           {!loadingAssignments && assignmentError && (
             <div className="micro-error">
@@ -785,41 +696,29 @@ function Microteaching() {
             </div>
           )}
 
-          {/* =================================================
-              TASK GRID
-          ================================================= */}
+          {/* TASK GRID */}
 
           {!loadingAssignments &&
             !assignmentError &&
             filteredTugas.length > 0 && (
               <div className="micro-task-grid">
                 {filteredTugas.map((tugas) => {
-                  /*
-                   * STATUS SUDAH BERASAL DARI
-                   * assignment_submissions
-                   */
-
                   const status = tugas.status || "belum";
 
-                  const title =
-                    tugas.title ||
-                    tugas.name ||
-                    tugas.judul ||
-                    "Tugas Microteaching";
+                  const title = tugas.title || "Tugas Microteaching";
 
                   const description =
                     tugas.description ||
-                    tugas.deskripsi ||
                     "Kerjakan tugas sesuai petunjuk yang diberikan.";
 
-                  const deadline =
-                    tugas.deadline || tugas.due_date || tugas.dueDate;
+                  const deadline = tugas.deadline;
 
-                  const image =
-                    tugas.image ||
-                    tugas.image_url ||
-                    tugas.thumbnail ||
-                    "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=80";
+                  /*
+                   * GAMBAR DIAMBIL DARI
+                   * assignments.image_path
+                   */
+
+                  const image = tugas.image_url || "";
 
                   return (
                     <article className="micro-task-card" key={tugas.id}>
@@ -828,7 +727,13 @@ function Microteaching() {
                         ================================= */}
 
                       <div className="task-visual">
-                        <img src={image} alt={title} className="task-image" />
+                        {image ? (
+                          <img src={image} alt={title} className="task-image" />
+                        ) : (
+                          <div className="task-image-empty">
+                            Tidak ada gambar
+                          </div>
+                        )}
 
                         <div className="task-image-overlay" />
 
@@ -842,16 +747,12 @@ function Microteaching() {
                         ================================= */}
 
                       <div className="task-body">
-                        {/* STATUS */}
-
                         <div className="task-status">
                           <span className={`status-${status}`}>
                             {statusConfig[status]?.icon || <FaClock />}
 
                             {statusConfig[status]?.label || "Belum Dikerjakan"}
                           </span>
-
-                          {/* NILAI */}
 
                           {tugas.score !== null &&
                             tugas.score !== undefined && (
@@ -861,15 +762,9 @@ function Microteaching() {
                             )}
                         </div>
 
-                        {/* TITLE */}
-
                         <h3>{title}</h3>
 
-                        {/* DESCRIPTION */}
-
                         <p>{description}</p>
-
-                        {/* DEADLINE */}
 
                         <div className="task-deadline">
                           <FaCalendarAlt />
@@ -878,8 +773,6 @@ function Microteaching() {
 
                           <strong>{formatDate(deadline)}</strong>
                         </div>
-
-                        {/* BUTTON */}
 
                         <button
                           type="button"
@@ -896,9 +789,7 @@ function Microteaching() {
               </div>
             )}
 
-          {/* =================================================
-              EMPTY
-          ================================================= */}
+          {/* EMPTY */}
 
           {!loadingAssignments &&
             !assignmentError &&
@@ -908,7 +799,7 @@ function Microteaching() {
 
                 <h3>Tugas tidak ditemukan</h3>
 
-                <p>Coba gunakan kata pencarian atau filter yang berbeda.</p>
+                <p>Tidak ada tugas yang sesuai dengan filter yang dipilih.</p>
               </div>
             )}
         </Container>
