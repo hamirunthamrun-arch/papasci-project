@@ -5,15 +5,10 @@
 .dosen-task-page {
   width: 100%;
   min-height: 100vh;
-
   padding: 30px;
-
   box-sizing: border-box;
-
   background: #f7faff;
-
   font-family: "Nunito", sans-serif;
-
   color: #1f2937;
 }
 
@@ -25,88 +20,64 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 20px;
-
   margin-bottom: 28px;
 }
 
 .dosen-task-title {
   display: flex;
   align-items: center;
-
   gap: 16px;
 }
 
 .dosen-task-title-icon {
   width: 54px;
   height: 54px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   border-radius: 15px;
-
   background: #eaf4ff;
   color: #1769aa;
-
   font-size: 24px;
 }
 
 .dosen-task-title h1 {
   margin: 0 0 5px;
-
   font-family: "Baloo 2", sans-serif;
-
   font-size: 30px;
   font-weight: 700;
-
   line-height: 1.2;
-
   color: #123b63;
 }
 
 .dosen-task-title p {
   margin: 0;
-
   font-size: 15px;
-
   line-height: 1.6;
-
   color: #6b7280;
 }
 
 /* =========================================================
-   TAMBAH TUGAS
+   TOMBOL TAMBAH
 ========================================================= */
 
 .dosen-task-add-btn {
   min-height: 44px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 9px;
-
   padding: 11px 18px;
-
   border: none;
   border-radius: 10px;
-
   background: #1769aa;
-  color: #ffffff;
-
+  color: #fff;
   font-family: "Nunito", sans-serif;
-
   font-size: 14px;
   font-weight: 700;
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     transform 0.2s ease,
@@ -115,10 +86,19 @@
 
 .dosen-task-add-btn:hover {
   background: #12588f;
-
   transform: translateY(-1px);
-
   box-shadow: 0 5px 14px rgba(23, 105, 170, 0.18);
+}
+
+/* =========================================================
+   PESAN ALERT
+========================================================= */
+
+.dosen-task-page .alert {
+  margin-bottom: 20px;
+  border-radius: 10px;
+  font-family: "Nunito", sans-serif;
+  font-size: 14px;
 }
 
 /* =========================================================
@@ -129,32 +109,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 18px;
-
   margin-bottom: 24px;
 }
 
 .dosen-task-search {
   width: min(430px, 100%);
   min-height: 44px;
-
   display: flex;
   align-items: center;
-
   gap: 10px;
-
   padding: 0 14px;
-
   box-sizing: border-box;
-
   border: 1px solid #dbe5ef;
   border-radius: 10px;
-
-  background: #ffffff;
-
+  background: #fff;
   color: #7b8794;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -162,31 +132,23 @@
 
 .dosen-task-search:focus-within {
   border-color: #70a9d3;
-
   box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.08);
 }
 
 .dosen-task-search > svg {
   flex-shrink: 0;
-
   font-size: 14px;
 }
 
 .dosen-task-search input {
   width: 100%;
   height: 42px;
-
   padding: 0;
-
   border: none;
   outline: none;
-
   background: transparent;
-
   font-family: "Nunito", sans-serif;
-
   font-size: 14px;
-
   color: #26384a;
 }
 
@@ -194,74 +156,36 @@
   color: #9aa7b5;
 }
 
-.dosen-task-search-clear {
-  width: 28px;
-  height: 28px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  padding: 0;
-
-  border: none;
-  border-radius: 7px;
-
-  background: #f1f5f9;
-
-  color: #6b7280;
-
-  cursor: pointer;
-}
-
-.dosen-task-search-clear:hover {
-  background: #e5ebf1;
-
-  color: #374151;
-}
-
 .dosen-task-total {
   flex-shrink: 0;
-
   font-size: 14px;
   font-weight: 700;
-
   color: #64748b;
 }
 
 /* =========================================================
-   TASK GRID
+   GRID TUGAS
 ========================================================= */
 
 .dosen-task-grid {
   display: grid;
-
   grid-template-columns: repeat(3, minmax(0, 1fr));
-
   gap: 22px;
 }
 
 /* =========================================================
-   TASK CARD
+   KARTU TUGAS
 ========================================================= */
 
 .dosen-task-card {
   min-width: 0;
-
   display: flex;
   flex-direction: column;
-
   overflow: hidden;
-
   border: 1px solid #e2eaf2;
   border-radius: 15px;
-
-  background: #ffffff;
-
+  background: #fff;
   box-shadow: 0 4px 14px rgba(31, 65, 96, 0.06);
-
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -270,33 +194,26 @@
 
 .dosen-task-card:hover {
   transform: translateY(-3px);
-
   border-color: #cdddea;
-
   box-shadow: 0 10px 24px rgba(31, 65, 96, 0.1);
 }
 
 /* =========================================================
-   CARD IMAGE
+   GAMBAR COVER
 ========================================================= */
 
 .dosen-task-card-image {
   width: 100%;
-  height: 190px;
-
+  height: 140px;
   overflow: hidden;
-
   background: #eaf4ff;
 }
 
 .dosen-task-card-image img {
   display: block;
-
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-
   transition: transform 0.3s ease;
 }
 
@@ -305,108 +222,122 @@
 }
 
 .dosen-task-card-image-empty {
+  width: 100%;
+  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-
+  gap: 7px;
   color: #8eb5d5;
+}
 
-  font-size: 42px;
+.dosen-task-card-image-empty svg {
+  font-size: 29px;
+}
+
+.dosen-task-card-image-empty span {
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /* =========================================================
-   CARD HEADER
+   HEADER KARTU
 ========================================================= */
 
 .dosen-task-card-header {
-  min-height: 72px;
-
+  min-height: 58px;
   display: flex;
   align-items: center;
-
-  gap: 12px;
-
-  padding: 15px 20px;
-
+  gap: 9px;
+  padding: 10px 14px;
   box-sizing: border-box;
-
   background: #f5faff;
-
   border-bottom: 1px solid #e5edf4;
 }
 
 .dosen-task-card-icon {
-  width: 44px;
-  height: 44px;
-
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
-  border-radius: 11px;
-
-  background: #ffffff;
-
-  color: #dc3e3e;
-
-  font-size: 20px;
-
+  border-radius: 9px;
+  background: #fff;
+  color: #1769aa;
+  font-size: 16px;
   box-shadow: 0 3px 10px rgba(31, 65, 96, 0.07);
 }
 
-.dosen-task-card-header > span {
-  font-size: 13px;
+.dosen-task-card-header > span:not(.dosen-task-status) {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
   font-weight: 700;
-
+  line-height: 1.4;
   color: #52708d;
 }
 
 /* =========================================================
-   CARD CONTENT
+   STATUS TUGAS
+========================================================= */
+
+.dosen-task-status {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dosen-task-status.active {
+  background: #e8f7ee;
+  color: #23834b;
+}
+
+.dosen-task-status.inactive {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* =========================================================
+   KONTEN KARTU
 ========================================================= */
 
 .dosen-task-card-content {
   display: flex;
   flex-direction: column;
-
   flex: 1;
-
-  padding: 20px;
+  padding: 15px;
 }
 
 .dosen-task-card-content h3 {
-  margin: 0 0 10px;
-
+  margin: 0 0 6px;
   font-family: "Baloo 2", sans-serif;
-
-  font-size: 21px;
+  font-size: 19px;
   font-weight: 700;
-
   line-height: 1.3;
-
   color: #173f64;
+  overflow-wrap: anywhere;
 }
 
 .dosen-task-card-content p {
   display: -webkit-box;
-
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
-
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-
-  min-height: 88px;
-
-  margin: 0 0 18px;
-
-  font-size: 14px;
-
-  line-height: 1.65;
-
+  min-height: 0;
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.5;
   color: #667587;
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
@@ -416,218 +347,136 @@
 .dosen-task-deadline {
   display: flex;
   align-items: center;
-
-  gap: 12px;
-
-  margin-bottom: 16px;
-
-  padding: 12px 13px;
-
+  gap: 9px;
+  margin-bottom: 12px;
+  padding: 9px 11px;
   border: 1px solid #dce8f2;
   border-radius: 9px;
-
   background: #f7faff;
-
   color: #1769aa;
 }
 
 .dosen-task-deadline > svg {
   flex-shrink: 0;
-
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .dosen-task-deadline div {
   display: flex;
   flex-direction: column;
-
-  gap: 2px;
+  gap: 1px;
 }
 
 .dosen-task-deadline span {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-
   color: #7b8794;
 }
 
 .dosen-task-deadline strong {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-
   color: #315879;
 }
 
 /* =========================================================
-   PDF LINK
-========================================================= */
-
-.dosen-task-pdf-link {
-  min-width: 0;
-
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  margin-bottom: 18px;
-
-  padding: 10px 12px;
-
-  border-radius: 8px;
-
-  background: #fff7f7;
-
-  color: #d64545;
-
-  text-decoration: none;
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.dosen-task-pdf-link:hover {
-  background: #fdecec;
-
-  color: #c23636;
-}
-
-.dosen-task-pdf-link > svg {
-  flex-shrink: 0;
-
-  font-size: 17px;
-}
-
-.dosen-task-pdf-link span {
-  overflow: hidden;
-
-  font-size: 12px;
-
-  line-height: 1.4;
-
-  color: #6d7480;
-
-  white-space: nowrap;
-
-  text-overflow: ellipsis;
-}
-
-/* =========================================================
-   BELUM ADA PDF
-========================================================= */
-
-.dosen-task-no-pdf {
-  display: flex;
-  align-items: center;
-
-  gap: 9px;
-
-  margin-bottom: 18px;
-
-  padding: 10px 12px;
-
-  border: 1px dashed #d6e0e9;
-  border-radius: 8px;
-
-  background: #fafbfd;
-
-  color: #9aa6b2;
-}
-
-.dosen-task-no-pdf svg {
-  flex-shrink: 0;
-
-  font-size: 16px;
-}
-
-.dosen-task-no-pdf span {
-  font-size: 12px;
-}
-
-/* =========================================================
-   CARD ACTIONS
+   AKSI KARTU
 ========================================================= */
 
 .dosen-task-card-actions {
   display: flex;
-  align-items: center;
-
-  gap: 10px;
-
+  flex-direction: column;
+  gap: 8px;
   margin-top: auto;
 }
 
-.dosen-task-edit-btn,
-.dosen-task-delete-btn {
-  min-height: 40px;
-
-  display: inline-flex;
+.dosen-task-manage-btn {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  gap: 7px;
-
+  gap: 9px;
+  padding: 8px 12px;
+  border: 1px solid #1769aa;
   border-radius: 9px;
-
+  background: #1769aa;
+  color: #fff;
   font-family: "Nunito", sans-serif;
-
-  font-size: 13px;
-  font-weight: 700;
-
-  white-space: nowrap;
-
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
-
   transition:
     background 0.2s ease,
-    color 0.2s ease,
     border-color 0.2s ease,
     transform 0.2s ease;
 }
 
-/* =========================================================
-   EDIT
-========================================================= */
+.dosen-task-manage-btn:hover {
+  border-color: #12588f;
+  background: #12588f;
+  transform: translateY(-1px);
+}
+
+.dosen-task-manage-btn svg:last-child {
+  margin-left: auto;
+}
+
+.dosen-task-secondary-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dosen-task-edit-btn,
+.dosen-task-delete-btn {
+  flex: 1;
+  min-width: 0;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-family: "Nunito", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
 
 .dosen-task-edit-btn {
-  flex: 1;
-
-  padding: 9px 14px;
-
   border: 1px solid #c9ddec;
-
   background: #f5faff;
-
   color: #1769aa;
 }
 
 .dosen-task-edit-btn:hover {
-  background: #eaf4ff;
-
   border-color: #a9c8df;
+  background: #eaf4ff;
 }
 
-/* =========================================================
-   DELETE
-========================================================= */
-
 .dosen-task-delete-btn {
-  flex: 1;
-
-  padding: 9px 14px;
-
   border: 1px solid #f0caca;
-
   background: #fff7f7;
-
   color: #d64545;
 }
 
 .dosen-task-delete-btn:hover {
-  background: #fdecec;
-
   border-color: #e7aaaa;
+  background: #fdecec;
+}
+
+.dosen-task-delete-btn:disabled,
+.dosen-task-edit-btn:disabled,
+.dosen-task-manage-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* =========================================================
@@ -636,47 +485,36 @@
 
 .dosen-task-empty {
   grid-column: 1 / -1;
-
-  min-height: 300px;
-
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  padding: 40px;
-
+  gap: 8px;
+  padding: 35px;
   border: 1px dashed #cbd9e6;
   border-radius: 15px;
-
-  background: #ffffff;
-
+  background: #fff;
   text-align: center;
 }
 
 .dosen-task-empty > svg {
-  margin-bottom: 14px;
-
+  margin-bottom: 8px;
   font-size: 42px;
-
   color: #8eb5d5;
 }
 
 .dosen-task-empty h3 {
-  margin: 0 0 7px;
-
+  margin: 0 0 4px;
   font-family: "Baloo 2", sans-serif;
-
   font-size: 22px;
-
   color: #315879;
 }
 
 .dosen-task-empty p {
   margin: 0;
-
   font-size: 14px;
-
+  line-height: 1.6;
   color: #7b8794;
 }
 
@@ -686,19 +524,13 @@
 
 .dosen-task-modal-overlay {
   position: fixed;
-
   inset: 0;
-
   z-index: 9999;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 25px;
-
   background: rgba(15, 38, 61, 0.55);
-
   overflow-y: auto;
 }
 
@@ -708,80 +540,57 @@
 
 .dosen-task-modal {
   width: min(650px, 100%);
-
   max-height: calc(100vh - 50px);
-
-  overflow: hidden;
+  overflow-x: hidden;
   overflow-y: auto;
-
   border-radius: 17px;
-
-  background: #ffffff;
-
+  background: #fff;
   box-shadow: 0 20px 55px rgba(20, 53, 82, 0.22);
 }
 
 /* =========================================================
-   MODAL HEADER
+   HEADER MODAL
 ========================================================= */
 
 .dosen-task-modal-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-
   gap: 20px;
-
   padding: 22px 24px;
-
   border-bottom: 1px solid #e6edf4;
 }
 
 .dosen-task-modal-header span {
   display: block;
-
   margin-bottom: 5px;
-
   font-size: 11px;
   font-weight: 800;
-
   letter-spacing: 0.8px;
-
   color: #1769aa;
 }
 
 .dosen-task-modal-header h2 {
   margin: 0;
-
   font-family: "Baloo 2", sans-serif;
-
   font-size: 24px;
   font-weight: 700;
-
   color: #173f64;
 }
 
 .dosen-task-close-btn {
   width: 36px;
   height: 36px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   padding: 0;
-
   border: none;
   border-radius: 8px;
-
   background: #f1f5f9;
-
   color: #64748b;
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     color 0.2s ease;
@@ -789,7 +598,6 @@
 
 .dosen-task-close-btn:hover {
   background: #e7edf3;
-
   color: #334155;
 }
 
@@ -805,71 +613,57 @@
   margin-bottom: 19px;
 }
 
-.dosen-task-form-group label {
+.dosen-task-form-group > label {
   display: block;
-
   margin-bottom: 7px;
-
   font-size: 14px;
   font-weight: 700;
-
   color: #34495e;
 }
 
-.dosen-task-form-group label span {
+.dosen-task-form-group > label span {
   margin-left: 3px;
-
   color: #dc4b4b;
 }
 
 /* =========================================================
-   INPUT
+   INPUT, TEXTAREA, DAN SELECT
 ========================================================= */
 
 .dosen-task-form-group input,
-.dosen-task-form-group textarea {
+.dosen-task-form-group textarea,
+.dosen-task-form-group select {
   width: 100%;
-
   box-sizing: border-box;
-
   border: 1px solid #d6e1eb;
   border-radius: 9px;
-
-  background: #ffffff;
-
+  background: #fff;
   font-family: "Nunito", sans-serif;
-
   font-size: 14px;
-
   color: #26384a;
-
   outline: none;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-.dosen-task-form-group input {
-  height: 44px;
-
+.dosen-task-form-group input,
+.dosen-task-form-group select {
+  min-height: 44px;
   padding: 0 13px;
 }
 
 .dosen-task-form-group textarea {
   min-height: 120px;
-
   padding: 11px 13px;
-
   resize: vertical;
-
   line-height: 1.55;
 }
 
 .dosen-task-form-group input:focus,
-.dosen-task-form-group textarea:focus {
+.dosen-task-form-group textarea:focus,
+.dosen-task-form-group select:focus {
   border-color: #70a9d3;
-
   box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.08);
 }
 
@@ -878,28 +672,26 @@
   color: #a0acb8;
 }
 
+.dosen-task-form-group select {
+  cursor: pointer;
+}
+
 /* =========================================================
-   DATE INPUT
+   INPUT TANGGAL
 ========================================================= */
 
 .dosen-task-input-icon {
   position: relative;
-
   display: flex;
   align-items: center;
 }
 
 .dosen-task-input-icon > svg {
   position: absolute;
-
   left: 13px;
-
   z-index: 1;
-
   color: #1769aa;
-
   font-size: 16px;
-
   pointer-events: none;
 }
 
@@ -908,46 +700,33 @@
 }
 
 /* =========================================================
-   UPLOAD BOX
+   UPLOAD GAMBAR
 ========================================================= */
 
 .dosen-task-upload-box {
   position: relative;
-
   overflow: hidden;
-
   border: 1.5px dashed #b9cede;
-
   border-radius: 11px;
-
   background: #f8fbfe;
 }
 
 .dosen-task-upload-box input[type="file"] {
   position: absolute;
-
   width: 1px;
   height: 1px;
-
   opacity: 0;
-
   pointer-events: none;
 }
 
 .dosen-task-upload-label {
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   min-height: 105px;
-
   padding: 18px;
-
   margin: 0;
-
   cursor: pointer;
-
   transition: background 0.2s ease;
 }
 
@@ -955,128 +734,81 @@
   background: #f0f7fd;
 }
 
-/* =========================================================
-   UPLOAD ICON
-========================================================= */
-
 .dosen-task-upload-icon {
   width: 48px;
   height: 48px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   border-radius: 12px;
-
   background: #eaf4ff;
-
   color: #1769aa;
-
   font-size: 21px;
 }
-
-.dosen-task-upload-pdf-icon {
-  background: #fff0f0;
-
-  color: #d64545;
-}
-
-/* =========================================================
-   UPLOAD TEXT
-========================================================= */
 
 .dosen-task-upload-label div:last-child {
   display: flex;
   flex-direction: column;
-
   gap: 3px;
 }
 
 .dosen-task-upload-label strong {
   font-size: 14px;
   font-weight: 700;
-
   color: #315879;
 }
 
 .dosen-task-upload-label span {
   font-size: 13px;
-
   color: #7b8794;
 }
 
 .dosen-task-upload-label small {
   margin-top: 2px;
-
   font-size: 11px;
-
   color: #9aa6b2;
 }
 
 /* =========================================================
-   IMAGE PREVIEW
+   PREVIEW GAMBAR
 ========================================================= */
 
 .dosen-task-image-preview {
   position: relative;
-
   margin-top: 12px;
-
   overflow: hidden;
-
   border: 1px solid #dce6ef;
-
   border-radius: 10px;
-
   background: #f7faff;
 }
 
 .dosen-task-image-preview img {
   display: block;
-
   width: 100%;
-
   max-height: 240px;
-
   object-fit: cover;
 }
 
 .dosen-task-remove-image-btn {
   position: absolute;
-
   right: 10px;
   bottom: 10px;
-
   min-height: 36px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
-
   padding: 8px 12px;
-
   border: 1px solid rgba(214, 69, 69, 0.2);
-
   border-radius: 8px;
-
   background: rgba(255, 255, 255, 0.95);
-
   color: #d64545;
-
   font-family: "Nunito", sans-serif;
-
   font-size: 12px;
   font-weight: 700;
-
   cursor: pointer;
-
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-
   transition:
     background 0.2s ease,
     color 0.2s ease;
@@ -1084,173 +816,43 @@
 
 .dosen-task-remove-image-btn:hover {
   background: #fff0f0;
-
   color: #c23636;
 }
 
 /* =========================================================
-   SELECTED PDF
-========================================================= */
-
-.dosen-task-selected-file {
-  display: flex;
-  align-items: center;
-
-  gap: 11px;
-
-  margin-top: 12px;
-
-  padding: 11px 12px;
-
-  border: 1px solid #dce6ef;
-
-  border-radius: 9px;
-
-  background: #f8fbfe;
-}
-
-.dosen-task-selected-file-icon {
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border-radius: 8px;
-
-  background: #fff0f0;
-
-  color: #d64545;
-
-  font-size: 17px;
-}
-
-.dosen-task-selected-file-info {
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-
-  flex: 1;
-
-  gap: 2px;
-}
-
-.dosen-task-selected-file-info strong {
-  overflow: hidden;
-
-  font-size: 13px;
-  font-weight: 700;
-
-  color: #42566b;
-
-  white-space: nowrap;
-
-  text-overflow: ellipsis;
-}
-
-.dosen-task-selected-file-info span {
-  font-size: 11px;
-
-  color: #8a97a5;
-}
-
-.dosen-task-remove-file-btn {
-  width: 32px;
-  height: 32px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  padding: 0;
-
-  border: none;
-
-  border-radius: 7px;
-
-  background: #fff0f0;
-
-  color: #d64545;
-
-  cursor: pointer;
-}
-
-.dosen-task-remove-file-btn:hover {
-  background: #fde1e1;
-}
-
-/* =========================================================
-   UPLOAD NOTE
-========================================================= */
-
-.dosen-task-upload-note {
-  display: block;
-
-  margin-top: 8px;
-
-  font-size: 11px;
-
-  line-height: 1.5;
-
-  color: #8996a4;
-}
-
-/* =========================================================
-   MODAL FOOTER
+   FOOTER MODAL
 ========================================================= */
 
 .dosen-task-modal-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-
   gap: 10px;
-
   padding-top: 5px;
 }
 
 .dosen-task-cancel-btn,
 .dosen-task-save-btn {
   min-height: 42px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 8px;
-
   padding: 9px 16px;
-
   border-radius: 9px;
-
   font-family: "Nunito", sans-serif;
-
   font-size: 14px;
   font-weight: 700;
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease;
 }
 
-/* =========================================================
-   CANCEL
-========================================================= */
-
 .dosen-task-cancel-btn {
   border: 1px solid #d7e0e8;
-
-  background: #ffffff;
-
+  background: #fff;
   color: #64748b;
 }
 
@@ -1258,26 +860,27 @@
   background: #f5f7f9;
 }
 
-/* =========================================================
-   SAVE
-========================================================= */
-
 .dosen-task-save-btn {
   border: 1px solid #1769aa;
-
   background: #1769aa;
-
-  color: #ffffff;
+  color: #fff;
 }
 
 .dosen-task-save-btn:hover {
   border-color: #12588f;
-
   background: #12588f;
 }
 
+.dosen-task-save-btn:disabled,
+.dosen-task-cancel-btn:disabled,
+.dosen-task-close-btn:disabled,
+.dosen-task-remove-image-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* =========================================================
-   TABLET
+   RESPONSIVE TABLET
 ========================================================= */
 
 @media (max-width: 1100px) {
@@ -1291,7 +894,7 @@
 }
 
 /* =========================================================
-   TABLET KECIL
+   RESPONSIVE TABLET KECIL
 ========================================================= */
 
 @media (max-width: 760px) {
@@ -1301,7 +904,6 @@
 
   .dosen-task-header {
     align-items: flex-start;
-
     flex-direction: column;
   }
 
@@ -1311,7 +913,6 @@
 
   .dosen-task-toolbar {
     align-items: stretch;
-
     flex-direction: column;
   }
 
@@ -1336,12 +937,12 @@
   }
 
   .dosen-task-card-image {
-    height: 200px;
+    height: 160px;
   }
 }
 
 /* =========================================================
-   HP
+   RESPONSIVE HP
 ========================================================= */
 
 @media (max-width: 480px) {
@@ -1351,16 +952,13 @@
 
   .dosen-task-title {
     align-items: flex-start;
-
     gap: 12px;
   }
 
   .dosen-task-title-icon {
     width: 46px;
     height: 46px;
-
     border-radius: 12px;
-
     font-size: 20px;
   }
 
@@ -1373,47 +971,64 @@
   }
 
   .dosen-task-card-image {
-    height: 175px;
+    height: 145px;
+  }
+
+  .dosen-task-card-header {
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .dosen-task-card-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .dosen-task-card-header > span:not(.dosen-task-status) {
+    font-size: 11px;
+  }
+
+  .dosen-task-status {
+    padding: 4px 7px;
+    font-size: 10px;
   }
 
   .dosen-task-card-content {
-    padding: 16px;
+    padding: 14px;
   }
 
   .dosen-task-card-content h3 {
-    font-size: 19px;
+    font-size: 18px;
   }
 
   .dosen-task-card-content p {
-    min-height: auto;
-
+    min-height: 0;
     font-size: 13px;
   }
 
   .dosen-task-deadline {
-    padding: 10px 11px;
+    padding: 9px 10px;
   }
 
-  .dosen-task-card-actions {
+  .dosen-task-secondary-actions {
     gap: 8px;
   }
 
   .dosen-task-edit-btn,
   .dosen-task-delete-btn {
-    min-height: 39px;
-
-    padding: 8px 10px;
+    min-height: 34px;
+    padding: 7px 9px;
+    font-size: 12px;
   }
 
   .dosen-task-modal-overlay {
     align-items: flex-start;
-
     padding: 12px;
   }
 
   .dosen-task-modal {
     max-height: calc(100vh - 24px);
-
     border-radius: 14px;
   }
 
@@ -1431,14 +1046,13 @@
 
   .dosen-task-upload-label {
     min-height: 90px;
-
     padding: 15px;
+    gap: 11px;
   }
 
   .dosen-task-upload-icon {
     width: 42px;
     height: 42px;
-
     font-size: 18px;
   }
 
@@ -1457,11 +1071,8 @@
   .dosen-task-remove-image-btn {
     right: 8px;
     bottom: 8px;
-
     min-height: 34px;
-
     padding: 7px 10px;
-
     font-size: 11px;
   }
 

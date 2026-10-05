@@ -1,0 +1,1291 @@
+/* =========================================================
+   HALAMAN KELOLA FILE TUGAS
+========================================================= */
+
+.dosen-manage-file-page {
+  min-height: 100vh;
+  padding: 24px 28px 40px;
+  background: #f5f8fc;
+  color: #26384d;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dosen-manage-file-header {
+  margin-bottom: 24px;
+}
+
+.dosen-manage-file-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 16px;
+}
+
+.dosen-manage-file-heading-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #e7f1ff;
+  color: #2865ae;
+
+  font-size: 20px;
+}
+
+.dosen-manage-file-eyebrow {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #3975ba;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dosen-manage-file-heading h1 {
+  margin: 0 0 4px;
+
+  color: #173b70;
+
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  overflow-wrap: anywhere;
+}
+
+.dosen-manage-file-heading p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   TOMBOL KEMBALI
+========================================================= */
+
+.dosen-manage-file-page .dosen-manage-file-back-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 31px;
+  padding: 5px 9px !important;
+
+  border: 1px solid #d4e0ee !important;
+  border-radius: 6px !important;
+
+  background: #fff !important;
+  color: #35659c !important;
+
+  font-size: 12px !important;
+  font-weight: 600 !important;
+
+  line-height: 1.2;
+
+  box-shadow: none !important;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.dosen-manage-file-page .dosen-manage-file-back-btn svg {
+  font-size: 11px;
+}
+
+.dosen-manage-file-page .dosen-manage-file-back-btn:hover {
+  background: #edf5ff !important;
+  border-color: #a9c8eb !important;
+  color: #174b8b !important;
+}
+
+/* =========================================================
+   ALERT / NOTIFIKASI
+========================================================= */
+
+.dosen-manage-file-alert {
+  margin-bottom: 18px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   INFORMASI TUGAS
+========================================================= */
+
+.dosen-manage-file-assignment {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+
+  margin-bottom: 24px;
+  padding: 17px;
+
+  border: 1px solid #e3eaf3;
+  border-radius: 11px;
+
+  background: #fff;
+
+  box-shadow: 0 3px 12px rgba(32, 64, 100, 0.045);
+}
+
+.dosen-manage-file-assignment-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #e7f1ff;
+  color: #2865ae;
+
+  font-size: 18px;
+}
+
+.dosen-manage-file-assignment-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.dosen-manage-file-assignment-content > span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #3975ba;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dosen-manage-file-assignment-content h2 {
+  margin: 0 0 6px;
+
+  color: #25486f;
+
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.dosen-manage-file-assignment-content > p {
+  max-width: 900px;
+
+  margin: 0 0 12px;
+
+  color: #718096;
+
+  font-size: 13px;
+  line-height: 1.6;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   META INFORMASI TUGAS
+========================================================= */
+
+.dosen-manage-file-assignment-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.dosen-manage-file-assignment-meta > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 6px 9px;
+
+  border: 1px solid #e8edf4;
+  border-radius: 6px;
+
+  background: #f8fafd;
+
+  color: #64788e;
+
+  font-size: 12px;
+}
+
+.dosen-manage-file-assignment-meta > div svg {
+  color: #5081b9;
+  font-size: 13px;
+}
+
+.dosen-manage-file-assignment-meta strong {
+  color: #52677f;
+  font-weight: 600;
+}
+
+/* =========================================================
+   STATUS TUGAS
+========================================================= */
+
+.dosen-manage-file-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 25px;
+  padding: 4px 9px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dosen-manage-file-status.active {
+  border: 1px solid #ccebd8;
+
+  background: #edfaf2;
+  color: #298050;
+}
+
+.dosen-manage-file-status.inactive {
+  border: 1px solid #ead9d9;
+
+  background: #faf1f1;
+  color: #a45b5b;
+}
+
+/* =========================================================
+   HEADING SECTION
+========================================================= */
+
+.dosen-manage-file-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 15px;
+}
+
+.dosen-manage-file-section-heading > div {
+  min-width: 0;
+}
+
+.dosen-manage-file-section-heading > div > span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #3975ba;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dosen-manage-file-section-heading h2 {
+  margin: 0 0 4px;
+
+  color: #24476e;
+
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.dosen-manage-file-section-heading p {
+  margin: 0;
+
+  color: #8290a2;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   JUMLAH FILE
+========================================================= */
+
+.dosen-manage-file-count {
+  flex-shrink: 0;
+
+  padding: 5px 10px;
+
+  border: 1px solid #e0e9f4;
+  border-radius: 20px;
+
+  background: #fff;
+  color: #55718f;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   SECTION UPLOAD
+========================================================= */
+
+.dosen-manage-file-upload-section {
+  margin-bottom: 30px;
+}
+
+/* =========================================================
+   AREA UPLOAD
+========================================================= */
+
+.dosen-manage-file-upload {
+  position: relative;
+
+  overflow: hidden;
+
+  border: 1px dashed #c7d8ec;
+  border-radius: 10px;
+
+  background: #f8fbff;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.dosen-manage-file-upload:hover {
+  border-color: #8db4dc;
+  background: #f3f8ff;
+}
+
+.dosen-manage-file-upload input[type="file"] {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  overflow: hidden;
+
+  opacity: 0;
+}
+
+.dosen-manage-file-upload label {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 82px;
+
+  padding: 14px;
+
+  cursor: pointer;
+}
+
+.dosen-manage-file-upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #e8f2ff;
+  color: #3574b8;
+
+  font-size: 16px;
+}
+
+.dosen-manage-file-upload label > div:last-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+}
+
+.dosen-manage-file-upload label strong {
+  color: #345779;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dosen-manage-file-upload label span {
+  color: #8190a4;
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.dosen-manage-file-upload label small {
+  color: #9aa7b7;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   FILE YANG DIPILIH
+========================================================= */
+
+.dosen-manage-file-selected {
+  margin-top: 12px;
+
+  padding: 13px;
+
+  border: 1px solid #dce8f5;
+  border-radius: 9px;
+
+  background: #fff;
+}
+
+.dosen-manage-file-selected-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 10px;
+}
+
+.dosen-manage-file-selected-header strong {
+  color: #345779;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dosen-manage-file-selected-header button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 4px 7px;
+
+  border: none;
+  border-radius: 5px;
+
+  background: transparent;
+
+  color: #b84c4c;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.dosen-manage-file-selected-header button:hover {
+  background: #fff1f1;
+  color: #9f3030;
+}
+
+.dosen-manage-file-selected-header button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LIST FILE YANG DIPILIH
+========================================================= */
+
+.dosen-manage-file-selected-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 12px;
+}
+
+.dosen-manage-file-selected-item {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  min-width: 0;
+
+  padding: 8px 9px;
+
+  border: 1px solid #e8edf4;
+  border-radius: 7px;
+
+  background: #f8fafd;
+}
+
+.dosen-manage-file-selected-item > svg {
+  flex-shrink: 0;
+
+  color: #d64b4b;
+
+  font-size: 15px;
+}
+
+.dosen-manage-file-selected-item > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+  flex: 1;
+}
+
+.dosen-manage-file-selected-item strong {
+  overflow: hidden;
+
+  color: #435d78;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dosen-manage-file-selected-item span {
+  color: #8a99aa;
+
+  font-size: 10px;
+}
+
+.dosen-manage-file-selected-item > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #f0d7d7;
+  border-radius: 5px;
+
+  background: #fff;
+
+  color: #c34a4a;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.dosen-manage-file-selected-item > button:hover {
+  background: #fff0f0;
+  color: #a72f2f;
+}
+
+.dosen-manage-file-selected-item > button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   TOMBOL UPLOAD
+========================================================= */
+
+.dosen-manage-file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 35px;
+
+  padding: 7px 13px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #2865ae;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 3px 9px rgba(40, 101, 174, 0.13);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dosen-manage-file-upload-btn:hover {
+  background: #194f91;
+
+  transform: translateY(-1px);
+}
+
+.dosen-manage-file-upload-btn:disabled {
+  background: #91aac4;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+/* =========================================================
+   DAFTAR FILE
+========================================================= */
+
+.dosen-manage-file-list-section {
+  margin-top: 10px;
+}
+
+/* =========================================================
+   GRID FILE
+========================================================= */
+
+.dosen-manage-file-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+/* =========================================================
+   KARTU FILE PDF
+========================================================= */
+
+.dosen-manage-file-card {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  padding: 16px;
+
+  border: 1px solid #e3eaf3;
+  border-radius: 11px;
+
+  background: #fff;
+
+  box-shadow: 0 3px 12px rgba(32, 64, 100, 0.045);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.dosen-manage-file-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #d5e2f1;
+
+  box-shadow: 0 7px 17px rgba(32, 64, 100, 0.08);
+}
+
+/* =========================================================
+   BAGIAN ATAS KARTU
+========================================================= */
+
+.dosen-manage-file-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 13px;
+}
+
+.dosen-manage-file-pdf-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #fff0f0;
+
+  color: #d64b4b;
+
+  font-size: 17px;
+}
+
+.dosen-manage-file-card-top > span {
+  padding: 4px 8px;
+
+  border: 1px solid #f0d6d6;
+  border-radius: 20px;
+
+  background: #fff6f6;
+
+  color: #c55353;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   CONTENT KARTU
+========================================================= */
+
+.dosen-manage-file-card-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.dosen-manage-file-card-content h3 {
+  display: -webkit-box;
+
+  overflow: hidden;
+
+  margin: 0 0 12px;
+
+  color: #25486f;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* =========================================================
+   INFORMASI FILE
+========================================================= */
+
+.dosen-manage-file-info {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  min-width: 0;
+
+  margin-bottom: 8px;
+  padding: 8px 9px;
+
+  border: 1px solid #e8edf4;
+  border-radius: 7px;
+
+  background: #f8fafd;
+
+  color: #64788e;
+
+  font-size: 11px;
+}
+
+.dosen-manage-file-info svg {
+  flex-shrink: 0;
+
+  color: #d64b4b;
+
+  font-size: 13px;
+}
+
+.dosen-manage-file-info span {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   ACTION FILE
+========================================================= */
+
+.dosen-manage-file-actions {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-top: auto;
+  padding-top: 13px;
+
+  border-top: 1px solid #edf1f6;
+}
+
+.dosen-manage-file-actions .btn {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 33px;
+
+  padding: 6px 9px;
+
+  border-radius: 6px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  box-shadow: none;
+}
+
+.dosen-manage-file-actions .btn svg {
+  font-size: 11px;
+}
+
+/* =========================================================
+   BUTTON BUKA PDF
+========================================================= */
+
+.dosen-manage-file-page .dosen-manage-file-view-btn {
+  width: 100%;
+
+  border: 1px solid #d9e8fa !important;
+
+  background: #edf5ff !important;
+
+  color: #2865ae !important;
+}
+
+.dosen-manage-file-page .dosen-manage-file-view-btn:hover {
+  border-color: #c3dbf4 !important;
+
+  background: #dcecff !important;
+
+  color: #194f91 !important;
+}
+
+/* =========================================================
+   BUTTON SEKUNDER
+========================================================= */
+
+.dosen-manage-file-secondary-actions {
+  display: flex;
+
+  gap: 8px;
+}
+
+.dosen-manage-file-secondary-actions .btn {
+  flex: 1;
+}
+
+/* =========================================================
+   BUTTON DOWNLOAD
+========================================================= */
+
+.dosen-manage-file-page .dosen-manage-file-download-btn {
+  border: 1px solid #d8e8dc !important;
+
+  background: #eff9f2 !important;
+
+  color: #398054 !important;
+}
+
+.dosen-manage-file-page .dosen-manage-file-download-btn:hover {
+  border-color: #c5dfcb !important;
+
+  background: #e1f3e6 !important;
+
+  color: #286b40 !important;
+}
+
+/* =========================================================
+   BUTTON HAPUS
+========================================================= */
+
+.dosen-manage-file-page .dosen-manage-file-delete-btn {
+  border: 1px solid #f3d1d1 !important;
+
+  background: #fff1f1 !important;
+
+  color: #c33f3f !important;
+}
+
+.dosen-manage-file-page .dosen-manage-file-delete-btn:hover {
+  border-color: #edbaba !important;
+
+  background: #ffe1e1 !important;
+
+  color: #a92c2c !important;
+}
+
+.dosen-manage-file-page .dosen-manage-file-delete-btn:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   EMPTY / LOADING STATE
+========================================================= */
+
+.dosen-manage-file-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 210px;
+
+  padding: 30px 20px;
+
+  border: 1px dashed #d4dfec;
+  border-radius: 11px;
+
+  background: #fff;
+
+  text-align: center;
+}
+
+.dosen-manage-file-empty .spinner-border {
+  width: 30px;
+  height: 30px;
+
+  margin-bottom: 15px;
+
+  border-width: 3px;
+
+  color: #3975ba;
+}
+
+.dosen-manage-file-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: 12px;
+
+  border-radius: 12px;
+
+  background: #fff0f0;
+
+  color: #d64b4b;
+
+  font-size: 21px;
+}
+
+.dosen-manage-file-empty h3 {
+  margin: 0 0 6px;
+
+  color: #294d75;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.dosen-manage-file-empty p {
+  max-width: 400px;
+
+  margin: 0;
+
+  color: #8190a4;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+  .dosen-manage-file-page {
+    padding: 22px;
+  }
+
+  .dosen-manage-file-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .dosen-manage-file-page {
+    padding: 16px 13px 28px;
+  }
+
+  /* HEADER */
+
+  .dosen-manage-file-heading {
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-top: 14px;
+  }
+
+  .dosen-manage-file-heading-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 9px;
+
+    font-size: 17px;
+  }
+
+  .dosen-manage-file-heading h1 {
+    font-size: 21px;
+  }
+
+  .dosen-manage-file-heading p {
+    font-size: 12px;
+  }
+
+  .dosen-manage-file-eyebrow {
+    font-size: 9px;
+  }
+
+  .dosen-manage-file-page .dosen-manage-file-back-btn {
+    min-height: 30px;
+
+    padding: 5px 8px !important;
+
+    font-size: 11px !important;
+  }
+
+  /* INFORMASI TUGAS */
+
+  .dosen-manage-file-assignment {
+    gap: 11px;
+
+    padding: 14px;
+
+    margin-bottom: 20px;
+  }
+
+  .dosen-manage-file-assignment-icon {
+    width: 37px;
+    height: 37px;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+  }
+
+  .dosen-manage-file-assignment-content h2 {
+    font-size: 16px;
+  }
+
+  .dosen-manage-file-assignment-content > p {
+    font-size: 12px;
+  }
+
+  .dosen-manage-file-assignment-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dosen-manage-file-assignment-meta > div {
+    font-size: 11px;
+  }
+
+  /* SECTION */
+
+  .dosen-manage-file-section-heading {
+    align-items: flex-start;
+  }
+
+  .dosen-manage-file-section-heading h2 {
+    font-size: 17px;
+  }
+
+  .dosen-manage-file-section-heading p {
+    font-size: 11px;
+  }
+
+  .dosen-manage-file-count {
+    padding: 4px 8px;
+
+    font-size: 10px;
+  }
+
+  /* UPLOAD */
+
+  .dosen-manage-file-upload label {
+    min-height: 76px;
+
+    padding: 12px;
+  }
+
+  .dosen-manage-file-upload-icon {
+    width: 36px;
+    height: 36px;
+
+    font-size: 14px;
+  }
+
+  .dosen-manage-file-upload label strong {
+    font-size: 12px;
+  }
+
+  .dosen-manage-file-upload label span {
+    font-size: 10px;
+  }
+
+  .dosen-manage-file-upload label small {
+    font-size: 9px;
+  }
+
+  /* SELECTED FILE */
+
+  .dosen-manage-file-selected {
+    padding: 11px;
+  }
+
+  .dosen-manage-file-selected-header {
+    align-items: flex-start;
+  }
+
+  .dosen-manage-file-selected-header button {
+    font-size: 10px;
+  }
+
+  /* GRID */
+
+  .dosen-manage-file-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .dosen-manage-file-card {
+    padding: 14px;
+  }
+
+  .dosen-manage-file-card-content h3 {
+    font-size: 14px;
+  }
+
+  /* BUTTON */
+
+  .dosen-manage-file-actions .btn {
+    min-height: 34px;
+
+    font-size: 11px;
+  }
+
+  .dosen-manage-file-upload-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE HP KECIL
+========================================================= */
+
+@media (max-width: 380px) {
+  .dosen-manage-file-page {
+    padding: 13px 10px 24px;
+  }
+
+  .dosen-manage-file-heading {
+    gap: 8px;
+  }
+
+  .dosen-manage-file-heading-icon {
+    width: 36px;
+    height: 36px;
+
+    font-size: 15px;
+  }
+
+  .dosen-manage-file-heading h1 {
+    font-size: 19px;
+  }
+
+  .dosen-manage-file-heading p {
+    font-size: 11px;
+  }
+
+  .dosen-manage-file-assignment {
+    padding: 12px;
+  }
+
+  .dosen-manage-file-assignment-icon {
+    width: 34px;
+    height: 34px;
+
+    font-size: 14px;
+  }
+
+  .dosen-manage-file-assignment-content h2 {
+    font-size: 15px;
+  }
+
+  .dosen-manage-file-assignment-content > p {
+    font-size: 11px;
+  }
+
+  .dosen-manage-file-card {
+    padding: 12px;
+  }
+
+  .dosen-manage-file-card-content h3 {
+    font-size: 13px;
+  }
+
+  .dosen-manage-file-info {
+    padding: 7px 8px;
+
+    font-size: 10px;
+  }
+
+  .dosen-manage-file-actions .btn {
+    font-size: 10px;
+  }
+
+  .dosen-manage-file-secondary-actions {
+    gap: 6px;
+  }
+}

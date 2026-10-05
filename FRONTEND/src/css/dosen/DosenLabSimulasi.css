@@ -913,3 +913,63 @@
     font-size: 20px;
   }
 }
+/* =========================================
+   FORM STATUS SIMULASI
+========================================= */
+
+.dosen-lab-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.dosen-lab-form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #26374a;
+}
+
+.dosen-lab-form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d4deea;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #26374a;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.dosen-lab-form-group select:focus {
+  border-color: #287bc1;
+  box-shadow: 0 0 0 3px rgba(40, 123, 193, 0.12);
+}
+
+.dosen-lab-form-group select:hover {
+  border-color: #8ab8df;
+}
+
+.dosen-lab-form-group select option {
+  padding: 10px;
+  background-color: #fff;
+  color: #26374a;
+}
+
+@media (max-width: 576px) {
+  .dosen-lab-form-group {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .dosen-lab-form-group label {
+    font-size: 13px;
+  }
+
+  .dosen-lab-form-group select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

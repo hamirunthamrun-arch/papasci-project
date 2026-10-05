@@ -21,7 +21,7 @@
 
   overflow: hidden;
 
-  padding: 65px 0 70px;
+  padding: 60px 0 65px;
 
   background: linear-gradient(135deg, #eff8ff 0%, #f9fcff 50%, #f0fcf7 100%);
 }
@@ -62,6 +62,10 @@
   background: rgba(46, 203, 145, 0.07);
 }
 
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
 .micro-hero-content {
   position: relative;
 
@@ -73,7 +77,7 @@
 
   align-items: center;
 
-  gap: 50px;
+  gap: 45px;
 }
 
 /* =========================================================
@@ -95,7 +99,7 @@
 
   color: #2f80ed;
 
-  font-size: 13px;
+  font-size: 12px;
 
   font-weight: 900;
 
@@ -107,7 +111,7 @@
 
   font-family: "Baloo 2", sans-serif;
 
-  font-size: clamp(45px, 5vw, 65px);
+  font-size: clamp(43px, 5vw, 60px);
 
   font-weight: 800;
 
@@ -123,7 +127,7 @@
 .micro-hero-text > p {
   max-width: 520px;
 
-  margin: 20px 0 28px;
+  margin: 19px 0 25px;
 
   color: #667085;
 
@@ -133,15 +137,57 @@
 }
 
 /* =========================================================
+   HERO INFO
+========================================================= */
+
+.micro-hero-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.micro-hero-info > div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 8px 12px;
+
+  border: 1px solid #e1edf7;
+
+  border-radius: 9px;
+
+  background: rgba(255, 255, 255, 0.75);
+
+  color: #557087;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  box-shadow: 0 5px 15px rgba(31, 41, 55, 0.03);
+}
+
+.micro-hero-info svg {
+  color: #2f80ed;
+
+  font-size: 13px;
+}
+
+/* =========================================================
    HERO VISUAL
 ========================================================= */
 
 .micro-hero-visual {
   position: relative;
 
-  width: 350px;
+  width: 330px;
 
-  height: 350px;
+  height: 330px;
 
   margin: auto;
 
@@ -161,15 +207,15 @@
 }
 
 .circle-one {
-  width: 285px;
+  width: 270px;
 
-  height: 285px;
+  height: 270px;
 }
 
 .circle-two {
-  width: 210px;
+  width: 200px;
 
-  height: 210px;
+  height: 200px;
 
   border-style: solid;
 
@@ -181,9 +227,9 @@
 
   z-index: 3;
 
-  width: 145px;
+  width: 135px;
 
-  height: 145px;
+  height: 135px;
 
   display: flex;
 
@@ -191,13 +237,13 @@
 
   justify-content: center;
 
-  border-radius: 42px;
+  border-radius: 40px;
 
   background: #ffffff;
 
-  font-size: 78px;
+  font-size: 72px;
 
-  box-shadow: 0 20px 45px rgba(31, 41, 55, 0.1);
+  box-shadow: 0 18px 40px rgba(31, 41, 55, 0.1);
 
   animation: studentFloat 4s ease-in-out infinite;
 }
@@ -213,14 +259,18 @@
   }
 }
 
+/* =========================================================
+   FLOATING ICON
+========================================================= */
+
 .micro-floating {
   position: absolute;
 
   z-index: 4;
 
-  width: 55px;
+  width: 52px;
 
-  height: 55px;
+  height: 52px;
 
   display: flex;
 
@@ -228,43 +278,43 @@
 
   justify-content: center;
 
-  border-radius: 17px;
+  border-radius: 16px;
 
   background: #ffffff;
 
-  font-size: 26px;
+  font-size: 24px;
 
-  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+  box-shadow: 0 9px 22px rgba(31, 41, 55, 0.08);
 
   animation: floating 4s ease-in-out infinite;
 }
 
 .float-one {
-  top: 30px;
+  top: 28px;
 
-  left: 38px;
+  left: 35px;
 }
 
 .float-two {
-  top: 35px;
+  top: 30px;
 
-  right: 30px;
+  right: 28px;
 
   animation-delay: 0.6s;
 }
 
 .float-three {
-  right: 5px;
+  right: 2px;
 
-  bottom: 70px;
+  bottom: 65px;
 
   animation-delay: 1s;
 }
 
 .float-four {
-  left: 42px;
+  left: 38px;
 
-  bottom: 25px;
+  bottom: 22px;
 
   animation-delay: 1.4s;
 }
@@ -281,35 +331,97 @@
 }
 
 /* =========================================================
-   INSTRUCTION
+   VIDEO PEMBELAJARAN DOSEN
 ========================================================= */
 
-.micro-instruction {
-  padding: 30px 0 5px;
+.micro-lecturer-video {
+  padding: 60px 0 65px;
+
+  background: #f7fbff;
 }
 
-.instruction-card {
-  display: grid;
+/* =========================================================
+   VIDEO SECTION HEADER
+========================================================= */
 
-  grid-template-columns: auto 1fr;
+.video-section-header {
+  display: flex;
 
-  gap: 20px;
+  align-items: flex-start;
 
-  padding: 22px 25px;
+  justify-content: space-between;
 
-  border: 1px solid #e4edf5;
+  gap: 25px;
 
-  border-radius: 18px;
-
-  background: #ffffff;
-
-  box-shadow: 0 8px 30px rgba(31, 41, 55, 0.04);
+  margin-bottom: 25px;
 }
 
-.instruction-icon {
-  width: 58px;
+.video-section-header > div:first-child {
+  max-width: 720px;
+}
 
-  height: 58px;
+/* =========================================================
+   VIDEO LABEL
+========================================================= */
+
+.video-section-label {
+  display: inline-block;
+
+  margin-bottom: 6px;
+
+  color: #2f80ed;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.4px;
+}
+
+/* =========================================================
+   VIDEO TITLE
+========================================================= */
+
+.video-section-header h2 {
+  margin: 0 0 7px;
+
+  color: #172033;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 28px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+/* =========================================================
+   VIDEO DESCRIPTION
+========================================================= */
+
+.video-section-header p {
+  max-width: 650px;
+
+  margin: 0;
+
+  color: #6b7c8f;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   HEADER ICON
+========================================================= */
+
+.video-header-icon {
+  width: 48px;
+
+  height: 48px;
+
+  flex-shrink: 0;
 
   display: flex;
 
@@ -317,19 +429,559 @@
 
   justify-content: center;
 
-  border-radius: 16px;
+  border-radius: 14px;
 
-  background: #fff8df;
+  background: #eaf4ff;
 
-  font-size: 27px;
+  color: #2f80ed;
+
+  font-size: 16px;
+
+  box-shadow: 0 7px 18px rgba(47, 128, 237, 0.08);
 }
 
-.instruction-content h3 {
-  margin: 0 0 14px;
+/* =========================================================
+   VIDEO GRID
+========================================================= */
+
+.lecturer-video-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+/* =========================================================
+   VIDEO CARD
+========================================================= */
+
+.lecturer-video-card {
+  overflow: hidden;
+
+  border: 1px solid #e2eaf2;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  box-shadow: 0 7px 22px rgba(31, 41, 55, 0.045);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.lecturer-video-card.clickable {
+  cursor: pointer;
+}
+
+.lecturer-video-card.clickable:hover {
+  transform: translateY(-4px);
+
+  border-color: #cfe1f2;
+
+  box-shadow: 0 13px 30px rgba(31, 41, 55, 0.09);
+}
+
+.lecturer-video-card.clickable:focus {
+  outline: 3px solid rgba(47, 128, 237, 0.18);
+
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   VIDEO WRAPPER
+========================================================= */
+
+.lecturer-video-wrapper {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  overflow: hidden;
+
+  background: #172033;
+}
+
+/* =========================================================
+   YOUTUBE THUMBNAIL
+========================================================= */
+
+.youtube-thumbnail {
+  width: 100%;
+
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition: transform 0.45s ease;
+}
+
+.lecturer-video-card:hover .youtube-thumbnail {
+  transform: scale(1.045);
+}
+
+/* =========================================================
+   THUMBNAIL OVERLAY
+========================================================= */
+
+.youtube-thumbnail-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.02) 0%,
+    rgba(0, 0, 0, 0.04) 45%,
+    rgba(0, 0, 0, 0.48) 100%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   PLAY BUTTON
+========================================================= */
+
+.youtube-play-button {
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  width: 52px;
+
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  color: #ff0000;
+
+  font-size: 17px;
+
+  padding-left: 3px;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.lecturer-video-card:hover .youtube-play-button {
+  transform: translate(-50%, -50%) scale(1.08);
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   YOUTUBE BADGE
+========================================================= */
+
+.youtube-badge {
+  position: absolute;
+
+  top: 10px;
+
+  left: 10px;
+
+  z-index: 4;
+
+  width: 32px;
+
+  height: 32px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  color: #ff0000;
+
+  font-size: 15px;
+
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+
+  backdrop-filter: blur(5px);
+}
+
+/* =========================================================
+   VIDEO UNAVAILABLE
+========================================================= */
+
+.video-unavailable {
+  width: 100%;
+
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  background: #eef3f8;
+
+  color: #98a2b3;
+}
+
+.video-unavailable svg {
+  color: #ff0000;
+
+  font-size: 30px;
+}
+
+.video-unavailable span {
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   VIDEO CONTENT
+========================================================= */
+
+.lecturer-video-content {
+  padding: 16px;
+}
+
+/* =========================================================
+   VIDEO TITLE
+========================================================= */
+
+.lecturer-video-content h3 {
+  min-height: 42px;
+
+  margin: 0 0 7px;
+
+  color: #26384a;
 
   font-family: "Baloo 2", sans-serif;
 
+  font-size: 17px;
+
+  font-weight: 900;
+
+  line-height: 1.3;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   VIDEO DESCRIPTION
+========================================================= */
+
+.lecturer-video-content > p {
+  min-height: 45px;
+
+  margin: 0 0 13px;
+
+  color: #718096;
+
+  font-size: 10px;
+
+  line-height: 1.6;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 3;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   LECTURER
+========================================================= */
+
+.video-lecturer {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding-top: 11px;
+
+  border-top: 1px solid #edf1f5;
+}
+
+/* =========================================================
+   LECTURER AVATAR
+========================================================= */
+
+.lecturer-avatar {
+  width: 32px;
+
+  height: 32px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #eaf4ff;
+
+  color: #2f80ed;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   LECTURER TEXT
+========================================================= */
+
+.video-lecturer span {
+  display: block;
+
+  margin-bottom: 1px;
+
+  color: #98a5b3;
+
+  font-size: 8px;
+}
+
+.video-lecturer strong {
+  display: block;
+
+  color: #405468;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  max-width: 180px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   WATCH YOUTUBE
+========================================================= */
+
+.watch-youtube {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 12px;
+
+  padding-top: 10px;
+
+  border-top: 1px solid #edf1f5;
+
+  color: #ff0000;
+
+  font-size: 9px;
+
+  font-weight: 900;
+}
+
+.watch-youtube svg:first-child {
+  font-size: 13px;
+}
+
+.watch-youtube svg:last-child {
+  margin-left: auto;
+
+  color: #98a2b3;
+
+  font-size: 9px;
+
+  transition: transform 0.2s ease;
+}
+
+.lecturer-video-card:hover .watch-youtube svg:last-child {
+  transform: translateX(3px);
+
+  color: #ff0000;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.micro-loading {
+  min-height: 120px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 30px;
+
+  color: #667085;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+.loading-spinner {
+  color: #2f80ed;
+
   font-size: 18px;
+
+  animation: spinnerRotate 1s linear infinite;
+}
+
+@keyframes spinnerRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.micro-error {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin: 15px 0;
+
+  padding: 15px 17px;
+
+  border: 1px solid #f2d5d5;
+
+  border-radius: 11px;
+
+  background: #fff7f7;
+
+  color: #c0392b;
+}
+
+.micro-error > svg {
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  font-size: 16px;
+}
+
+.micro-error strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 11px;
+
+  font-weight: 900;
+}
+
+.micro-error p {
+  margin: 0;
+
+  color: #8f5b5b;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   INSTRUCTION
+========================================================= */
+
+.micro-instruction {
+  padding: 28px 0 5px;
+}
+
+.instruction-card {
+  display: grid;
+
+  grid-template-columns: auto 1fr;
+
+  gap: 18px;
+
+  padding: 20px 23px;
+
+  border: 1px solid #e4edf5;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 7px 25px rgba(31, 41, 55, 0.04);
+}
+
+.instruction-icon {
+  width: 54px;
+
+  height: 54px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: #fff8df;
+
+  font-size: 25px;
+}
+
+.instruction-content h3 {
+  margin: 0 0 12px;
+
+  font-family: "Baloo 2", sans-serif;
+
+  font-size: 17px;
 
   font-weight: 800;
 }
@@ -339,7 +991,7 @@
 
   grid-template-columns: repeat(4, 1fr);
 
-  gap: 15px;
+  gap: 14px;
 }
 
 .instruction-step {
@@ -351,9 +1003,9 @@
 }
 
 .instruction-step span {
-  width: 23px;
+  width: 22px;
 
-  height: 23px;
+  height: 22px;
 
   flex-shrink: 0;
 
@@ -369,7 +1021,7 @@
 
   color: #2f80ed;
 
-  font-size: 15px;
+  font-size: 12px;
 
   font-weight: 900;
 }
@@ -379,7 +1031,7 @@
 
   color: #667085;
 
-  font-size: 12px;
+  font-size: 10px;
 
   line-height: 1.5;
 }
@@ -389,7 +1041,7 @@
 ========================================================= */
 
 .micro-tasks {
-  padding: 55px 0 80px;
+  padding: 50px 0 70px;
 }
 
 .micro-section-header {
@@ -399,15 +1051,15 @@
 
   justify-content: space-between;
 
-  gap: 25px;
+  gap: 20px;
 
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .micro-section-header > div:first-child > span {
   color: #2f80ed;
 
-  font-size: 12px;
+  font-size: 10px;
 
   font-weight: 900;
 
@@ -415,11 +1067,11 @@
 }
 
 .micro-section-header h2 {
-  margin: 4px 0 2px;
+  margin: 3px 0 2px;
 
   font-family: "Baloo 2", sans-serif;
 
-  font-size: 30px;
+  font-size: 28px;
 
   font-weight: 800;
 }
@@ -429,51 +1081,7 @@
 
   color: #98a2b3;
 
-  font-size: 15px;
-}
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-.micro-search {
-  width: 230px;
-
-  height: 40px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  padding: 0 12px;
-
-  border: 1px solid #e4e7ec;
-
-  border-radius: 10px;
-
-  background: #ffffff;
-
-  color: #98a2b3;
-}
-
-.micro-search input {
-  width: 100%;
-
-  border: none;
-
-  outline: none;
-
-  background: transparent;
-
-  font-family: inherit;
-
   font-size: 12px;
-}
-
-.micro-search input::placeholder {
-  color: #98a2b3;
 }
 
 /* =========================================================
@@ -483,9 +1091,9 @@
 .micro-filter {
   display: flex;
 
-  gap: 8px;
+  gap: 7px;
 
-  margin-bottom: 25px;
+  margin-bottom: 22px;
 
   overflow-x: auto;
 
@@ -495,7 +1103,7 @@
 .micro-filter button {
   flex-shrink: 0;
 
-  padding: 8px 12px;
+  padding: 7px 11px;
 
   border: 1px solid #e4e7ec;
 
@@ -507,7 +1115,7 @@
 
   font-family: inherit;
 
-  font-size: 12px;
+  font-size: 10px;
 
   font-weight: 800;
 
@@ -537,9 +1145,9 @@
 .micro-task-grid {
   display: grid;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
-  gap: 20px;
+  gap: 18px;
 }
 
 /* =========================================================
@@ -551,11 +1159,11 @@
 
   border: 1px solid #e7edf2;
 
-  border-radius: 18px;
+  border-radius: 16px;
 
   background: #ffffff;
 
-  box-shadow: 0 8px 25px rgba(31, 41, 55, 0.045);
+  box-shadow: 0 7px 22px rgba(31, 41, 55, 0.045);
 
   transition:
     transform 0.25s ease,
@@ -563,20 +1171,21 @@
 }
 
 .micro-task-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
 
-  box-shadow: 0 15px 35px rgba(31, 41, 55, 0.09);
+  box-shadow: 0 13px 30px rgba(31, 41, 55, 0.09);
 }
 
 /* =========================================================
-   TASK VISUAL - IMAGE
+   TASK VISUAL
 ========================================================= */
 
 .task-visual {
   position: relative;
 
   width: 100%;
-  height: 200px;
+
+  height: 175px;
 
   overflow: hidden;
 
@@ -585,11 +1194,13 @@
 
 .task-image {
   width: 100%;
+
   height: 100%;
 
   display: block;
 
   object-fit: cover;
+
   object-position: center;
 
   transition: transform 0.45s ease;
@@ -599,7 +1210,9 @@
   transform: scale(1.05);
 }
 
-/* Overlay */
+/* =========================================================
+   TASK IMAGE OVERLAY
+========================================================= */
 
 .task-image-overlay {
   position: absolute;
@@ -608,7 +1221,7 @@
 
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.03) 0%,
+    rgba(0, 0, 0, 0.02) 0%,
     rgba(0, 0, 0, 0.02) 45%,
     rgba(0, 0, 0, 0.45) 100%
   );
@@ -623,72 +1236,33 @@
 .task-pdf {
   position: absolute;
 
-  top: 15px;
-  right: 15px;
+  top: 12px;
+
+  right: 12px;
 
   z-index: 3;
 
-  width: 42px;
-  height: 42px;
+  width: 38px;
+
+  height: 38px;
 
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
-  border-radius: 11px;
+  border-radius: 10px;
 
   background: rgba(255, 255, 255, 0.92);
 
   color: #e53935;
 
-  font-size: 17px;
+  font-size: 15px;
 
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
 
   backdrop-filter: blur(6px);
-}
-
-/* =========================================================
-   DECORATION
-========================================================= */
-
-.task-decoration span {
-  position: absolute;
-
-  border-radius: 50%;
-
-  background: rgba(255, 255, 255, 0.55);
-}
-
-.task-decoration span:nth-child(1) {
-  width: 100px;
-
-  height: 100px;
-
-  top: -45px;
-
-  right: -35px;
-}
-
-.task-decoration span:nth-child(2) {
-  width: 55px;
-
-  height: 55px;
-
-  bottom: -20px;
-
-  right: 30px;
-}
-
-.task-decoration span:nth-child(3) {
-  width: 25px;
-
-  height: 25px;
-
-  top: 25px;
-
-  left: 75px;
 }
 
 /* =========================================================
@@ -696,8 +1270,12 @@
 ========================================================= */
 
 .task-body {
-  padding: 17px;
+  padding: 15px;
 }
+
+/* =========================================================
+   TASK STATUS
+========================================================= */
 
 .task-status {
   display: flex;
@@ -706,9 +1284,9 @@
 
   justify-content: space-between;
 
-  gap: 8px;
+  gap: 7px;
 
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 }
 
 .task-status > span {
@@ -716,13 +1294,13 @@
 
   align-items: center;
 
-  gap: 5px;
+  gap: 4px;
 
-  padding: 5px 7px;
+  padding: 5px 6px;
 
   border-radius: 6px;
 
-  font-size: 10px;
+  font-size: 9px;
 
   font-weight: 900;
 }
@@ -751,34 +1329,54 @@
   color: #a76a00;
 }
 
-.task-body h3 {
-  min-height: 43px;
+/* =========================================================
+   TASK TITLE
+========================================================= */
 
-  margin: 0 0 8px;
+.task-body h3 {
+  min-height: 40px;
+
+  margin: 0 0 7px;
 
   font-family: "Baloo 2", sans-serif;
 
-  font-size: 19px;
+  font-size: 17px;
 
   font-weight: 800;
 
   line-height: 1.2;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
 }
 
 /* =========================================================
-   DESCRIPTION
+   TASK DESCRIPTION
 ========================================================= */
 
 .task-body > p {
-  min-height: 55px;
+  min-height: 50px;
 
-  margin: 0 0 14px;
+  margin: 0 0 12px;
 
   color: #667085;
 
-  font-size: 12px;
+  font-size: 10px;
 
-  line-height: 1.65;
+  line-height: 1.6;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 3;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
 }
 
 /* =========================================================
@@ -792,11 +1390,11 @@
 
   column-gap: 7px;
 
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 
-  padding: 9px 10px;
+  padding: 8px 9px;
 
-  border-radius: 9px;
+  border-radius: 8px;
 
   background: #f8fafc;
 }
@@ -808,13 +1406,13 @@
 
   color: #98a2b3;
 
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .task-deadline span {
   color: #98a2b3;
 
-  font-size: 12px;
+  font-size: 9px;
 
   font-weight: 700;
 }
@@ -822,13 +1420,13 @@
 .task-deadline strong {
   color: #475467;
 
-  font-size: 10px;
+  font-size: 9px;
 
   font-weight: 900;
 }
 
 /* =========================================================
-   BUTTON
+   TASK BUTTON
 ========================================================= */
 
 .task-button {
@@ -840,13 +1438,13 @@
 
   justify-content: center;
 
-  gap: 8px;
+  gap: 7px;
 
-  padding: 10px !important;
+  padding: 9px !important;
 
   border: none !important;
 
-  border-radius: 9px !important;
+  border-radius: 8px !important;
 
   background: #edf7ff !important;
 
@@ -854,9 +1452,11 @@
 
   font-family: inherit;
 
-  font-size: 12px !important;
+  font-size: 10px !important;
 
   font-weight: 900 !important;
+
+  cursor: pointer;
 
   transition: all 0.2s ease;
 }
@@ -868,7 +1468,7 @@
 }
 
 .task-button svg {
-  font-size: 10px;
+  font-size: 9px;
 }
 
 /* =========================================================
@@ -876,21 +1476,29 @@
 ========================================================= */
 
 .micro-empty {
-  padding: 60px 20px;
+  padding: 50px 20px;
 
   text-align: center;
 }
 
 .micro-empty > div {
-  font-size: 35px;
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #2f80ed;
+
+  font-size: 32px;
 }
 
 .micro-empty h3 {
-  margin: 10px 0 5px;
+  margin: 9px 0 4px;
 
   font-family: "Baloo 2", sans-serif;
 
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .micro-empty p {
@@ -899,6 +1507,24 @@
   color: #98a2b3;
 
   font-size: 10px;
+}
+
+/* =========================================================
+   VIDEO EMPTY
+========================================================= */
+
+.video-empty {
+  padding: 45px 20px;
+
+  border: 1px dashed #d9e6f0;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.video-empty > div {
+  color: #ff0000;
 }
 
 /* =========================================================
@@ -929,9 +1555,9 @@
   }
 
   .micro-hero-visual {
-    width: 310px;
+    width: 300px;
 
-    height: 310px;
+    height: 300px;
   }
 
   .instruction-steps {
@@ -939,7 +1565,11 @@
   }
 
   .micro-task-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lecturer-video-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -948,16 +1578,18 @@
 ========================================================= */
 
 @media (max-width: 767.98px) {
+  /* HERO */
+
   .micro-hero {
-    padding: 50px 0 55px;
+    padding: 48px 0 52px;
   }
 
   .micro-hero h1 {
-    font-size: 45px;
+    font-size: 43px;
   }
 
   .micro-hero-text > p {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .micro-hero-info {
@@ -968,65 +1600,121 @@
     flex: 1;
 
     min-width: 120px;
+
+    justify-content: center;
   }
 
   .micro-hero-visual {
-    width: 280px;
+    width: 275px;
 
-    height: 280px;
+    height: 275px;
   }
 
   .micro-student {
-    width: 120px;
+    width: 118px;
 
-    height: 120px;
+    height: 118px;
 
-    border-radius: 35px;
+    border-radius: 34px;
 
-    font-size: 65px;
+    font-size: 62px;
   }
 
-  .micro-circle.circle-one {
-    width: 235px;
+  .circle-one {
+    width: 230px;
 
-    height: 235px;
+    height: 230px;
   }
 
-  .micro-circle.circle-two {
-    width: 175px;
+  .circle-two {
+    width: 170px;
 
-    height: 175px;
+    height: 170px;
   }
 
   .micro-floating {
-    width: 47px;
+    width: 45px;
 
-    height: 47px;
+    height: 45px;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .float-one {
-    left: 20px;
+    left: 18px;
   }
 
   .float-two {
-    right: 20px;
+    right: 18px;
   }
 
   .float-three {
     right: 0;
 
-    bottom: 55px;
+    bottom: 52px;
   }
 
   .float-four {
-    left: 25px;
+    left: 23px;
 
-    bottom: 15px;
+    bottom: 13px;
   }
+
+  /* VIDEO */
+
+  .micro-lecturer-video {
+    padding: 48px 0 52px;
+  }
+
+  .video-section-header {
+    display: block;
+
+    margin-bottom: 21px;
+  }
+
+  .video-section-label {
+    font-size: 9px;
+  }
+
+  .video-section-header h2 {
+    font-size: 23px;
+  }
+
+  .video-section-header p {
+    font-size: 10px;
+
+    line-height: 1.65;
+  }
+
+  .video-header-icon {
+    display: none;
+  }
+
+  .lecturer-video-grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+  .lecturer-video-card {
+    border-radius: 14px;
+  }
+
+  .lecturer-video-content {
+    padding: 15px;
+  }
+
+  .lecturer-video-content h3 {
+    font-size: 16px;
+  }
+
+  .lecturer-video-content > p {
+    font-size: 9px;
+  }
+
+  /* INSTRUCTION */
 
   .instruction-card {
     grid-template-columns: 1fr;
@@ -1044,19 +1732,18 @@
     text-align: left;
   }
 
+  /* TASK */
+
   .micro-section-header {
     align-items: flex-start;
 
     flex-direction: column;
   }
 
-  .micro-search {
-    width: 100%;
-  }
-
   .micro-task-grid {
     grid-template-columns: 1fr;
   }
+
   .task-visual {
     height: 175px;
   }
@@ -1068,7 +1755,7 @@
 
 @media (max-width: 480px) {
   .micro-hero h1 {
-    font-size: 39px;
+    font-size: 38px;
   }
 
   .micro-hero-info {
@@ -1079,479 +1766,135 @@
     width: 100%;
   }
 
-  .task-visual {
-    height: 165px;
-  }
-  .task-visual {
-    height: 165px;
-  }
-}
+  .micro-hero-visual {
+    width: 255px;
 
-/* =========================================================
-   VIDEO MENGAJAR DOSEN
-   ========================================================= */
-
-.micro-lecturer-video {
-  padding: 75px 0;
-
-  background: #f7fbff;
-}
-
-/* =========================================================
-   VIDEO SECTION HEADER
-   ========================================================= */
-
-.video-section-header {
-  display: flex;
-
-  align-items: flex-start;
-  justify-content: space-between;
-
-  gap: 30px;
-
-  margin-bottom: 30px;
-}
-
-.video-section-header > div:first-child {
-  max-width: 760px;
-}
-
-/* =========================================================
-   LABEL
-   ========================================================= */
-
-.video-section-label {
-  display: inline-block;
-
-  margin-bottom: 8px;
-
-  color: #2f80ed;
-
-  font-size: 10px;
-
-  font-weight: 900;
-
-  letter-spacing: 1.5px;
-}
-
-/* =========================================================
-   TITLE
-   ========================================================= */
-
-.video-section-header h2 {
-  margin: 0 0 8px;
-
-  color: #172033;
-
-  font-family: "Baloo 2", sans-serif;
-
-  font-size: 30px;
-
-  font-weight: 800;
-
-  line-height: 1.2;
-}
-
-/* =========================================================
-   DESCRIPTION
-   ========================================================= */
-
-.video-section-header p {
-  max-width: 680px;
-
-  margin: 0;
-
-  color: #6b7c8f;
-
-  font-size: 13px;
-
-  line-height: 1.7;
-}
-
-/* =========================================================
-   HEADER ICON
-   ========================================================= */
-
-.video-header-icon {
-  width: 52px;
-  height: 52px;
-
-  flex-shrink: 0;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 16px;
-
-  background: #eaf4ff;
-
-  color: #2f80ed;
-
-  font-size: 17px;
-
-  box-shadow: 0 8px 20px rgba(47, 128, 237, 0.08);
-}
-
-/* =========================================================
-   VIDEO GRID
-   ========================================================= */
-
-.lecturer-video-grid {
-  display: grid;
-
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-
-  gap: 22px;
-}
-
-/* =========================================================
-   VIDEO CARD
-   ========================================================= */
-
-.lecturer-video-card {
-  overflow: hidden;
-
-  border: 1px solid #e2eaf2;
-
-  border-radius: 18px;
-
-  background: #ffffff;
-
-  box-shadow: 0 8px 28px rgba(31, 41, 55, 0.05);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
-}
-
-.lecturer-video-card:hover {
-  transform: translateY(-5px);
-
-  border-color: #d4e5f5;
-
-  box-shadow: 0 15px 35px rgba(31, 41, 55, 0.09);
-}
-
-/* =========================================================
-   VIDEO WRAPPER
-   ========================================================= */
-
-.lecturer-video-wrapper {
-  position: relative;
-
-  width: 100%;
-
-  aspect-ratio: 16 / 9;
-
-  overflow: hidden;
-
-  background: #172033;
-}
-
-/* =========================================================
-   YOUTUBE IFRAME
-   ========================================================= */
-
-.lecturer-video-wrapper iframe {
-  width: 100%;
-  height: 100%;
-
-  display: block;
-
-  border: none;
-}
-
-/* =========================================================
-   VIDEO DURATION
-   ========================================================= */
-
-.video-duration {
-  position: absolute;
-
-  right: 10px;
-  bottom: 10px;
-
-  padding: 5px 8px;
-
-  border-radius: 6px;
-
-  background: rgba(0, 0, 0, 0.75);
-
-  color: #ffffff;
-
-  font-size: 9px;
-
-  font-weight: 800;
-
-  pointer-events: none;
-}
-
-/* =========================================================
-   VIDEO CONTENT
-   ========================================================= */
-
-.lecturer-video-content {
-  padding: 20px;
-}
-
-/* =========================================================
-   VIDEO META
-   ========================================================= */
-
-.video-meta {
-  display: flex;
-
-  align-items: center;
-
-  gap: 7px;
-
-  margin-bottom: 9px;
-}
-
-.video-category,
-.video-subject {
-  display: inline-flex;
-
-  align-items: center;
-
-  padding: 5px 8px;
-
-  border-radius: 6px;
-
-  font-size: 8px;
-
-  font-weight: 900;
-}
-
-.video-category {
-  background: #eaf4ff;
-
-  color: #2f80ed;
-}
-
-.video-subject {
-  background: #f1f5f9;
-
-  color: #718096;
-}
-
-/* =========================================================
-   VIDEO TITLE
-   ========================================================= */
-
-.lecturer-video-content h3 {
-  margin: 0 0 8px;
-
-  color: #26384a;
-
-  font-family: "Baloo 2", sans-serif;
-
-  font-size: 18px;
-
-  font-weight: 900;
-
-  line-height: 1.45;
-}
-
-/* =========================================================
-   VIDEO DESCRIPTION
-   ========================================================= */
-
-.lecturer-video-content > p {
-  margin: 0 0 17px;
-
-  color: #718096;
-
-  font-size: 10px;
-
-  line-height: 1.65;
-
-  display: -webkit-box;
-
-  -webkit-line-clamp: 3;
-
-  -webkit-box-orient: vertical;
-
-  overflow: hidden;
-}
-
-/* =========================================================
-   LECTURER
-   ========================================================= */
-
-.video-lecturer {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  padding-top: 13px;
-
-  border-top: 1px solid #edf1f5;
-}
-
-/* =========================================================
-   LECTURER AVATAR
-   ========================================================= */
-
-.lecturer-avatar {
-  width: 34px;
-  height: 34px;
-
-  flex-shrink: 0;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 10px;
-
-  background: #eaf4ff;
-
-  color: #2f80ed;
-
-  font-size: 12px;
-}
-
-/* =========================================================
-   LECTURER TEXT
-   ========================================================= */
-
-.video-lecturer span {
-  display: block;
-
-  margin-bottom: 1px;
-
-  color: #98a5b3;
-
-  font-size: 8px;
-}
-
-.video-lecturer strong {
-  display: block;
-
-  color: #405468;
-
-  font-size: 10px;
-
-  font-weight: 900;
-}
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 991.98px) {
-  .micro-lecturer-video {
-    padding: 60px 0;
+    height: 255px;
   }
 
-  .video-section-header h2 {
-    font-size: 27px;
+  .micro-student {
+    width: 110px;
+
+    height: 110px;
+
+    font-size: 58px;
   }
 
-  .video-section-header p {
-    font-size: 12px;
+  .circle-one {
+    width: 215px;
+
+    height: 215px;
   }
 
-  .lecturer-video-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .circle-two {
+    width: 160px;
 
-    gap: 18px;
-  }
-}
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 767.98px) {
-  .micro-lecturer-video {
-    padding: 50px 0;
-  }
-
-  /* HEADER */
-
-  .video-section-header {
-    display: block;
-
-    margin-bottom: 23px;
-  }
-
-  .video-section-label {
-    font-size: 9px;
-
-    letter-spacing: 1.2px;
-  }
-
-  .video-section-header h2 {
-    font-size: 24px;
-
-    line-height: 1.2;
-  }
-
-  .video-section-header p {
-    font-size: 11px;
-
-    line-height: 1.65;
-  }
-
-  .video-header-icon {
-    display: none;
-  }
-
-  /* GRID */
-
-  .lecturer-video-grid {
-    grid-template-columns: 1fr;
-
-    gap: 18px;
-  }
-
-  /* CARD */
-
-  .lecturer-video-card {
-    border-radius: 16px;
-  }
-
-  /* CONTENT */
-
-  .lecturer-video-content {
-    padding: 17px;
+    height: 160px;
   }
 
   .lecturer-video-content h3 {
-    font-size: 13px;
+    font-size: 15px;
   }
 
-  .lecturer-video-content > p {
-    font-size: 9px;
+  .task-visual {
+    height: 165px;
+  }
+
+  .task-body {
+    padding: 14px;
   }
 }
 
 /* =========================================================
-   SMALL MOBILE
-   ========================================================= */
+   EXTRA SMALL MOBILE
+========================================================= */
 
 @media (max-width: 390px) {
+  .micro-hero {
+    padding: 42px 0 48px;
+  }
+
+  .micro-hero h1 {
+    font-size: 35px;
+  }
+
+  .micro-hero-text > p {
+    font-size: 10px;
+  }
+
+  .micro-hero-visual {
+    width: 235px;
+
+    height: 235px;
+  }
+
+  .micro-student {
+    width: 100px;
+
+    height: 100px;
+
+    font-size: 53px;
+
+    border-radius: 30px;
+  }
+
+  .circle-one {
+    width: 200px;
+
+    height: 200px;
+  }
+
+  .circle-two {
+    width: 145px;
+
+    height: 145px;
+  }
+
+  .micro-floating {
+    width: 40px;
+
+    height: 40px;
+
+    font-size: 18px;
+  }
+
+  .float-one {
+    left: 8px;
+  }
+
+  .float-two {
+    right: 8px;
+  }
+
+  .float-three {
+    right: -2px;
+
+    bottom: 45px;
+  }
+
+  .float-four {
+    left: 12px;
+
+    bottom: 8px;
+  }
+
   .micro-lecturer-video {
-    padding: 42px 0;
+    padding: 40px 0 45px;
   }
 
   .video-section-header h2 {
-    font-size: 22px;
+    font-size: 21px;
   }
 
   .lecturer-video-content {
-    padding: 15px;
+    padding: 14px;
   }
 
-  .lecturer-video-content h3 {
-    font-size: 17px;
+  .youtube-play-button {
+    width: 46px;
+
+    height: 46px;
+
+    font-size: 15px;
   }
 }

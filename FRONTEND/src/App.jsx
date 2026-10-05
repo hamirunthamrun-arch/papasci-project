@@ -33,10 +33,10 @@ import DosenVideoPembelajaran from "./pages/dosen/DosenVideoPembelajaran";
 import DosenTugas from "./pages/dosen/DosenTugas";
 import DosenPengumpulan from "./pages/dosen/DosenPengumpulan";
 import DosenNilai from "./pages/dosen/DosenNilai";
-import DosenKompetensiPedagogik from "./pages/dosen/DosenKompetensiPedagogik";
 import DosenProfil from "./pages/dosen/DosenProfil";
 import AdminDosen from "./pages/admin/AdminDosen";
 import DosenMateri from "./pages/dosen/DosenMateri";
+import DosenKelolaFile from "./pages/dosen/DosenKelolaFile";
 
 function App() {
   return (
@@ -124,7 +124,7 @@ function App() {
 
           <Route
             path="/dosen/module/:moduleId/materi"
-            element={<DosenMateri/>}
+            element={<DosenMateri />}
           />
 
           <Route
@@ -189,6 +189,14 @@ function App() {
               </DosenLayout>
             }
           />
+          <Route
+            path="/dosen/tugas/kelola-file/:assignmentId"
+            element={
+              <DosenLayout>
+                <DosenKelolaFile />
+              </DosenLayout>
+            }
+          />
 
           <Route
             path="/dosen/pengumpulan"
@@ -204,15 +212,6 @@ function App() {
             element={
               <DosenLayout>
                 <DosenNilai />
-              </DosenLayout>
-            }
-          />
-
-          <Route
-            path="/dosen/kompetensi-pedagogik"
-            element={
-              <DosenLayout>
-                <DosenKompetensiPedagogik />
               </DosenLayout>
             }
           />

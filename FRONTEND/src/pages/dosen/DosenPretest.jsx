@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+
+import { useCallback, useEffect, useState } from "react";
 import {
   FaBookOpen,
   FaEdit,
@@ -6,157 +7,145 @@ import {
   FaPlus,
   FaQuestionCircle,
   FaSave,
-  FaSearch,
   FaTimes,
   FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+import {
+  getPretests,
+  createPretest,
+  updatePretest,
+  deletePretest,
+} from "../../service/pretestService";
+import { getModules } from "../../service/moduleService";
 import "../../css/dosen/DosenPretest.css";
 
-/* =========================================================
-   DATA PRETEST
-========================================================= */
-
-const initialPretests = [
-  {
-    id: 1,
-    moduleId: 1,
-    title: "Pretest Makhluk Hidup",
-    description:
-      "Mengukur pengetahuan awal mahasiswa mengenai konsep dasar makhluk hidup.",
-    questions: 10,
-    status: "Publik",
-  },
-  {
-    id: 2,
-    moduleId: 2,
-    title: "Pretest Gaya dan Gerak",
-    description:
-      "Mengukur pemahaman awal mahasiswa tentang gaya, gerak, dan perubahan gerak.",
-    questions: 10,
-    status: "Publik",
-  },
-  {
-    id: 3,
-    moduleId: 3,
-    title: "Pretest Energi",
-    description:
-      "Mengukur pengetahuan awal mahasiswa mengenai berbagai bentuk energi.",
-    questions: 8,
-    status: "Draft",
-  },
-];
-
-/* =========================================================
-   DATA MODULE
-========================================================= */
-
-const modules = [
-  {
-    id: 1,
-    title: "Makhluk Hidup",
-  },
-  {
-    id: 2,
-    title: "Gaya dan Gerak",
-  },
-  {
-    id: 3,
-    title: "Energi",
-  },
-  {
-    id: 4,
-    title: "Air dan Perubahannya",
-  },
-];
-
-/* =========================================================
-   COMPONENT
-========================================================= */
+const initialForm = {
+  module_id: "",
+  title: "",
+  description: "",
+  question_count: 10,
+  status: "draf",
+};
 
 function DosenPretest() {
   const navigate = useNavigate();
 
-  const [pretests, setPretests] = useState(initialPretests);
-  const [search, setSearch] = useState("");
+  const [pretests, setPretests] = useState([]);
+  const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [editingPretest, setEditingPretest] = useState(null);
+  const [formData, setFormData] = useState(initialForm);
 
-  const [formData, setFormData] = useState({
-    moduleId: "",
-    title: "",
-    description: "",
-    questions: 10,
-    status: "Draft",
-  });
+  /* =========================================================
+     MEMUAT ULANG DATA
+  ========================================================= */
 
-  /* =======================================================
-     FILTER
-  ======================================================= */
+  const loadData = useCallback(async () => {
+    try {
+      setError("");
 
-  const filteredPretests = useMemo(() => {
-    const keyword = search.toLowerCase().trim();
+      const [pretestData, moduleData] = await Promise.all([
+        getPretests(),
+        getModules(),
+      ]);
 
-    if (!keyword) {
-      return pretests;
+      setPretests(Array.isArray(pretestData) ? pretestData : []);
+      setModules(Array.isArray(moduleData) ? moduleData : []);
+    } catch (err) {
+      console.error("Gagal memuat data:", err);
+      setError(err.message || "Gagal memuat data.");
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
-    return pretests.filter((pretest) => {
-      const module = modules.find(
-        (item) => item.id === pretest.moduleId
-      );
+  /* =========================================================
+     PEMUATAN AWAL
+  ========================================================= */
 
-      const moduleTitle = module?.title || "";
+  useEffect(() => {
+    let isMounted = true;
 
-      return (
-        pretest.title.toLowerCase().includes(keyword) ||
-        pretest.description.toLowerCase().includes(keyword) ||
-        moduleTitle.toLowerCase().includes(keyword)
-      );
-    });
-  }, [pretests, search]);
+    const fetchData = async () => {
+      try {
+        const [pretestData, moduleData] = await Promise.all([
+          getPretests(),
+          getModules(),
+        ]);
 
-  /* =======================================================
+        if (!isMounted) return;
+
+        setPretests(Array.isArray(pretestData) ? pretestData : []);
+        setModules(Array.isArray(moduleData) ? moduleData : []);
+        setError("");
+      } catch (err) {
+        if (!isMounted) return;
+
+        console.error("Gagal memuat data:", err);
+        setError(err.message || "Gagal memuat data.");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /* =========================================================
+     CEK APAKAH MODUL SUDAH MEMILIKI PRETEST
+  ========================================================= */
+
+  const moduleHasPretest = (moduleId) => {
+    return pretests.some(
+      (pretest) =>
+        String(pretest.module_id) === String(moduleId) &&
+        pretest.id !== editingPretest?.id
+    );
+  };
+
+  /* =========================================================
      TAMBAH PRETEST
-  ======================================================= */
+  ========================================================= */
 
   const handleAdd = () => {
     setEditingPretest(null);
-
-    setFormData({
-      moduleId: "",
-      title: "",
-      description: "",
-      questions: 10,
-      status: "Draft",
-    });
-
+    setFormData({ ...initialForm });
     setShowModal(true);
   };
 
-  /* =======================================================
+  /* =========================================================
      EDIT PRETEST
-  ======================================================= */
+  ========================================================= */
 
   const handleEdit = (pretest) => {
     setEditingPretest(pretest);
 
     setFormData({
-      moduleId: pretest.moduleId,
-      title: pretest.title,
-      description: pretest.description,
-      questions: pretest.questions,
-      status: pretest.status,
+      module_id: pretest.module_id || "",
+      title: pretest.title || "",
+      description: pretest.description || "",
+      question_count: pretest.question_count || 10,
+      status: pretest.status || "draf",
     });
 
     setShowModal(true);
   };
 
-  /* =======================================================
+  /* =========================================================
      FORM CHANGE
-  ======================================================= */
+  ========================================================= */
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -167,15 +156,32 @@ function DosenPretest() {
     }));
   };
 
-  /* =======================================================
-     SIMPAN
-  ======================================================= */
+  /* =========================================================
+     TUTUP MODAL
+  ========================================================= */
 
-  const handleSubmit = (event) => {
+  const closeModal = () => {
+    if (saving) return;
+
+    setShowModal(false);
+    setEditingPretest(null);
+    setFormData({ ...initialForm });
+  };
+
+  /* =========================================================
+     SIMPAN PRETEST
+  ========================================================= */
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!formData.moduleId) {
+    if (!formData.module_id) {
       alert("Module wajib dipilih.");
+      return;
+    }
+
+    if (moduleHasPretest(formData.module_id)) {
+      alert("Module ini sudah memiliki pretest. Satu module hanya boleh memiliki satu pretest.");
       return;
     }
 
@@ -189,112 +195,92 @@ function DosenPretest() {
       return;
     }
 
-    if (!formData.questions || Number(formData.questions) < 1) {
+    if (
+      !formData.question_count ||
+      Number(formData.question_count) < 1
+    ) {
       alert("Jumlah soal minimal 1.");
       return;
     }
 
-    if (editingPretest) {
-      setPretests((previous) =>
-        previous.map((pretest) =>
-          pretest.id === editingPretest.id
-            ? {
-                ...pretest,
-                moduleId: Number(formData.moduleId),
-                title: formData.title.trim(),
-                description: formData.description.trim(),
-                questions: Number(formData.questions),
-                status: formData.status,
-              }
-            : pretest
-        )
-      );
-    } else {
-      const newId =
-        pretests.length > 0
-          ? Math.max(...pretests.map((pretest) => pretest.id)) + 1
-          : 1;
+    const payload = {
+      module_id: formData.module_id,
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      question_count: Number(formData.question_count),
+      status: formData.status,
+    };
 
-      const newPretest = {
-        id: newId,
-        moduleId: Number(formData.moduleId),
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        questions: Number(formData.questions),
-        status: formData.status,
-      };
+    try {
+      setSaving(true);
+      setError("");
 
-      setPretests((previous) => [...previous, newPretest]);
+      if (editingPretest) {
+        await updatePretest(editingPretest.id, payload);
+      } else {
+        await createPretest(payload);
+      }
+
+      await loadData();
+
+      setShowModal(false);
+      setEditingPretest(null);
+      setFormData({ ...initialForm });
+    } catch (err) {
+      console.error("Gagal menyimpan pretest:", err);
+      alert(err.message || "Gagal menyimpan pretest.");
+    } finally {
+      setSaving(false);
     }
-
-    closeModal();
   };
 
-  /* =======================================================
-     HAPUS
-  ======================================================= */
+  /* =========================================================
+     HAPUS PRETEST
+  ========================================================= */
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmed = window.confirm(
       "Apakah kamu yakin ingin menghapus pretest ini?"
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
-    setPretests((previous) =>
-      previous.filter((pretest) => pretest.id !== id)
-    );
+    try {
+      await deletePretest(id);
+      await loadData();
+    } catch (err) {
+      console.error("Gagal menghapus pretest:", err);
+      alert(err.message || "Gagal menghapus pretest.");
+    }
   };
 
-  /* =======================================================
+  /* =========================================================
      KELOLA SOAL
-  ======================================================= */
+  ========================================================= */
 
   const handleQuestions = (id) => {
     navigate(`/dosen/pretest/${id}/soal`);
   };
 
-  /* =======================================================
-     CLOSE MODAL
-  ======================================================= */
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditingPretest(null);
-
-    setFormData({
-      moduleId: "",
-      title: "",
-      description: "",
-      questions: 10,
-      status: "Draft",
-    });
-  };
-
-  /* =======================================================
+  /* =========================================================
      GET MODULE
-  ======================================================= */
+  ========================================================= */
 
   const getModuleTitle = (moduleId) => {
     const module = modules.find(
-      (item) => item.id === moduleId
+      (item) => String(item.id) === String(moduleId)
     );
 
     return module?.title || "Module tidak ditemukan";
   };
 
-  /* =======================================================
+  /* =========================================================
      RENDER
-  ======================================================= */
+  ========================================================= */
 
   return (
     <div className="dosen-pretest-page">
-
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+      {/* HEADER */}
 
       <div className="dosen-pretest-header">
         <div className="dosen-pretest-header-info">
@@ -306,8 +292,8 @@ function DosenPretest() {
           <h1>Pretest</h1>
 
           <p>
-            Kelola pretest untuk mengukur pengetahuan awal
-            mahasiswa sebelum mempelajari module.
+            Kelola pretest untuk mengukur pengetahuan awal mahasiswa
+            sebelum mempelajari module.
           </p>
         </div>
 
@@ -321,9 +307,7 @@ function DosenPretest() {
         </button>
       </div>
 
-      {/* =====================================================
-          INFO
-      ===================================================== */}
+      {/* INFO */}
 
       <div className="dosen-pretest-info">
         <div className="dosen-pretest-info-icon">
@@ -334,82 +318,73 @@ function DosenPretest() {
           <strong>Tentang Pretest</strong>
 
           <p>
-            Pretest digunakan untuk mengetahui pengetahuan
-            awal mahasiswa sebelum memulai pembelajaran.
-            Gambar tidak diperlukan pada data pretest.
-            Jika diperlukan, gambar dapat ditambahkan
-            secara opsional pada masing-masing soal.
+            Setiap module hanya memiliki satu pretest.
+            Pretest digunakan untuk mengetahui pengetahuan awal
+            mahasiswa sebelum memulai pembelajaran. Gambar dapat
+            ditambahkan secara opsional pada masing-masing soal.
           </p>
         </div>
       </div>
 
-      {/* =====================================================
-          TOOLBAR
-      ===================================================== */}
+      {/* TOTAL */}
 
       <div className="dosen-pretest-toolbar">
-        <div className="dosen-pretest-search">
-          <FaSearch />
-
-          <input
-            type="text"
-            placeholder="Cari pretest atau module..."
-            value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
-          />
-        </div>
-
         <div className="dosen-pretest-total">
-          <strong>{filteredPretests.length}</strong>
+          <strong>{pretests.length}</strong>
           <span>Pretest</span>
         </div>
       </div>
 
-      {/* =====================================================
-          GRID
-      ===================================================== */}
+      {/* ERROR */}
+
+      {error && (
+        <div className="dosen-pretest-error">
+          {error}
+          <button type="button" onClick={loadData}>
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
+      {/* GRID */}
 
       <div className="dosen-pretest-grid">
-        {filteredPretests.length > 0 ? (
-          filteredPretests.map((pretest, index) => (
+        {loading ? (
+          <div className="dosen-pretest-empty">
+            <p>Memuat data pretest...</p>
+          </div>
+        ) : pretests.length > 0 ? (
+          pretests.map((pretest, index) => (
             <article
               className="dosen-pretest-card"
               key={pretest.id}
             >
-
-              {/* CARD HEADER */}
-
               <div className="dosen-pretest-card-header">
                 <div className="dosen-pretest-number">
-                  PRETEST{" "}
-                  {String(index + 1).padStart(2, "0")}
+                  PRETEST {String(index + 1).padStart(2, "0")}
                 </div>
 
                 <span
                   className={`dosen-pretest-status ${
-                    pretest.status === "Publik"
+                    pretest.status === "publik"
                       ? "published"
                       : "draft"
                   }`}
                 >
-                  {pretest.status}
+                  {pretest.status === "publik"
+                    ? "Publik"
+                    : "Draf"}
                 </span>
               </div>
-
-              {/* ICON */}
 
               <div className="dosen-pretest-card-icon">
                 <FaFileAlt />
               </div>
 
-              {/* CONTENT */}
-
               <div className="dosen-pretest-card-content">
                 <span className="dosen-pretest-module">
                   <FaBookOpen />
-                  {getModuleTitle(pretest.moduleId)}
+                  {getModuleTitle(pretest.module_id)}
                 </span>
 
                 <h3>{pretest.title}</h3>
@@ -419,15 +394,12 @@ function DosenPretest() {
                 <div className="dosen-pretest-meta">
                   <div>
                     <FaQuestionCircle />
-
                     <span>
-                      {pretest.questions} Soal
+                      {pretest.question_count} Soal
                     </span>
                   </div>
                 </div>
               </div>
-
-              {/* ACTION */}
 
               <div className="dosen-pretest-card-footer">
                 <button
@@ -445,9 +417,7 @@ function DosenPretest() {
                   <button
                     type="button"
                     className="dosen-pretest-edit-btn"
-                    onClick={() =>
-                      handleEdit(pretest)
-                    }
+                    onClick={() => handleEdit(pretest)}
                     title="Edit pretest"
                   >
                     <FaEdit />
@@ -471,19 +441,17 @@ function DosenPretest() {
           <div className="dosen-pretest-empty">
             <FaFileAlt />
 
-            <h3>Pretest tidak ditemukan</h3>
+            <h3>Belum ada pretest</h3>
 
             <p>
-              Tidak ada pretest yang sesuai dengan
-              pencarian.
+              Tambahkan pretest untuk mulai mengelola soal
+              pembelajaran.
             </p>
           </div>
         )}
       </div>
 
-      {/* =====================================================
-          MODAL TAMBAH / EDIT
-      ===================================================== */}
+      {/* MODAL TAMBAH / EDIT */}
 
       {showModal && (
         <div
@@ -515,39 +483,54 @@ function DosenPretest() {
                 type="button"
                 className="dosen-pretest-modal-close"
                 onClick={closeModal}
+                disabled={saving}
               >
                 <FaTimes />
               </button>
             </div>
 
             <form onSubmit={handleSubmit}>
-
               {/* MODULE */}
 
               <div className="dosen-pretest-field">
-                <label htmlFor="moduleId">
+                <label htmlFor="module_id">
                   Module
                 </label>
 
                 <select
-                  id="moduleId"
-                  name="moduleId"
-                  value={formData.moduleId}
+                  id="module_id"
+                  name="module_id"
+                  value={formData.module_id}
                   onChange={handleChange}
+                  required
                 >
                   <option value="">
                     Pilih Module
                   </option>
 
-                  {modules.map((module) => (
-                    <option
-                      key={module.id}
-                      value={module.id}
-                    >
-                      {module.title}
-                    </option>
-                  ))}
+                  {modules.map((module) => {
+                    const alreadyHasPretest =
+                      moduleHasPretest(module.id);
+
+                    return (
+                      <option
+                        key={module.id}
+                        value={module.id}
+                        disabled={alreadyHasPretest}
+                      >
+                        {module.title}
+                        {alreadyHasPretest
+                          ? " (Sudah memiliki pretest)"
+                          : ""}
+                      </option>
+                    );
+                  })}
                 </select>
+
+                <small>
+                  Modul yang sudah memiliki pretest tidak
+                  dapat dipilih untuk pretest baru.
+                </small>
               </div>
 
               {/* TITLE */}
@@ -564,6 +547,7 @@ function DosenPretest() {
                   placeholder="Contoh: Pretest Makhluk Hidup"
                   value={formData.title}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -581,23 +565,25 @@ function DosenPretest() {
                   placeholder="Tuliskan deskripsi pretest..."
                   value={formData.description}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
               {/* JUMLAH SOAL */}
 
               <div className="dosen-pretest-field">
-                <label htmlFor="questions">
+                <label htmlFor="question_count">
                   Jumlah Soal
                 </label>
 
                 <input
-                  id="questions"
-                  name="questions"
+                  id="question_count"
+                  name="question_count"
                   type="number"
                   min="1"
-                  value={formData.questions}
+                  value={formData.question_count}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -614,13 +600,8 @@ function DosenPretest() {
                   value={formData.status}
                   onChange={handleChange}
                 >
-                  <option value="Publik">
-                    Publik
-                  </option>
-
-                  <option value="Draft">
-                    Draft
-                  </option>
+                  <option value="draf">Draf</option>
+                  <option value="publik">Publik</option>
                 </select>
               </div>
 
@@ -643,6 +624,7 @@ function DosenPretest() {
                   type="button"
                   className="dosen-pretest-cancel-btn"
                   onClick={closeModal}
+                  disabled={saving}
                 >
                   Batal
                 </button>
@@ -650,12 +632,14 @@ function DosenPretest() {
                 <button
                   type="submit"
                   className="dosen-pretest-save-btn"
+                  disabled={saving}
                 >
                   <FaSave />
-
-                  {editingPretest
-                    ? "Simpan Perubahan"
-                    : "Simpan Pretest"}
+                  {saving
+                    ? "Menyimpan..."
+                    : editingPretest
+                      ? "Simpan Perubahan"
+                      : "Simpan Pretest"}
                 </button>
               </div>
             </form>

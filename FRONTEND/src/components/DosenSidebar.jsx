@@ -214,19 +214,6 @@ function DosenSidebar({ showMobileSidebar, closeMobileSidebar }) {
             <FaStar />
             <span>Nilai Mahasiswa</span>
           </NavLink>
-
-          {/* KOMPETENSI PEDAGOGIK */}
-
-          <NavLink
-            to="/dosen/kompetensi-pedagogik"
-            className={({ isActive }) =>
-              `dosen-nav-link ${isActive ? "active" : ""}`
-            }
-            onClick={closeMobileSidebar}
-          >
-            <FaStar />
-            <span>Kompetensi Pedagogik</span>
-          </NavLink>
         </nav>
 
         {/* =================================================

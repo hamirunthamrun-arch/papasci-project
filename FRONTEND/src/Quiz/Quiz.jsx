@@ -1,144 +1,148 @@
-import { useState } from "react";
-import { Button, Container } from "react-bootstrap";
+
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Container,
+  Button,
+  ProgressBar,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
+
 import {
   FaArrowLeft,
   FaArrowRight,
   FaCheck,
-  FaTrophy,
-  FaRedo,
   FaBookOpen,
-  FaStar,
+  FaRedo,
+  FaTrophy,
   FaLightbulb,
-  FaLock,
+  FaExclamationCircle,
 } from "react-icons/fa";
+
+import { getPublishedQuizByModule } from "../service/quizService";
+import { getStudentQuestions } from "../service/quizQuestionService";
+import {
+  evaluateQuizAttempt,
+  submitQuizResult,
+} from "../service/quizResultService";
 
 import "./Quiz.css";
 
-/* =========================================================
-   DATA SOAL QUIZ MODULE 01
-========================================================= */
-
-const questions = [
-  {
-    id: 1,
-    question: "Manakah yang termasuk makhluk hidup?",
-    options: ["Batu", "Kucing", "Meja", "Pensil"],
-    answer: "Kucing",
-  },
-
-  {
-    id: 2,
-    question: "Salah satu ciri makhluk hidup adalah dapat ...",
-    options: ["Tumbuh", "Berkarat", "Pecah", "Mencair"],
-    answer: "Tumbuh",
-  },
-
-  {
-    id: 3,
-    question: "Manusia bernapas menggunakan ...",
-    options: ["Jantung", "Paru-paru", "Lambung", "Ginjal"],
-    answer: "Paru-paru",
-  },
-
-  {
-    id: 4,
-    question:
-      "Bagian tumbuhan yang berfungsi menyerap air dari tanah adalah ...",
-    options: ["Bunga", "Daun", "Akar", "Buah"],
-    answer: "Akar",
-  },
-
-  {
-    id: 5,
-    question: "Tumbuhan membutuhkan cahaya matahari untuk melakukan ...",
-    options: ["Fotosintesis", "Tidur", "Berjalan", "Bermain"],
-    answer: "Fotosintesis",
-  },
-
-  {
-    id: 6,
-    question: "Hewan membutuhkan makanan untuk mendapatkan ...",
-    options: ["Warna", "Energi", "Suara", "Bentuk"],
-    answer: "Energi",
-  },
-
-  {
-    id: 7,
-    question: "Contoh hewan yang berkembang biak dengan bertelur adalah ...",
-    options: ["Kucing", "Ayam", "Sapi", "Kambing"],
-    answer: "Ayam",
-  },
-
-  {
-    id: 8,
-    question:
-      "Biji dapat tumbuh menjadi tanaman. Hal ini menunjukkan bahwa tumbuhan dapat ...",
-    options: ["Berjalan", "Tumbuh", "Berbicara", "Berenang"],
-    answer: "Tumbuh",
-  },
-
-  {
-    id: 9,
-    question: "Makhluk hidup berkembang biak untuk ...",
-    options: [
-      "Menghasilkan keturunan",
-      "Mendapatkan warna",
-      "Membuat suara",
-      "Mengubah bentuk",
-    ],
-    answer: "Menghasilkan keturunan",
-  },
-
-  {
-    id: 10,
-    question: "Manakah yang merupakan kebutuhan manusia untuk hidup?",
-    options: [
-      "Makanan dan air",
-      "Mainan dan televisi",
-      "Sepeda dan bola",
-      "Buku dan pensil",
-    ],
-    answer: "Makanan dan air",
-  },
-];
-
-/* =========================================================
-   QUIZ COMPONENT
-========================================================= */
-
 function Quiz() {
+  const { moduleId } = useParams();
+  const navigate = useNavigate();
+
+  // DATA KUIS
+  const [quiz, setQuiz] = useState(null);
+  const [questions, setQuestions] = useState([]);
+
+  // NAVIGASI SOAL
   const [currentQuestion, setCurrentQuestion] = useState(0);
-
-  const [selectedAnswer, setSelectedAnswer] = useState("");
-
   const [answers, setAnswers] = useState({});
 
+  // STATUS HALAMAN
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+
+  // STATUS PENILAIAN
   const [finished, setFinished] = useState(false);
+  const [evaluating, setEvaluating] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const [score, setScore] = useState(0);
+  // HASIL
+  const [result, setResult] = useState(null);
+  const [officialResult, setOfficialResult] = useState(null);
 
-  const [correctAnswers, setCorrectAnswers] = useState(0);
+  // MEMUAT KUIS DAN SOAL DARI BACKEND
+  useEffect(() => {
+    let ignore = false;
 
-  const [attempt, setAttempt] = useState(1);
+    const loadQuiz = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        setActionError("");
 
-  const totalQuestions = questions.length;
+        setQuiz(null);
+        setQuestions([]);
+        setAnswers({});
+        setCurrentQuestion(0);
 
+        setFinished(false);
+        setEvaluating(false);
+        setSubmitting(false);
+
+        setResult(null);
+        setOfficialResult(null);
+
+        if (!moduleId) {
+          throw new Error("ID module tidak ditemukan.");
+        }
+
+        const quizData = await getPublishedQuizByModule(moduleId);
+        const questionData = await getStudentQuestions(quizData.id);
+
+        if (ignore) return;
+
+        setQuiz(quizData);
+
+        setQuestions(
+          [...questionData].sort(
+            (a, b) => a.order_number - b.order_number,
+          ),
+        );
+      } catch (err) {
+        if (!ignore) {
+          setError(err.message || "Gagal memuat data kuis.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadQuiz();
+
+    return () => {
+      ignore = true;
+    };
+  }, [moduleId]);
+
+  // DATA SOAL SAAT INI
   const question = questions[currentQuestion];
-
+  const totalQuestions = questions.length;
   const questionNumber = currentQuestion + 1;
 
-  const progress = (questionNumber / totalQuestions) * 100;
+  const progress =
+    totalQuestions > 0
+      ? (questionNumber / totalQuestions) * 100
+      : 0;
 
-  const MAX_ATTEMPTS = 3;
+  // PILIHAN JAWABAN
+  const options = question
+    ? [
+        { key: "A", value: question.option_a },
+        { key: "B", value: question.option_b },
+        { key: "C", value: question.option_c },
+        { key: "D", value: question.option_d },
+      ].filter(
+        (option) =>
+          option.value !== null &&
+          option.value !== undefined &&
+          String(option.value).trim() !== "",
+      )
+    : [];
 
-  const PASSING_SCORE = 70;
+  const selectedAnswer = question
+    ? answers[question.id] || ""
+    : "";
 
-  /* =======================================================
-     PILIH JAWABAN
-  ======================================================= */
-
+  // MEMILIH JAWABAN
   const handleAnswer = (answer) => {
-    setSelectedAnswer(answer);
+    if (!question || finished || evaluating) return;
 
     setAnswers((prev) => ({
       ...prev,
@@ -146,374 +150,416 @@ function Quiz() {
     }));
   };
 
-  /* =======================================================
-     NEXT
-  ======================================================= */
+  // SOAL SEBELUMNYA
+  const handlePrevious = () => {
+    if (currentQuestion <= 0 || evaluating) return;
 
+    setCurrentQuestion((prev) => prev - 1);
+  };
+
+  // SOAL BERIKUTNYA
   const handleNext = () => {
-    if (!selectedAnswer) {
-      return;
-    }
+    if (!selectedAnswer || evaluating) return;
 
     if (currentQuestion < totalQuestions - 1) {
-      const nextIndex = currentQuestion + 1;
-
-      setCurrentQuestion(nextIndex);
-
-      setSelectedAnswer(answers[questions[nextIndex].id] || "");
-    } else {
-      finishQuiz();
+      setCurrentQuestion((prev) => prev + 1);
     }
   };
 
-  /* =======================================================
-     PREVIOUS
-  ======================================================= */
-
-  const handlePrevious = () => {
-    if (currentQuestion === 0) {
-      return;
-    }
-
-    const previousIndex = currentQuestion - 1;
-
-    setCurrentQuestion(previousIndex);
-
-    setSelectedAnswer(answers[questions[previousIndex].id] || "");
-  };
-
-  /* =======================================================
-     FINISH QUIZ
-  ======================================================= */
-
-  const finishQuiz = () => {
-    let correct = 0;
-
-    questions.forEach((item) => {
-      if (answers[item.id] === item.answer) {
-        correct++;
-      }
-    });
-
-    /*
-      Jawaban terakhir belum tentu sudah
-      masuk ke state answers ketika tombol
-      selesai ditekan.
-    */
-
-    if (selectedAnswer === question.answer) {
-      correct++;
-    }
-
-    const finalScore = Math.round((correct / totalQuestions) * 100);
-
-    setCorrectAnswers(correct);
-
-    setScore(finalScore);
-
-    setFinished(true);
-
-    /* Simpan hasil sementara */
-
-    localStorage.setItem(
-      "quiz_module_1",
-      JSON.stringify({
-        attempt,
-        score: finalScore,
-        correct,
-        total: totalQuestions,
-        passed: finalScore >= PASSING_SCORE,
-      }),
+  // MENYELESAIKAN DAN MENILAI PERCOBAAN
+  const finishQuiz = async () => {
+    const unansweredIndex = questions.findIndex(
+      (item) => !answers[item.id],
     );
-  };
 
-  /* =======================================================
-     ULANGI QUIZ
-  ======================================================= */
-
-  const retryQuiz = () => {
-    if (attempt >= MAX_ATTEMPTS) {
+    if (unansweredIndex !== -1) {
+      setCurrentQuestion(unansweredIndex);
       return;
     }
 
-    setAttempt((prev) => prev + 1);
+    if (evaluating || finished) return;
+
+    try {
+      setEvaluating(true);
+      setActionError("");
+
+      const data = await evaluateQuizAttempt(quiz.id, answers);
+
+      setResult(data);
+      setFinished(true);
+    } catch (err) {
+      setActionError(
+        err.message || "Gagal menilai percobaan kuis.",
+      );
+    } finally {
+      setEvaluating(false);
+    }
+  };
+
+  // MENGULANG PERCOBAAN
+  const handleRetry = () => {
+    if (
+      !result ||
+      result.attempts_used >= result.max_attempts ||
+      officialResult
+    ) {
+      return;
+    }
 
     setCurrentQuestion(0);
-
-    setSelectedAnswer("");
-
     setAnswers({});
-
+    setResult(null);
     setFinished(false);
-
-    setScore(0);
-
-    setCorrectAnswers(0);
+    setActionError("");
   };
 
-  /* =======================================================
-     RESULT
-  ======================================================= */
+  // MENGIRIM HASIL RESMI
+  const handleSubmitResult = async () => {
+    if (!result || submitting || officialResult) return;
 
-  if (finished) {
-    const passed = score >= PASSING_SCORE;
+    try {
+      setSubmitting(true);
+      setActionError("");
 
+      const data = await submitQuizResult(quiz.id, answers);
+
+      setOfficialResult(data);
+    } catch (err) {
+      setActionError(
+        err.message || "Gagal mengirim hasil resmi.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // LOADING
+  if (loading) {
     return (
       <div className="quiz-page">
         <Container>
-          <div className="quiz-result">
-            {/* Trophy */}
+          <div className="quiz-loading text-center py-5">
+            <Spinner animation="border" variant="primary" />
 
-            <div className={`quiz-result-icon ${passed ? "passed" : "failed"}`}>
-              {passed ? <FaTrophy /> : <FaRedo />}
-            </div>
+            <h4 className="mt-3">Memuat Kuis...</h4>
 
-            {/* Badge */}
-
-            <div
-              className={`quiz-result-badge ${passed ? "passed" : "failed"}`}
-            >
-              {passed ? "🎉 QUIZ SELESAI!" : "💪 JANGAN MENYERAH!"}
-            </div>
-
-            {/* Title */}
-
-            <h1>
-              {passed ? (
-                <>
-                  Hebat!
-                  <span>Kamu berhasil!</span>
-                </>
-              ) : (
-                <>
-                  Tetap Semangat!
-                  <span>Ayo coba lagi!</span>
-                </>
-              )}
-            </h1>
-
-            <p className="quiz-result-description">
-              {passed
-                ? "Kamu sudah memahami materi Module 01 dengan sangat baik."
-                : "Tidak apa-apa. Pelajari kembali materinya dan coba lagi ya!"}
-            </p>
-
-            {/* Score */}
-
-            <div className="quiz-score-card">
-              <div className="quiz-score-circle">
-                <strong>{score}</strong>
-
-                <span>Nilai</span>
-              </div>
-
-              <div className="quiz-score-info">
-                <div className="score-stars">
-                  {[1, 2, 3].map((star) => (
-                    <FaStar
-                      key={star}
-                      className={score >= star * 30 ? "star-active" : ""}
-                    />
-                  ))}
-                </div>
-
-                <strong>
-                  {correctAnswers} dari {totalQuestions} jawaban benar
-                </strong>
-
-                <p>
-                  Percobaan {attempt} dari {MAX_ATTEMPTS}
-                </p>
-              </div>
-            </div>
-
-            {/* Result message */}
-
-            {passed ? (
-              <div className="passed-message">
-                <FaCheck />
-
-                <div>
-                  <strong>Module berhasil diselesaikan!</strong>
-
-                  <p>
-                    Kamu sudah siap melanjutkan perjalanan belajar ke module
-                    berikutnya.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="failed-message">
-                <FaLightbulb />
-
-                <div>
-                  <strong>Jangan menyerah!</strong>
-
-                  <p>
-                    Kamu masih memiliki {MAX_ATTEMPTS - attempt} kesempatan
-                    untuk mencoba lagi.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Buttons */}
-
-            <div className="quiz-result-actions">
-              {passed ? (
-                <>
-                  <Button className="quiz-primary-button" href="/module">
-                    <FaBookOpen />
-                    Kembali ke Module
-                    <FaArrowRight />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {attempt < MAX_ATTEMPTS && (
-                    <Button className="quiz-primary-button" onClick={retryQuiz}>
-                      <FaRedo />
-                      Ulangi Quiz
-                    </Button>
-                  )}
-
-                  <Button className="quiz-secondary-button" href="/module/1">
-                    <FaBookOpen />
-                    Pelajari Lagi
-                  </Button>
-                </>
-              )}
-            </div>
-
-            {/* Attempts */}
-
-            <div className="attempt-indicator">
-              <span>Kesempatan</span>
-
-              <div className="attempt-dots">
-                {[1, 2, 3].map((number) => (
-                  <div
-                    key={number}
-                    className={`attempt-dot ${
-                      number <= attempt ? "used" : ""
-                    } ${number > attempt ? "available" : ""}`}
-                  >
-                    {number <= attempt ? <FaCheck /> : <span>{number}</span>}
-                  </div>
-                ))}
-              </div>
-
-              {attempt >= MAX_ATTEMPTS && !passed && (
-                <div className="attempt-limit">
-                  <FaLock />
-                  Kesempatan quiz telah habis.
-                </div>
-              )}
-            </div>
+            <p>Mohon tunggu, soal sedang disiapkan.</p>
           </div>
         </Container>
       </div>
     );
   }
 
-  /* =======================================================
-     QUIZ SCREEN
-  ======================================================= */
+  // ERROR MEMUAT KUIS
+  if (error) {
+    return (
+      <div className="quiz-page">
+        <Container>
+          <div className="quiz-error py-5">
+            <Alert variant="danger">
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <FaExclamationCircle />
+                <strong>Kuis tidak dapat dimuat</strong>
+              </div>
 
+              <p className="mb-3">{error}</p>
+
+              <Button
+                variant="outline-danger"
+                onClick={() => window.location.reload()}
+              >
+                Coba Lagi
+              </Button>
+
+              <Button
+                variant="secondary"
+                className="ms-2"
+                onClick={() => navigate("/module")}
+              >
+                Kembali ke Module
+              </Button>
+            </Alert>
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
+  // BELUM ADA SOAL
+  if (!quiz || totalQuestions === 0) {
+    return (
+      <div className="quiz-page">
+        <Container>
+          <div className="quiz-empty text-center py-5">
+            <FaBookOpen size={42} />
+
+            <h3 className="mt-3">Soal Belum Tersedia</h3>
+
+            <p>
+              Kuis ini belum memiliki soal yang dapat dikerjakan.
+            </p>
+
+            <Button
+              onClick={() => navigate(`/module/${moduleId}`)}
+              className="result-primary-button"
+            >
+              <FaArrowLeft />
+              Kembali ke Module
+            </Button>
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
+  // HALAMAN HASIL
+  if (finished) {
+    const isOfficial = Boolean(officialResult);
+    const displayedResult = officialResult || result;
+
+    const attemptsUsed =
+      displayedResult?.attempts_used ?? 0;
+
+    const maxAttempts =
+      displayedResult?.max_attempts ?? 3;
+
+    const canRetry =
+      !isOfficial && attemptsUsed < maxAttempts;
+
+    return (
+      <div className="quiz-page">
+        <Container>
+          <div className="quiz-result">
+            <div className="result-trophy">
+              <FaTrophy />
+            </div>
+
+            <span className="result-badge">
+              {isOfficial ? "HASIL RESMI" : "NILAI SEMENTARA"}
+            </span>
+
+            <h1>
+              {isOfficial ? "Selamat!" : "Hebat!"}
+
+              <span>
+                {isOfficial
+                  ? "Hasil kuis berhasil disimpan."
+                  : "Kamu sudah menyelesaikan percobaan."}
+              </span>
+            </h1>
+
+            <p className="result-description">
+              {isOfficial
+                ? "Nilai kuis ini sudah ditetapkan sebagai hasil resmi."
+                : "Periksa nilai sementara dan tentukan apakah ingin mencoba lagi atau mengirim hasil."}
+            </p>
+
+            {/* NILAI */}
+            <div className="score-card">
+              <div className="score-circle">
+                <strong>
+                  {displayedResult?.score ?? 0}
+                </strong>
+
+                <span>Nilai</span>
+              </div>
+
+              <div className="score-message">
+                <FaCheck />
+
+                <strong>
+                  {displayedResult?.correct_count ?? 0} dari{" "}
+                  {displayedResult?.total_questions ??
+                    totalQuestions}{" "}
+                  soal benar
+                </strong>
+
+                <p>
+                  Percobaan ke-
+                  {displayedResult?.attempt_number ?? 0} dari{" "}
+                  {maxAttempts}
+                </p>
+
+                <p>
+                  Kesempatan terpakai: {attemptsUsed}/
+                  {maxAttempts}
+                </p>
+              </div>
+            </div>
+
+            {/* PESAN ERROR */}
+            {actionError && (
+              <Alert variant="danger" className="mt-3">
+                {actionError}
+              </Alert>
+            )}
+
+            {/* TOMBOL */}
+            <div className="result-actions">
+              <Button
+                className="result-primary-button"
+                onClick={() =>
+                  navigate(`/module/${moduleId}`)
+                }
+              >
+                <FaBookOpen />
+                Kembali Belajar
+                <FaArrowRight />
+              </Button>
+
+              {!isOfficial && (
+                <>
+                  {canRetry && (
+                    <Button
+                      className="result-secondary-button"
+                      onClick={handleRetry}
+                      disabled={submitting}
+                    >
+                      <FaRedo />
+                      Coba Lagi
+                    </Button>
+                  )}
+
+                  <Button
+                    className="result-primary-button"
+                    onClick={handleSubmitResult}
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <>
+                        <Spinner
+                          size="sm"
+                          animation="border"
+                        />
+                        Mengirim...
+                      </>
+                    ) : (
+                      <>
+                        <FaCheck />
+                        Kirim Hasil
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* INFORMASI */}
+            <p className="result-note">
+              <FaLightbulb />
+
+              {isOfficial
+                ? "Hasil resmi telah dikirim. Kamu tidak dapat mengirim hasil lagi untuk kuis ini."
+                : canRetry
+                  ? "Nilai masih sementara. Kamu dapat mencoba lagi atau mengirim hasil percobaan ini."
+                  : "Kesempatan percobaan telah habis. Kirim hasil ini untuk menyimpan nilai resmi."}
+            </p>
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
+  // HALAMAN PENGERJAAN KUIS
   return (
     <div className="quiz-page">
-      {/* ===================================================
-          HEADER
-      =================================================== */}
-
+      {/* HEADER */}
       <section className="quiz-top">
         <Container>
           <div className="quiz-top-content">
-            <a href="/module/1" className="quiz-back-button">
+            <Button
+              onClick={() => navigate("/module")}
+              className="back-module-button"
+            >
               <FaArrowLeft />
+              Kembali ke Module
+            </Button>
 
-              <span>Kembali ke Materi</span>
-            </a>
+            <div className="quiz-title">
+              <span>QUIZ</span>
 
-            <div className="quiz-heading">
-              <span>🧠 QUIZ MODULE 01</span>
+              <h1>{quiz.title}</h1>
 
-              <h1>Tantangan Makhluk Hidup</h1>
+              <p>
+                {quiz.description ||
+                  "Uji pemahamanmu setelah mempelajari materi."}
+              </p>
             </div>
 
-            <div className="quiz-attempt">
-              <span>Percobaan</span>
+            <div className="question-counter">
+              <strong>{questionNumber}</strong>
 
-              <strong>
-                {attempt}/{MAX_ATTEMPTS}
-              </strong>
+              <span>/ {totalQuestions}</span>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* ===================================================
-          PROGRESS
-      =================================================== */}
-
+      {/* PROGRESS */}
       <div className="quiz-progress-wrapper">
         <div className="quiz-progress">
-          <div
-            className="quiz-progress-fill"
-            style={{
-              width: `${progress}%`,
-            }}
-          />
+          <ProgressBar now={progress} />
         </div>
       </div>
 
-      {/* ===================================================
-          QUIZ CONTENT
-      =================================================== */}
-
-      <section className="quiz-content">
+      {/* QUESTION */}
+      <section className="question-section">
         <Container>
-          <div className="quiz-container">
-            {/* Question info */}
+          <div className="question-wrapper">
+            <div className="question-card">
+              {/* HEADER SOAL */}
+              <div className="question-card-header">
+                <span className="question-number">
+                  Pertanyaan {questionNumber}
+                </span>
 
-            <div className="quiz-question-info">
-              <div>
-                <span>PERTANYAAN</span>
-
-                <strong>{questionNumber}</strong>
-
-                <small>/ {totalQuestions}</small>
+                <span className="question-type">
+                  Pilihan Ganda
+                </span>
               </div>
 
-              <span className="quiz-score-hint">⭐ Kumpulkan poinmu!</span>
-            </div>
+              {/* PERTANYAAN */}
+              <h2>{question.question_text}</h2>
 
-            {/* Question card */}
+              {/* GAMBAR SOAL */}
+              {question.image_url && (
+                <div className="question-image-wrapper">
+                  <img
+                    src={question.image_url}
+                    alt={`Gambar untuk soal ${questionNumber}`}
+                    className="question-image"
+                  />
+                </div>
+              )}
 
-            <div className="quiz-question-card">
-              <div className="quiz-question-icon">🧠</div>
-
-              <h2>{question.question}</h2>
-
-              <div className="quiz-options">
-                {question.options.map((option, index) => {
-                  const selected = selectedAnswer === option;
+              {/* PILIHAN JAWABAN */}
+              <div className="options-list">
+                {options.map((option) => {
+                  const isSelected =
+                    selectedAnswer === option.key;
 
                   return (
                     <button
-                      key={option}
+                      key={option.key}
                       type="button"
-                      className={`quiz-option ${selected ? "selected" : ""}`}
-                      onClick={() => handleAnswer(option)}
+                      className={`answer-option ${
+                        isSelected ? "selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleAnswer(option.key)
+                      }
+                      disabled={evaluating}
                     >
-                      <span className="quiz-option-letter">
-                        {String.fromCharCode(65 + index)}
+                      <span className="option-letter">
+                        {option.key}
                       </span>
 
-                      <span className="quiz-option-text">{option}</span>
+                      <span className="option-text">
+                        {option.value}
+                      </span>
 
-                      {selected && (
-                        <span className="quiz-option-check">
+                      {isSelected && (
+                        <span className="option-check">
                           <FaCheck />
                         </span>
                       )}
@@ -522,61 +568,74 @@ function Quiz() {
                 })}
               </div>
 
-              {/* Navigation */}
+              {/* ERROR AKSI */}
+              {actionError && (
+                <Alert variant="danger" className="mt-3">
+                  {actionError}
+                </Alert>
+              )}
 
-              <div className="quiz-navigation">
+              {/* FOOTER */}
+              <div className="question-footer">
                 <Button
-                  className="quiz-prev-button"
+                  className="previous-button"
                   onClick={handlePrevious}
-                  disabled={currentQuestion === 0}
+                  disabled={
+                    currentQuestion === 0 || evaluating
+                  }
                 >
                   <FaArrowLeft />
                   Sebelumnya
                 </Button>
 
-                <div className="quiz-question-dots">
-                  {questions.map((item, index) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={`quiz-question-dot ${
-                        index === currentQuestion ? "active" : ""
-                      } ${answers[item.id] ? "answered" : ""}`}
-                      onClick={() => {
-                        setCurrentQuestion(index);
+                <span className="answer-hint">
+                  {selectedAnswer
+                    ? "Jawaban dipilih ✓"
+                    : "Pilih salah satu jawaban"}
+                </span>
 
-                        setSelectedAnswer(answers[item.id] || "");
-                      }}
-                    />
-                  ))}
-                </div>
-
-                <Button
-                  className="quiz-next-button"
-                  onClick={handleNext}
-                  disabled={!selectedAnswer}
-                >
-                  {currentQuestion === totalQuestions - 1
-                    ? "Selesai"
-                    : "Berikutnya"}
-
-                  {currentQuestion === totalQuestions - 1 ? (
-                    <FaCheck />
-                  ) : (
+                {currentQuestion < totalQuestions - 1 ? (
+                  <Button
+                    className="next-button"
+                    onClick={handleNext}
+                    disabled={!selectedAnswer || evaluating}
+                  >
+                    Berikutnya
                     <FaArrowRight />
-                  )}
-                </Button>
+                  </Button>
+                ) : (
+                  <Button
+                    className="next-button"
+                    onClick={finishQuiz}
+                    disabled={!selectedAnswer || evaluating}
+                  >
+                    {evaluating ? (
+                      <>
+                        <Spinner
+                          size="sm"
+                          animation="border"
+                        />
+                        Menilai...
+                      </>
+                    ) : (
+                      <>
+                        Selesai
+                        <FaCheck />
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             </div>
 
-            {/* Tip */}
-
-            <div className="quiz-tip">
+            {/* INFORMASI */}
+            <div className="quiz-information">
               <FaLightbulb />
 
               <p>
-                <strong>Tips:</strong> Baca pertanyaan dengan teliti dan pilih
-                jawaban yang menurutmu paling tepat.
+                <strong>Tips:</strong> Bacalah pertanyaan
+                dengan teliti sebelum memilih jawaban.
+                Tidak perlu terburu-buru, ya!
               </p>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaCheck,
@@ -13,76 +13,209 @@ import {
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { fetchWithAuth, getAccessToken } from "../../service/authService";
+
+import {
+  getQuestionsByPretest,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion,
+} from "../../service/pretestQuestionService";
+
 import "../../css/dosen/DosenPretestSoal.css";
 
 /* =========================================================
-   DATA PRETEST
+   KONFIGURASI API DAN STORAGE
 ========================================================= */
 
-const pretestData = [
-  {
-    id: 1,
-    title: "Pretest Makhluk Hidup",
-    module: "Makhluk Hidup",
-    duration: 30,
-  },
-  {
-    id: 2,
-    title: "Pretest Gaya dan Gerak",
-    module: "Gaya dan Gerak",
-    duration: 30,
-  },
-  {
-    id: 3,
-    title: "Pretest Energi",
-    module: "Energi",
-    duration: 20,
-  },
-];
+const API_URL = "http://localhost:5000/api";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const STORAGE_BUCKET = "media-storage";
+const STORAGE_FOLDER = "modules/pretest-questions";
+
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 /* =========================================================
-   DATA SOAL DUMMY
+   FORM KOSONG
 ========================================================= */
 
-const initialQuestions = [
-  {
-    id: 1,
-    pretestId: 1,
-    question: "Manakah yang termasuk makhluk hidup?",
-    questionImage: "",
-    optionA: "Batu",
-    optionB: "Kucing",
-    optionC: "Meja",
-    optionD: "Buku",
-    correctAnswer: "B",
-    points: 10,
-  },
-  {
-    id: 2,
-    pretestId: 1,
-    question: "Salah satu ciri makhluk hidup adalah...",
-    questionImage: "",
-    optionA: "Tidak membutuhkan makanan",
-    optionB: "Tidak dapat tumbuh",
-    optionC: "Dapat berkembang biak",
-    optionD: "Tidak dapat bergerak",
-    correctAnswer: "C",
-    points: 10,
-  },
-  {
-    id: 3,
-    pretestId: 1,
-    question: "Perhatikan gambar berikut. Apa yang sedang dilakukan tumbuhan?",
-    questionImage:
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=80",
-    optionA: "Tumbuh",
-    optionB: "Bergerak",
-    optionC: "Berkembang biak",
-    optionD: "Tidur",
-    correctAnswer: "A",
-    points: 10,
-  },
-];
+const emptyForm = {
+  question: "",
+  questionImage: "",
+  optionA: "",
+  optionB: "",
+  optionC: "",
+  optionD: "",
+  correctAnswer: "A",
+  points: 10,
+};
+
+/* =========================================================
+   NORMALISASI DATA SOAL
+========================================================= */
+
+const mapQuestion = (item) => ({
+  id: item.id,
+  pretestId: item.pretest_id,
+  orderNumber: Number(item.order_number || 1),
+  question: item.question_text || "",
+  questionImage: item.image_url || "",
+  optionA: item.option_a || "",
+  optionB: item.option_b || "",
+  optionC: item.option_c || "",
+  optionD: item.option_d || "",
+  correctAnswer: (item.correct_answer || "A").toUpperCase(),
+  points: Number(item.weight ?? 10),
+});
+
+/* =========================================================
+   HELPER STORAGE
+========================================================= */
+
+const getPublicUrl = (path) => {
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
+};
+
+const getStoragePath = (imageUrl) => {
+  if (!imageUrl || !SUPABASE_URL) return null;
+
+  try {
+    const url = new URL(imageUrl);
+    const marker = `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+    const index = url.pathname.indexOf(marker);
+
+    if (index === -1) return null;
+
+    return decodeURIComponent(url.pathname.slice(index + marker.length));
+  } catch {
+    return null;
+  }
+};
+
+/* =========================================================
+   UPLOAD GAMBAR
+========================================================= */
+
+const uploadPretestImage = async (file) => {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error("Konfigurasi Supabase belum tersedia.");
+  }
+
+  if (!file) {
+    throw new Error("File gambar belum dipilih.");
+  }
+
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error("Gunakan gambar JPG, PNG, atau WEBP.");
+  }
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error("Ukuran gambar maksimal 2 MB.");
+  }
+
+  const token = getAccessToken();
+
+  if (!token) {
+    throw new Error("Session tidak ditemukan. Silakan login kembali.");
+  }
+
+  const extension = file.name.split(".").pop().toLowerCase();
+  const fileName = `${crypto.randomUUID()}.${extension}`;
+  const path = `${STORAGE_FOLDER}/${fileName}`;
+
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+
+  const response = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodedPath}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": file.type,
+        "x-upsert": "false",
+      },
+      body: file,
+    },
+  );
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || result.error || "Gagal mengunggah gambar.",
+    );
+  }
+
+  return {
+    path,
+    url: getPublicUrl(path),
+  };
+};
+
+/* =========================================================
+   HAPUS GAMBAR STORAGE
+========================================================= */
+
+const deleteStorageImage = async (path) => {
+  if (!path) return;
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error("Konfigurasi Supabase belum tersedia.");
+  }
+
+  const token = getAccessToken();
+
+  if (!token) {
+    throw new Error("Session tidak ditemukan.");
+  }
+
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+
+  const response = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodedPath}`,
+    {
+      method: "DELETE",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || result.error || "Gagal menghapus gambar.",
+    );
+  }
+};
+
+/* =========================================================
+   AMBIL DETAIL PRETEST
+========================================================= */
+
+const getPretestDetail = async (id) => {
+  const response = await fetchWithAuth(
+    `${API_URL}/pretests/${encodeURIComponent(id)}`,
+  );
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok || result?.success === false) {
+    throw new Error(result?.message || "Gagal mengambil data pretest.");
+  }
+
+  return result?.data ?? null;
+};
 
 /* =========================================================
    COMPONENT
@@ -92,65 +225,120 @@ function DosenPretestSoal() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const pretestId = Number(id);
+  const [currentPretest, setCurrentPretest] = useState(null);
+  const [questions, setQuestions] = useState([]);
 
-  const currentPretest =
-    pretestData.find((pretest) => pretest.id === pretestId) || pretestData[0];
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
-  const [questions, setQuestions] = useState(initialQuestions);
-
+  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
-
   const [editingQuestion, setEditingQuestion] = useState(null);
 
-  const [formData, setFormData] = useState({
-    question: "",
-    questionImage: "",
-    optionA: "",
-    optionB: "",
-    optionC: "",
-    optionD: "",
-    correctAnswer: "A",
-    points: 10,
-  });
+  const [formData, setFormData] = useState({ ...emptyForm });
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
-  /* =======================================================
-     FILTER SOAL
-  ======================================================= */
-
-  const currentQuestions = useMemo(() => {
-    return questions.filter(
-      (question) => question.pretestId === currentPretest.id,
-    );
-  }, [questions, currentPretest.id]);
-
-  /* =======================================================
-     TOTAL NILAI
-  ======================================================= */
-
-  const totalPoints = currentQuestions.reduce(
+  const totalPoints = questions.reduce(
     (total, question) => total + Number(question.points || 0),
     0,
   );
+
+  /* =======================================================
+     MEMUAT SOAL
+  ======================================================= */
+
+  const loadQuestions = async (pretestId) => {
+    const data = await getQuestionsByPretest(pretestId);
+
+    const mapped = Array.isArray(data)
+      ? data.map(mapQuestion).sort((a, b) => a.orderNumber - b.orderNumber)
+      : [];
+
+    setQuestions(mapped);
+    return mapped;
+  };
+
+  /* =======================================================
+     MEMUAT DATA PRETEST DAN SOAL
+  ======================================================= */
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadData = async () => {
+      if (!id) {
+        setCurrentPretest(null);
+        setQuestions([]);
+        setError("ID pretest tidak ditemukan.");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError("");
+      setCurrentPretest(null);
+      setQuestions([]);
+
+      try {
+        const pretest = await getPretestDetail(id);
+
+        if (ignore) return;
+
+        if (!pretest) {
+          throw new Error("Data pretest tidak ditemukan.");
+        }
+
+        setCurrentPretest(pretest);
+
+        const questionData = await getQuestionsByPretest(id);
+
+        if (ignore) return;
+
+        const mapped = Array.isArray(questionData)
+          ? questionData
+              .map(mapQuestion)
+              .sort((a, b) => a.orderNumber - b.orderNumber)
+          : [];
+
+        setQuestions(mapped);
+      } catch (err) {
+        if (ignore) return;
+
+        setError(err.message || "Gagal memuat data.");
+        setCurrentPretest(null);
+        setQuestions([]);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadData();
+
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
+
+  /* =======================================================
+     RESET FORM
+  ======================================================= */
+
+  const resetForm = () => {
+    setFormData({ ...emptyForm });
+    setEditingQuestion(null);
+    setSelectedImageFile(null);
+  };
 
   /* =======================================================
      TAMBAH SOAL
   ======================================================= */
 
   const handleAdd = () => {
-    setEditingQuestion(null);
-
-    setFormData({
-      question: "",
-      questionImage: "",
-      optionA: "",
-      optionB: "",
-      optionC: "",
-      optionD: "",
-      correctAnswer: "A",
-      points: 10,
-    });
-
+    resetForm();
+    setError("");
     setShowModal(true);
   };
 
@@ -168,15 +356,17 @@ function DosenPretestSoal() {
       optionB: question.optionB,
       optionC: question.optionC,
       optionD: question.optionD,
-      correctAnswer: question.correctAnswer,
-      points: question.points,
+      correctAnswer: question.correctAnswer || "A",
+      points: question.points || 10,
     });
 
+    setSelectedImageFile(null);
+    setError("");
     setShowModal(true);
   };
 
   /* =======================================================
-     FORM CHANGE
+     PERUBAHAN FORM
   ======================================================= */
 
   const handleChange = (event) => {
@@ -189,163 +379,265 @@ function DosenPretestSoal() {
   };
 
   /* =======================================================
-     UPLOAD GAMBAR
+     PILIH GAMBAR
   ======================================================= */
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
 
-    if (!file) {
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setError("Gunakan gambar JPG, PNG, atau WEBP.");
+      event.target.value = "";
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
-      alert("File yang dipilih harus berupa gambar.");
+    if (file.size > MAX_IMAGE_SIZE) {
+      setError("Ukuran gambar maksimal 2 MB.");
+      event.target.value = "";
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    setError("");
+    setSelectedImageFile(file);
 
-    if (file.size > maxSize) {
-      alert("Ukuran gambar maksimal 5 MB.");
-      return;
-    }
-
-    const imageUrl = URL.createObjectURL(file);
+    const previewUrl = URL.createObjectURL(file);
 
     setFormData((previous) => ({
       ...previous,
-      questionImage: imageUrl,
+      questionImage: previewUrl,
     }));
   };
 
-  /* =========================================================
-   HAPUS GAMBAR
-========================================================= */
+  /* =======================================================
+     HAPUS GAMBAR DARI FORM
+  ======================================================= */
 
   const handleRemoveImage = () => {
     setFormData((previous) => ({
       ...previous,
       questionImage: "",
     }));
+
+    setSelectedImageFile(null);
+
+    const input = document.getElementById("questionImage");
+
+    if (input) {
+      input.value = "";
+    }
+  };
+
+  /* =======================================================
+     TUTUP MODAL
+  ======================================================= */
+
+  const closeModal = () => {
+    if (saving) return;
+
+    setShowModal(false);
+    resetForm();
+  };
+
+  /* =======================================================
+     MEMBUAT PAYLOAD
+  ======================================================= */
+
+  const buildPayload = (orderNumber, imageUrl) => ({
+    pretest_id: id,
+    question_text: formData.question.trim(),
+    image_url: imageUrl,
+    option_a: formData.optionA.trim(),
+    option_b: formData.optionB.trim(),
+    option_c: formData.optionC.trim(),
+    option_d: formData.optionD.trim(),
+    correct_answer: formData.correctAnswer.toUpperCase(),
+    weight: Number(formData.points),
+    order_number: orderNumber,
+  });
+
+  /* =======================================================
+     VALIDASI FORM
+  ======================================================= */
+
+  const validateForm = () => {
+    if (!formData.question.trim()) {
+      return "Pertanyaan wajib diisi.";
+    }
+
+    const options = [
+      formData.optionA,
+      formData.optionB,
+      formData.optionC,
+      formData.optionD,
+    ];
+
+    if (options.some((option) => !option.trim())) {
+      return "Semua pilihan jawaban wajib diisi.";
+    }
+
+    if (!["A", "B", "C", "D"].includes(formData.correctAnswer)) {
+      return "Pilih jawaban benar yang valid.";
+    }
+
+    const points = Number(formData.points);
+
+    if (!Number.isInteger(points) || points <= 0) {
+      return "Bobot soal harus berupa bilangan bulat positif.";
+    }
+
+    if (
+      selectedImageFile &&
+      !ALLOWED_IMAGE_TYPES.includes(selectedImageFile.type)
+    ) {
+      return "Format gambar tidak didukung.";
+    }
+
+    if (selectedImageFile && selectedImageFile.size > MAX_IMAGE_SIZE) {
+      return "Ukuran gambar maksimal 2 MB.";
+    }
+
+    return "";
   };
 
   /* =======================================================
      SIMPAN SOAL
   ======================================================= */
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!formData.question.trim()) {
-      alert("Pertanyaan wajib diisi.");
+    const validationError = validateForm();
+
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
-    if (!formData.optionA.trim()) {
-      alert("Pilihan A wajib diisi.");
-      return;
+    setSaving(true);
+    setError("");
+
+    let uploadedImage = null;
+    let databaseSaved = false;
+
+    try {
+      let orderNumber;
+
+      if (editingQuestion) {
+        orderNumber = editingQuestion.orderNumber;
+      } else {
+        orderNumber =
+          questions.length > 0
+            ? Math.max(...questions.map((question) => question.orderNumber)) + 1
+            : 1;
+      }
+
+      /*
+       * Jika gambar lama masih berupa URL,
+       * pertahankan URL tersebut.
+       *
+       * Jika gambar sengaja dihapus,
+       * imageUrl akan menjadi null.
+       */
+      let imageUrl = formData.questionImage.startsWith("http")
+        ? formData.questionImage
+        : null;
+
+      /* Upload gambar baru */
+      if (selectedImageFile) {
+        uploadedImage = await uploadPretestImage(selectedImageFile);
+        imageUrl = uploadedImage.url;
+      }
+
+      const payload = buildPayload(orderNumber, imageUrl);
+
+      /* EDIT */
+      if (editingQuestion) {
+        await updateQuestion(editingQuestion.id, payload);
+        databaseSaved = true;
+
+        const oldPath = getStoragePath(editingQuestion.questionImage);
+
+        const imageWasReplacedOrRemoved =
+          Boolean(oldPath) && (Boolean(uploadedImage) || !imageUrl);
+
+        if (
+          imageWasReplacedOrRemoved &&
+          oldPath.startsWith(`${STORAGE_FOLDER}/`)
+        ) {
+          try {
+            await deleteStorageImage(oldPath);
+          } catch (storageError) {
+            console.warn(
+              "Data soal berhasil diperbarui, tetapi gambar lama gagal dihapus:",
+              storageError,
+            );
+          }
+        }
+      } else {
+        /* TAMBAH */
+        await createQuestion(payload);
+        databaseSaved = true;
+      }
+
+      await loadQuestions(id);
+
+      setShowModal(false);
+      resetForm();
+    } catch (err) {
+      if (uploadedImage && !databaseSaved) {
+        try {
+          await deleteStorageImage(uploadedImage.path);
+        } catch (cleanupError) {
+          console.warn("File hasil upload gagal dibersihkan:", cleanupError);
+        }
+      }
+
+      setError(err.message || "Gagal menyimpan soal.");
+    } finally {
+      setSaving(false);
     }
-
-    if (!formData.optionB.trim()) {
-      alert("Pilihan B wajib diisi.");
-      return;
-    }
-
-    if (!formData.optionC.trim()) {
-      alert("Pilihan C wajib diisi.");
-      return;
-    }
-
-    if (!formData.optionD.trim()) {
-      alert("Pilihan D wajib diisi.");
-      return;
-    }
-
-    if (!formData.points) {
-      alert("Bobot soal wajib diisi.");
-      return;
-    }
-
-    if (editingQuestion) {
-      setQuestions((previous) =>
-        previous.map((question) =>
-          question.id === editingQuestion.id
-            ? {
-                ...question,
-                question: formData.question.trim(),
-                questionImage: formData.questionImage,
-                optionA: formData.optionA.trim(),
-                optionB: formData.optionB.trim(),
-                optionC: formData.optionC.trim(),
-                optionD: formData.optionD.trim(),
-                correctAnswer: formData.correctAnswer,
-                points: Number(formData.points),
-              }
-            : question,
-        ),
-      );
-    } else {
-      const newId =
-        questions.length > 0
-          ? Math.max(...questions.map((question) => question.id)) + 1
-          : 1;
-
-      const newQuestion = {
-        id: newId,
-        pretestId: currentPretest.id,
-        question: formData.question.trim(),
-        questionImage: formData.questionImage,
-        optionA: formData.optionA.trim(),
-        optionB: formData.optionB.trim(),
-        optionC: formData.optionC.trim(),
-        optionD: formData.optionD.trim(),
-        correctAnswer: formData.correctAnswer,
-        points: Number(formData.points),
-      };
-
-      setQuestions((previous) => [...previous, newQuestion]);
-    }
-
-    closeModal();
   };
 
   /* =======================================================
      HAPUS SOAL
   ======================================================= */
 
-  const handleDelete = (questionId) => {
+  const handleDelete = async (question) => {
     const confirmed = window.confirm(
       "Apakah kamu yakin ingin menghapus soal ini?",
     );
 
-    if (!confirmed) {
-      return;
+    if (!confirmed) return;
+
+    setDeletingId(question.id);
+    setError("");
+
+    try {
+      await deleteQuestion(question.id);
+
+      const imagePath = getStoragePath(question.questionImage);
+
+      if (imagePath && imagePath.startsWith(`${STORAGE_FOLDER}/`)) {
+        try {
+          await deleteStorageImage(imagePath);
+        } catch (storageError) {
+          console.warn(
+            "Soal terhapus, tetapi gambar gagal dihapus:",
+            storageError,
+          );
+        }
+      }
+
+      setQuestions((previous) =>
+        previous.filter((item) => item.id !== question.id),
+      );
+    } catch (err) {
+      setError(err.message || "Gagal menghapus soal.");
+    } finally {
+      setDeletingId(null);
     }
-
-    setQuestions((previous) =>
-      previous.filter((question) => question.id !== questionId),
-    );
-  };
-
-  /* =======================================================
-     CLOSE MODAL
-  ======================================================= */
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditingQuestion(null);
-
-    setFormData({
-      question: "",
-      questionImage: "",
-      optionA: "",
-      optionB: "",
-      optionC: "",
-      optionD: "",
-      correctAnswer: "A",
-      points: 10,
-    });
   };
 
   /* =======================================================
@@ -356,11 +648,67 @@ function DosenPretestSoal() {
     navigate("/dosen/pretest");
   };
 
+  /* =======================================================
+     TANPA ID
+  ======================================================= */
+
+  if (!id) {
+    return (
+      <div className="dosen-pretest-soal-page">
+        <button
+          type="button"
+          className="dosen-pretest-soal-back-btn"
+          onClick={handleBack}
+        >
+          <FaArrowLeft />
+          Kembali ke Pretest
+        </button>
+
+        <p role="alert">ID pretest tidak ditemukan.</p>
+      </div>
+    );
+  }
+
+  /* =======================================================
+     LOADING
+  ======================================================= */
+
+  if (loading) {
+    return (
+      <div className="dosen-pretest-soal-page">
+        <p>Memuat data pretest dan soal...</p>
+      </div>
+    );
+  }
+
+  /* =======================================================
+     PRETEST TIDAK DITEMUKAN
+  ======================================================= */
+
+  if (!currentPretest) {
+    return (
+      <div className="dosen-pretest-soal-page">
+        <button
+          type="button"
+          className="dosen-pretest-soal-back-btn"
+          onClick={handleBack}
+        >
+          <FaArrowLeft />
+          Kembali ke Pretest
+        </button>
+
+        <p role="alert">{error || "Data pretest tidak ditemukan."}</p>
+      </div>
+    );
+  }
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
   return (
     <div className="dosen-pretest-soal-page">
-      {/* ===================================================
-          HEADER
-      =================================================== */}
+      {/* HEADER */}
 
       <div className="dosen-pretest-soal-header">
         <div>
@@ -379,10 +727,7 @@ function DosenPretestSoal() {
           </span>
 
           <h1>{currentPretest.title}</h1>
-
-          <p>
-            {currentPretest.module} • {currentPretest.duration} menit
-          </p>
+          <p>{currentPretest.module || "Pretest"}</p>
         </div>
 
         <button
@@ -395,14 +740,18 @@ function DosenPretestSoal() {
         </button>
       </div>
 
-      {/* ===================================================
-          SUMMARY
-      =================================================== */}
+      {error && (
+        <div role="alert" className="dosen-pretest-soal-error">
+          {error}
+        </div>
+      )}
+
+      {/* RINGKASAN */}
 
       <div className="dosen-pretest-soal-summary">
         <div className="dosen-pretest-soal-summary-item">
           <span>Total Soal</span>
-          <strong>{currentQuestions.length}</strong>
+          <strong>{questions.length}</strong>
         </div>
 
         <div className="dosen-pretest-soal-summary-item">
@@ -410,31 +759,22 @@ function DosenPretestSoal() {
           <strong>{totalPoints}</strong>
         </div>
 
-        <div className="dosen-pretest-soal-summary-item">
-          <span>Durasi</span>
-          <strong>{currentPretest.duration} Menit</strong>
-        </div>
-
         <div className="dosen-pretest-soal-summary-note">
           <FaFileImage />
-
           <span>Gambar soal bersifat opsional.</span>
         </div>
       </div>
 
-      {/* ===================================================
-          LIST SOAL
-      =================================================== */}
+      {/* DAFTAR SOAL */}
 
       <div className="dosen-pretest-soal-list">
-        {currentQuestions.length > 0 ? (
-          currentQuestions.map((question, index) => (
+        {questions.length > 0 ? (
+          questions.map((question, index) => (
             <article className="dosen-pretest-soal-card" key={question.id}>
-              {/* CARD HEADER */}
-
               <div className="dosen-pretest-soal-card-header">
                 <div className="dosen-pretest-soal-number">
-                  SOAL {String(index + 1).padStart(2, "0")}
+                  SOAL{" "}
+                  {String(question.orderNumber || index + 1).padStart(2, "0")}
                 </div>
 
                 <div className="dosen-pretest-soal-card-actions">
@@ -450,15 +790,14 @@ function DosenPretestSoal() {
                   <button
                     type="button"
                     className="dosen-pretest-soal-delete-btn"
-                    onClick={() => handleDelete(question.id)}
+                    onClick={() => handleDelete(question)}
+                    disabled={deletingId === question.id}
                   >
                     <FaTrash />
-                    Hapus
+                    {deletingId === question.id ? "Menghapus..." : "Hapus"}
                   </button>
                 </div>
               </div>
-
-              {/* QUESTION */}
 
               <div className="dosen-pretest-soal-question">
                 <h3>{question.question}</h3>
@@ -473,26 +812,12 @@ function DosenPretestSoal() {
                 )}
               </div>
 
-              {/* OPTIONS */}
-
               <div className="dosen-pretest-soal-options">
                 {[
-                  {
-                    key: "A",
-                    value: question.optionA,
-                  },
-                  {
-                    key: "B",
-                    value: question.optionB,
-                  },
-                  {
-                    key: "C",
-                    value: question.optionC,
-                  },
-                  {
-                    key: "D",
-                    value: question.optionD,
-                  },
+                  { key: "A", value: question.optionA },
+                  { key: "B", value: question.optionB },
+                  { key: "C", value: question.optionC },
+                  { key: "D", value: question.optionD },
                 ].map((option) => {
                   const isCorrect = option.key === question.correctAnswer;
 
@@ -522,8 +847,6 @@ function DosenPretestSoal() {
                 })}
               </div>
 
-              {/* FOOTER */}
-
               <div className="dosen-pretest-soal-card-footer">
                 <span>
                   Bobot: <strong>{question.points}</strong> poin
@@ -545,9 +868,7 @@ function DosenPretestSoal() {
         ) : (
           <div className="dosen-pretest-soal-empty">
             <FaQuestionCircle />
-
             <h3>Belum ada soal</h3>
-
             <p>Tambahkan soal pertama untuk pretest ini.</p>
 
             <button type="button" onClick={handleAdd}>
@@ -558,20 +879,19 @@ function DosenPretestSoal() {
         )}
       </div>
 
-      {/* ===================================================
-          MODAL
-      =================================================== */}
+      {/* MODAL TAMBAH / EDIT */}
 
       {showModal && (
         <div
           className="dosen-pretest-soal-modal-overlay"
-          onMouseDown={closeModal}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !saving) {
+              closeModal();
+            }
+          }}
         >
-          <div
-            className="dosen-pretest-soal-modal"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            {/* MODAL HEADER */}
+          <div className="dosen-pretest-soal-modal">
+            {/* HEADER MODAL */}
 
             <div className="dosen-pretest-soal-modal-header">
               <div>
@@ -584,6 +904,7 @@ function DosenPretestSoal() {
                 type="button"
                 className="dosen-pretest-soal-modal-close"
                 onClick={closeModal}
+                disabled={saving}
               >
                 <FaTimes />
               </button>
@@ -592,8 +913,6 @@ function DosenPretestSoal() {
             {/* FORM */}
 
             <form onSubmit={handleSubmit}>
-              {/* QUESTION */}
-
               <div className="dosen-pretest-soal-field">
                 <label htmlFor="question">Pertanyaan</label>
 
@@ -604,17 +923,18 @@ function DosenPretestSoal() {
                   placeholder="Tuliskan pertanyaan soal..."
                   value={formData.question}
                   onChange={handleChange}
+                  disabled={saving}
+                  required
                 />
               </div>
 
-              {/* IMAGE */}
+              {/* GAMBAR */}
 
               <div className="dosen-pretest-soal-image-field">
                 <div className="dosen-pretest-soal-image-field-header">
                   <div>
                     <label>Gambar Soal</label>
-
-                    <small>Opsional • JPG, PNG, WEBP • Maks. 5 MB</small>
+                    <small>Opsional • JPG, PNG, WEBP • Maks. 2 MB</small>
                   </div>
 
                   {formData.questionImage && (
@@ -622,6 +942,7 @@ function DosenPretestSoal() {
                       type="button"
                       className="dosen-pretest-soal-remove-image"
                       onClick={handleRemoveImage}
+                      disabled={saving}
                     >
                       <FaTrash />
                       Hapus gambar
@@ -646,9 +967,7 @@ function DosenPretestSoal() {
                     className="dosen-pretest-soal-upload-box"
                   >
                     <FaUpload />
-
                     <strong>Pilih gambar soal</strong>
-
                     <span>Klik untuk memilih gambar</span>
 
                     <input
@@ -656,6 +975,7 @@ function DosenPretestSoal() {
                       type="file"
                       accept="image/png,image/jpeg,image/webp"
                       onChange={handleImageChange}
+                      disabled={saving}
                     />
                   </label>
                 )}
@@ -672,68 +992,34 @@ function DosenPretestSoal() {
                       type="file"
                       accept="image/png,image/jpeg,image/webp"
                       onChange={handleImageChange}
+                      disabled={saving}
                     />
                   </label>
                 )}
               </div>
 
-              {/* OPTIONS */}
+              {/* PILIHAN JAWABAN */}
 
               <div className="dosen-pretest-soal-options-form">
-                <div className="dosen-pretest-soal-field">
-                  <label htmlFor="optionA">Pilihan A</label>
+                {["A", "B", "C", "D"].map((letter) => (
+                  <div className="dosen-pretest-soal-field" key={letter}>
+                    <label htmlFor={`option${letter}`}>Pilihan {letter}</label>
 
-                  <input
-                    id="optionA"
-                    name="optionA"
-                    type="text"
-                    placeholder="Masukkan pilihan A"
-                    value={formData.optionA}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="dosen-pretest-soal-field">
-                  <label htmlFor="optionB">Pilihan B</label>
-
-                  <input
-                    id="optionB"
-                    name="optionB"
-                    type="text"
-                    placeholder="Masukkan pilihan B"
-                    value={formData.optionB}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="dosen-pretest-soal-field">
-                  <label htmlFor="optionC">Pilihan C</label>
-
-                  <input
-                    id="optionC"
-                    name="optionC"
-                    type="text"
-                    placeholder="Masukkan pilihan C"
-                    value={formData.optionC}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="dosen-pretest-soal-field">
-                  <label htmlFor="optionD">Pilihan D</label>
-
-                  <input
-                    id="optionD"
-                    name="optionD"
-                    type="text"
-                    placeholder="Masukkan pilihan D"
-                    value={formData.optionD}
-                    onChange={handleChange}
-                  />
-                </div>
+                    <input
+                      id={`option${letter}`}
+                      name={`option${letter}`}
+                      type="text"
+                      placeholder={`Masukkan pilihan ${letter}`}
+                      value={formData[`option${letter}`]}
+                      onChange={handleChange}
+                      disabled={saving}
+                      required
+                    />
+                  </div>
+                ))}
               </div>
 
-              {/* ANSWER + POINTS */}
+              {/* JAWABAN DAN BOBOT */}
 
               <div className="dosen-pretest-soal-form-row">
                 <div className="dosen-pretest-soal-field">
@@ -744,14 +1030,13 @@ function DosenPretestSoal() {
                     name="correctAnswer"
                     value={formData.correctAnswer}
                     onChange={handleChange}
+                    disabled={saving}
                   >
-                    <option value="A">A</option>
-
-                    <option value="B">B</option>
-
-                    <option value="C">C</option>
-
-                    <option value="D">D</option>
+                    {["A", "B", "C", "D"].map((letter) => (
+                      <option key={letter} value={letter}>
+                        {letter}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -763,38 +1048,48 @@ function DosenPretestSoal() {
                     name="points"
                     type="number"
                     min="1"
+                    step="1"
                     value={formData.points}
                     onChange={handleChange}
+                    disabled={saving}
+                    required
                   />
                 </div>
               </div>
 
-              {/* NOTE */}
+              {/* CATATAN */}
 
               <div className="dosen-pretest-soal-note">
                 <FaFileImage />
-
                 <p>
                   Gambar bersifat opsional. Jika soal tidak membutuhkan gambar,
                   langsung isi pertanyaan dan pilihan jawaban.
                 </p>
               </div>
 
-              {/* ACTION */}
+              {/* AKSI MODAL */}
 
               <div className="dosen-pretest-soal-modal-actions">
                 <button
                   type="button"
                   className="dosen-pretest-soal-cancel-btn"
                   onClick={closeModal}
+                  disabled={saving}
                 >
                   Batal
                 </button>
 
-                <button type="submit" className="dosen-pretest-soal-save-btn">
+                <button
+                  type="submit"
+                  className="dosen-pretest-soal-save-btn"
+                  disabled={saving}
+                >
                   <FaSave />
-
-                  {editingQuestion ? "Simpan Perubahan" : "Simpan Soal"}
+                  {saving
+                    ? "Mengunggah dan menyimpan..."
+                    : editingQuestion
+                      ? "Simpan Perubahan"
+                      : "Simpan Soal"}
                 </button>
               </div>
             </form>

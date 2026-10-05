@@ -1,11 +1,35 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getQuestions, createQuestion, updateQuestion, deleteQuestion, submitQuiz } = require('../controllers/quizController');
 
-router.get('/:moduleId', getQuestions);
-router.post('/', createQuestion);
-router.put('/:id', updateQuestion);
-router.delete('/:id', deleteQuestion);
-router.post('/submit', submitQuiz);
+const {
+  getAllQuizzes,
+  getQuizById,
+  getQuizByModule,
+  createQuiz,
+  updateQuiz,
+  deleteQuiz,
+  getModulesForQuiz,
+} = require("../controllers/quizController");
+
+// GET daftar modul untuk dropdown form kuis
+router.get("/modules", getModulesForQuiz);
+
+// GET kuis berdasarkan modul
+router.get("/module/:moduleId", getQuizByModule);
+
+// GET semua kuis
+router.get("/", getAllQuizzes);
+
+// CREATE kuis
+router.post("/", createQuiz);
+
+// UPDATE kuis
+router.put("/:id", updateQuiz);
+
+// DELETE kuis
+router.delete("/:id", deleteQuiz);
+
+// GET kuis berdasarkan ID
+router.get("/:id", getQuizById);
 
 module.exports = router;
