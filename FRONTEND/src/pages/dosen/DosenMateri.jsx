@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   FaArrowLeft,
   FaBookOpen,
@@ -7,110 +7,142 @@ import {
   FaImage,
   FaPlus,
   FaSave,
-  FaSearch,
   FaSeedling,
   FaTimes,
   FaTrash,
 } from "react-icons/fa";
 
+import {
+  getMaterialsByModule,
+  createMaterial,
+  updateMaterial,
+  deleteMaterial,
+} from "../../service/moduleMaterialService";
+
+import { getModuleById } from "../../service/moduleService";
+import { getAccessToken } from "../../service/authService";
+
 import "../../css/dosen/DosenMateri.css";
 
 /* =========================================================
-   DATA MODULE
+   KONFIGURASI STORAGE
 ========================================================= */
 
-const moduleData = {
-  1: {
-    title: "Makhluk Hidup",
-    description:
-      "Mengenal ciri-ciri, kebutuhan, pertumbuhan, dan perkembangbiakan makhluk hidup.",
-  },
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  2: {
-    title: "Gaya dan Gerak",
-    description:
-      "Mempelajari hubungan antara gaya, gerak, dan perubahan gerak benda.",
-  },
+const STORAGE_BUCKET = "media-storage";
+const STORAGE_FOLDER = "modules/materials";
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 
-  3: {
-    title: "Energi",
-    description:
-      "Mengenal berbagai bentuk energi dan perubahan energi dalam kehidupan sehari-hari.",
-  },
-
-  4: {
-    title: "Air dan Perubahannya",
-    description:
-      "Mempelajari sifat air serta perubahan wujud air dalam kehidupan sehari-hari.",
-  },
+const initialForm = {
+  title: "",
+  subtitle: "",
+  image_url: "",
+  content: "",
+  order: 1,
 };
 
 /* =========================================================
-   DATA DUMMY MATERI
+   HELPER STORAGE
 ========================================================= */
 
-const initialMateri = [
-  {
-    id: 1,
-    module_id: 1,
-    title: "Apa Itu Makhluk Hidup?",
-    subtitle: "Mari mengenal dunia makhluk hidup",
-    image_url:
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=80",
-    content:
-      "Pernahkah kamu melihat kucing bermain, burung terbang, atau tanaman tumbuh di halaman rumah? Kucing, burung, dan tanaman merupakan contoh makhluk hidup. Makhluk hidup adalah sesuatu yang memiliki ciri-ciri kehidupan. Makhluk hidup dapat tumbuh, bernapas, membutuhkan makanan, bergerak, berkembang biak, dan melakukan berbagai aktivitas lainnya.",
-    order: 1,
-  },
+const uploadMaterialImage = async (file) => {
+  if (!file) return null;
 
-  {
-    id: 2,
-    module_id: 1,
-    title: "Ciri-Ciri Makhluk Hidup",
-    subtitle: "Apa yang membuat sesuatu disebut hidup?",
-    image_url:
-      "https://images.unsplash.com/photo-1456926631375-92c8ce872def?auto=format&fit=crop&w=1200&q=80",
-    content:
-      "Setiap makhluk hidup memiliki beberapa ciri yang membedakannya dari benda mati. Beberapa ciri makhluk hidup antara lain bernapas, membutuhkan makanan dan air, dapat bergerak, dapat tumbuh, dapat berkembang biak, dan peka terhadap rangsangan. Walaupun bentuk manusia, hewan, dan tumbuhan berbeda, semuanya memiliki ciri-ciri kehidupan.",
-    order: 2,
-  },
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
-  {
-    id: 3,
-    module_id: 1,
-    title: "Kebutuhan Makhluk Hidup",
-    subtitle: "Apa saja yang dibutuhkan makhluk hidup?",
-    image_url:
-      "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1200&q=80",
-    content:
-      "Agar dapat hidup dan tumbuh dengan baik, makhluk hidup membutuhkan berbagai hal. Manusia membutuhkan makanan, air, udara, dan tempat tinggal. Hewan juga membutuhkan makanan, air, dan udara. Tumbuhan membutuhkan air, udara, cahaya matahari, dan unsur hara dari tanah.",
-    order: 3,
-  },
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("Gunakan gambar JPG, PNG, atau WEBP.");
+  }
 
-  {
-    id: 4,
-    module_id: 1,
-    title: "Pertumbuhan Makhluk Hidup",
-    subtitle: "Makhluk hidup dapat tumbuh",
-    image_url:
-      "https://images.unsplash.com/photo-1491002052546-bf38f186af56?auto=format&fit=crop&w=1200&q=80",
-    content:
-      "Salah satu ciri makhluk hidup adalah dapat mengalami pertumbuhan. Pertumbuhan adalah proses bertambahnya ukuran, tinggi, berat, atau bagian tubuh makhluk hidup. Contohnya, manusia yang awalnya bayi akan tumbuh menjadi anak-anak kemudian menjadi orang dewasa. Tumbuhan juga mengalami pertumbuhan. Biji dapat tumbuh menjadi tanaman kecil dan kemudian menjadi tanaman yang lebih besar.",
-    order: 4,
-  },
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error("Ukuran gambar maksimal 2 MB.");
+  }
 
-  {
-    id: 5,
-    module_id: 1,
-    title: "Perkembangbiakan",
-    subtitle:
-      "Bagaimana makhluk hidup menghasilkan keturunan?",
-    image_url:
-      "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1200&q=80",
-    content:
-      "Makhluk hidup juga dapat berkembang biak. Berkembang biak berarti menghasilkan keturunan baru. Dengan berkembang biak, jumlah makhluk hidup dapat terus bertambah. Contohnya, ayam menghasilkan telur yang kemudian dapat menetas menjadi anak ayam. Tumbuhan juga dapat berkembang biak melalui biji, tunas, atau bagian tubuh tertentu.",
-    order: 5,
-  },
-];
+  const accessToken = getAccessToken();
+
+  if (!accessToken) {
+    throw new Error("Session tidak ditemukan. Silakan login kembali.");
+  }
+
+  const extension = file.name.split(".").pop().toLowerCase();
+  const fileName = `${crypto.randomUUID()}.${extension}`;
+  const filePath = `${STORAGE_FOLDER}/${fileName}`;
+
+  const uploadUrl =
+    `${SUPABASE_URL}/storage/v1/object/` + `${STORAGE_BUCKET}/${filePath}`;
+
+  const response = await fetch(uploadUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      apikey: SUPABASE_ANON_KEY,
+      "Content-Type": file.type,
+      "x-upsert": "false",
+    },
+    body: file,
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(result.message || "Gagal mengunggah gambar.");
+  }
+
+  return (
+    `${SUPABASE_URL}/storage/v1/object/public/` +
+    `${STORAGE_BUCKET}/${filePath}`
+  );
+};
+
+/* =========================================================
+   HAPUS GAMBAR STORAGE
+========================================================= */
+
+const deleteMaterialImage = async (imageUrl) => {
+  if (!imageUrl) return;
+
+  const marker = `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+  const markerIndex = imageUrl.indexOf(marker);
+
+  if (markerIndex === -1) return;
+
+  const filePath = decodeURIComponent(
+    imageUrl.substring(markerIndex + marker.length),
+  );
+
+  const accessToken = getAccessToken();
+
+  if (!accessToken) {
+    throw new Error("Session tidak ditemukan.");
+  }
+
+  const response = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${filePath}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        apikey: SUPABASE_ANON_KEY,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.message || "Gagal menghapus gambar dari Storage.");
+  }
+};
+
+/* =========================================================
+   NORMALISASI DATA
+========================================================= */
+
+const normalizeMaterial = (item) => ({
+  ...item,
+  order: Number(item.order_number ?? item.order ?? 1),
+});
 
 /* =========================================================
    COMPONENT
@@ -118,54 +150,87 @@ const initialMateri = [
 
 function DosenMateri() {
   const { moduleId } = useParams();
-
-  const currentModuleId = Number(moduleId) || 1;
-
-  const currentModule =
-    moduleData[currentModuleId] || moduleData[1];
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   /* =======================================================
      STATE
   ======================================================= */
 
-  const [materi, setMateri] = useState(
-    initialMateri.filter(
-      (item) => item.module_id === currentModuleId,
-    ),
-  );
+  const [currentModule, setCurrentModule] = useState(null);
+  const [materi, setMateri] = useState([]);
 
-  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const [pageError, setPageError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [showModal, setShowModal] = useState(false);
-
   const [editingMateri, setEditingMateri] = useState(null);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    subtitle: "",
-    image_url: "",
-    content: "",
-    order: "",
-  });
+  const [formData, setFormData] = useState(initialForm);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   /* =======================================================
-     FILTER MATERI
+   LOAD DATA
+======================================================= */
+
+  const loadData = useCallback(async () => {
+    if (!moduleId) {
+      setPageError("ID module tidak ditemukan.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const [moduleResult, materialResult] = await Promise.all([
+        getModuleById(moduleId),
+        getMaterialsByModule(moduleId),
+      ]);
+
+      setCurrentModule(moduleResult);
+
+      const materialList = Array.isArray(materialResult)
+        ? materialResult
+        : materialResult?.data || [];
+
+      setMateri(
+        materialList.map(normalizeMaterial).sort((a, b) => a.order - b.order),
+      );
+
+      setPageError("");
+    } catch (error) {
+      console.error("Gagal memuat materi:", error);
+
+      setPageError(error.message || "Gagal memuat data materi.");
+    } finally {
+      setLoading(false);
+    }
+  }, [moduleId]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadData();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [loadData]);
+  /* =======================================================
+     RESET FORM
   ======================================================= */
 
-  const filteredMateri = useMemo(() => {
-    const keyword = search.toLowerCase().trim();
+  const resetForm = () => {
+    setFormData(initialForm);
+    setSelectedImage(null);
+    setPreviewUrl("");
 
-    const result = keyword
-      ? materi.filter(
-          (item) =>
-            item.title.toLowerCase().includes(keyword) ||
-            item.subtitle.toLowerCase().includes(keyword) ||
-            item.content.toLowerCase().includes(keyword),
-        )
-      : [...materi];
-
-    return result.sort((a, b) => a.order - b.order);
-  }, [materi, search]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   /* =======================================================
      TAMBAH MATERI
@@ -175,16 +240,17 @@ function DosenMateri() {
     setEditingMateri(null);
 
     setFormData({
-      title: "",
-      subtitle: "",
-      image_url: "",
-      content: "",
+      ...initialForm,
       order:
         materi.length > 0
           ? Math.max(...materi.map((item) => item.order)) + 1
           : 1,
     });
 
+    setSelectedImage(null);
+    setPreviewUrl("");
+    setPageError("");
+    setSuccessMessage("");
     setShowModal(true);
   };
 
@@ -196,13 +262,17 @@ function DosenMateri() {
     setEditingMateri(item);
 
     setFormData({
-      title: item.title,
-      subtitle: item.subtitle,
+      title: item.title || "",
+      subtitle: item.subtitle || "",
       image_url: item.image_url || "",
-      content: item.content,
-      order: item.order,
+      content: item.content || "",
+      order: item.order || 1,
     });
 
+    setSelectedImage(null);
+    setPreviewUrl(item.image_url || "");
+    setPageError("");
+    setSuccessMessage("");
     setShowModal(true);
   };
 
@@ -220,7 +290,7 @@ function DosenMateri() {
   };
 
   /* =======================================================
-     IMAGE CHANGE
+     PILIH GAMBAR
   ======================================================= */
 
   const handleImageChange = (event) => {
@@ -228,24 +298,52 @@ function DosenMateri() {
 
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert("File yang dipilih harus berupa gambar.");
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Gunakan gambar JPG, PNG, atau WEBP.");
+      event.target.value = "";
       return;
     }
 
-    const imageUrl = URL.createObjectURL(file);
+    if (file.size > MAX_IMAGE_SIZE) {
+      alert("Ukuran gambar maksimal 2 MB.");
+      event.target.value = "";
+      return;
+    }
 
-    setFormData((previous) => ({
-      ...previous,
-      image_url: imageUrl,
-    }));
+    if (previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+
+    setSelectedImage(file);
+    setPreviewUrl(objectUrl);
+  };
+
+  /* =======================================================
+     TUTUP MODAL
+  ======================================================= */
+
+  const closeModal = () => {
+    if (saving) return;
+
+    setShowModal(false);
+    setEditingMateri(null);
+
+    if (previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    resetForm();
   };
 
   /* =======================================================
      SIMPAN MATERI
   ======================================================= */
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!formData.title.trim()) {
@@ -263,87 +361,121 @@ function DosenMateri() {
       return;
     }
 
-    if (!formData.order) {
-      alert("Urutan materi wajib diisi.");
+    const orderNumber = Number(formData.order);
+
+    if (!Number.isInteger(orderNumber) || orderNumber < 1) {
+      alert("Urutan materi harus berupa bilangan bulat minimal 1.");
       return;
     }
 
-    if (editingMateri) {
-      setMateri((previous) =>
-        previous.map((item) =>
-          item.id === editingMateri.id
-            ? {
-                ...item,
-                title: formData.title.trim(),
-                subtitle: formData.subtitle.trim(),
-                image_url: formData.image_url,
-                content: formData.content.trim(),
-                order: Number(formData.order),
-              }
-            : item,
-        ),
-      );
-    } else {
-      const newMateri = {
-        id:
-          materi.length > 0
-            ? Math.max(...materi.map((item) => item.id)) + 1
-            : 1,
+    setSaving(true);
+    setPageError("");
+    setSuccessMessage("");
 
-        module_id: currentModuleId,
+    let uploadedImageUrl = null;
 
+    try {
+      let imageUrl = editingMateri?.image_url || null;
+
+      if (selectedImage) {
+        uploadedImageUrl = await uploadMaterialImage(selectedImage);
+        imageUrl = uploadedImageUrl;
+      }
+
+      const payload = {
+        module_id: moduleId,
         title: formData.title.trim(),
-
         subtitle: formData.subtitle.trim(),
-
-        image_url: formData.image_url,
-
+        image_url: imageUrl,
         content: formData.content.trim(),
-
-        order: Number(formData.order),
+        order_number: orderNumber,
       };
 
-      setMateri((previous) => [
-        ...previous,
-        newMateri,
-      ]);
-    }
+      if (editingMateri) {
+        await updateMaterial(editingMateri.id, payload);
+      } else {
+        await createMaterial(payload);
+      }
 
-    closeModal();
+      if (editingMateri && selectedImage && editingMateri.image_url) {
+        try {
+          await deleteMaterialImage(editingMateri.image_url);
+        } catch (imageError) {
+          console.warn("Gambar lama belum berhasil dihapus:", imageError);
+        }
+      }
+
+      setShowModal(false);
+      setEditingMateri(null);
+      resetForm();
+
+      setSuccessMessage(
+        editingMateri
+          ? "Materi berhasil diperbarui."
+          : "Materi berhasil ditambahkan.",
+      );
+
+      await loadData();
+    } catch (error) {
+      console.error("Gagal menyimpan materi:", error);
+
+      if (uploadedImageUrl) {
+        try {
+          await deleteMaterialImage(uploadedImageUrl);
+        } catch (cleanupError) {
+          console.warn(
+            "Gagal membersihkan gambar yang baru diunggah:",
+            cleanupError,
+          );
+        }
+      }
+
+      setPageError(error.message || "Gagal menyimpan materi.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   /* =======================================================
      HAPUS MATERI
   ======================================================= */
 
-  const handleDelete = (id) => {
+  const handleDelete = async (item) => {
     const confirmed = window.confirm(
-      "Apakah kamu yakin ingin menghapus materi ini?",
+      `Apakah kamu yakin ingin menghapus materi "${item.title}"?`,
     );
 
     if (!confirmed) return;
 
-    setMateri((previous) =>
-      previous.filter((item) => item.id !== id),
-    );
-  };
+    setDeletingId(item.id);
+    setPageError("");
+    setSuccessMessage("");
 
-  /* =======================================================
-     TUTUP MODAL
-  ======================================================= */
+    try {
+      await deleteMaterial(item.id);
 
-  const closeModal = () => {
-    setShowModal(false);
+      if (item.image_url) {
+        try {
+          await deleteMaterialImage(item.image_url);
+        } catch (imageError) {
+          console.warn(
+            "Materi terhapus, tetapi gambar belum terhapus:",
+            imageError,
+          );
+        }
+      }
 
-    setEditingMateri(null);
+      setMateri((previous) =>
+        previous.filter((material) => material.id !== item.id),
+      );
 
-    setFormData({
-      title: "",
-      subtitle: "",
-      image_url: "",
-      content: "",
-      order: "",
-    });
+      setSuccessMessage("Materi berhasil dihapus.");
+    } catch (error) {
+      console.error("Gagal menghapus materi:", error);
+      setPageError(error.message || "Gagal menghapus materi.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   /* =======================================================
@@ -351,7 +483,7 @@ function DosenMateri() {
   ======================================================= */
 
   const handleBack = () => {
-    window.location.href = "/dosen/module";
+    navigate("/dosen/module");
   };
 
   /* =======================================================
@@ -360,9 +492,7 @@ function DosenMateri() {
 
   return (
     <div className="dosen-materi-page">
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+      {/* HEADER */}
 
       <div className="dosen-materi-header">
         <div className="dosen-materi-header-info">
@@ -377,17 +507,16 @@ function DosenMateri() {
 
           <span className="dosen-materi-eyebrow">
             <FaBookOpen />
-
-            MODULE{" "}
-            {String(currentModuleId).padStart(2, "0")}{" "}
-            • {currentModule.title.toUpperCase()}
+            {currentModule
+              ? currentModule.title.toUpperCase()
+              : "MATERI PEMBELAJARAN"}
           </span>
 
           <h1>Materi Pembelajaran</h1>
 
           <p>
-            Kelola materi pembelajaran yang akan dipelajari
-            mahasiswa pada module ini.
+            Kelola materi pembelajaran yang akan dipelajari mahasiswa pada
+            module ini.
           </p>
         </div>
 
@@ -395,15 +524,22 @@ function DosenMateri() {
           type="button"
           className="dosen-materi-add-btn"
           onClick={handleAdd}
+          disabled={loading || !currentModule}
         >
           <FaPlus />
           Tambah Materi
         </button>
       </div>
 
-      {/* =====================================================
-          MODULE INFO
-      ===================================================== */}
+      {/* PESAN */}
+
+      {pageError && <div className="dosen-materi-alert error">{pageError}</div>}
+
+      {successMessage && (
+        <div className="dosen-materi-alert success">{successMessage}</div>
+      )}
+
+      {/* INFO MODULE */}
 
       <div className="dosen-materi-module-info">
         <div className="dosen-materi-module-icon">
@@ -411,14 +547,13 @@ function DosenMateri() {
         </div>
 
         <div className="dosen-materi-module-detail">
-          <span>
-            MODULE{" "}
-            {String(currentModuleId).padStart(2, "0")}
-          </span>
+          <span>MODULE</span>
 
-          <h2>{currentModule.title}</h2>
+          <h2>{currentModule?.title || "Memuat module..."}</h2>
 
-          <p>{currentModule.description}</p>
+          <p>
+            {currentModule?.description || "Daftar materi untuk module ini."}
+          </p>
         </div>
 
         <div className="dosen-materi-module-total">
@@ -427,217 +562,141 @@ function DosenMateri() {
         </div>
       </div>
 
-      {/* =====================================================
-          TOOLBAR
-      ===================================================== */}
-
-      <div className="dosen-materi-toolbar">
-        <div className="dosen-materi-search">
-          <FaSearch />
-
-          <input
-            type="text"
-            placeholder="Cari materi..."
-            value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
-          />
-        </div>
-
-        <div className="dosen-materi-order-info">
-          Materi ditampilkan berdasarkan urutan pembelajaran
-        </div>
-      </div>
-
-      {/* =====================================================
-          MATERI LIST
-      ===================================================== */}
+      {/* DAFTAR MATERI */}
 
       <div className="dosen-materi-list">
-        {filteredMateri.length > 0 ? (
-          filteredMateri.map((item) => (
-            <article
-              className="dosen-materi-card"
-              key={item.id}
-            >
-              {/* =================================================
-                  IMAGE
-              ================================================= */}
+        {loading ? (
+          <div className="dosen-materi-empty">
+            <p>Memuat daftar materi...</p>
+          </div>
+        ) : materi.length > 0 ? (
+          [...materi]
+            .sort((a, b) => a.order - b.order)
+            .map((item) => (
+              <article className="dosen-materi-card" key={item.id}>
+                {/* GAMBAR */}
 
-              <div className="dosen-materi-card-image">
-                {item.image_url ? (
-                  <img
-                    src={item.image_url}
-                    alt={item.title}
-                  />
-                ) : (
-                  <div className="dosen-materi-image-placeholder">
-                    <FaImage />
+                <div className="dosen-materi-card-image">
+                  {item.image_url ? (
+                    <img src={item.image_url} alt={item.title} />
+                  ) : (
+                    <div className="dosen-materi-image-placeholder">
+                      <FaImage />
+                      <span>Belum ada gambar</span>
+                    </div>
+                  )}
 
-                    <span>
-                      Belum ada gambar
-                    </span>
-                  </div>
-                )}
-
-                <span className="dosen-materi-number">
-                  MATERI{" "}
-                  {String(item.order).padStart(2, "0")}
-                </span>
-              </div>
-
-              {/* =================================================
-                  CONTENT
-              ================================================= */}
-
-              <div className="dosen-materi-card-content">
-                <h3>{item.title}</h3>
-
-                <p className="dosen-materi-subtitle">
-                  {item.subtitle}
-                </p>
-
-                <p className="dosen-materi-description">
-                  {item.content}
-                </p>
-
-                {/* =================================================
-                    ACTION
-                ================================================= */}
-
-                <div className="dosen-materi-card-footer">
-                  <button
-                    type="button"
-                    className="dosen-materi-edit-btn"
-                    onClick={() =>
-                      handleEdit(item)
-                    }
-                  >
-                    <FaEdit />
-                    Edit Materi
-                  </button>
-
-                  <button
-                    type="button"
-                    className="dosen-materi-delete-btn"
-                    onClick={() =>
-                      handleDelete(item.id)
-                    }
-                    title="Hapus materi"
-                  >
-                    <FaTrash />
-                  </button>
+                  <span className="dosen-materi-number">
+                    MATERI {String(item.order).padStart(2, "0")}
+                  </span>
                 </div>
-              </div>
-            </article>
-          ))
+
+                {/* KONTEN */}
+
+                <div className="dosen-materi-card-content">
+                  <h3>{item.title}</h3>
+
+                  <p className="dosen-materi-subtitle">{item.subtitle}</p>
+
+                  <p className="dosen-materi-description">{item.content}</p>
+
+                  {/* AKSI */}
+
+                  <div className="dosen-materi-card-footer">
+                    <button
+                      type="button"
+                      className="dosen-materi-edit-btn"
+                      onClick={() => handleEdit(item)}
+                    >
+                      <FaEdit />
+                      Edit Materi
+                    </button>
+
+                    <button
+                      type="button"
+                      className="dosen-materi-delete-btn"
+                      onClick={() => handleDelete(item)}
+                      disabled={deletingId === item.id}
+                      title="Hapus materi"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))
         ) : (
           <div className="dosen-materi-empty">
             <FaBookOpen />
 
-            <h3>
-              {search
-                ? "Materi tidak ditemukan"
-                : "Belum ada materi"}
-            </h3>
+            <h3>Belum ada materi</h3>
 
-            <p>
-              {search
-                ? "Tidak ada materi yang sesuai dengan pencarian."
-                : "Tambahkan materi pertama untuk module ini."}
-            </p>
+            <p>Tambahkan materi pertama untuk module ini.</p>
 
-            {!search && (
-              <button
-                type="button"
-                onClick={handleAdd}
-              >
-                <FaPlus />
-                Tambah Materi
-              </button>
-            )}
+            <button type="button" onClick={handleAdd}>
+              <FaPlus />
+              Tambah Materi
+            </button>
           </div>
         )}
       </div>
 
-      {/* =====================================================
-          MODAL
-      ===================================================== */}
+      {/* MODAL */}
 
       {showModal && (
         <div
           className="dosen-materi-modal-overlay"
-          onMouseDown={closeModal}
-        >
-          <div
-            className="dosen-materi-modal"
-            onMouseDown={(event) =>
-              event.stopPropagation()
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closeModal();
             }
-          >
-            {/* =================================================
-                MODAL HEADER
-            ================================================= */}
+          }}
+        >
+          <div className="dosen-materi-modal">
+            {/* MODAL HEADER */}
 
             <div className="dosen-materi-modal-header">
               <div>
-                <span>
-                  {editingMateri
-                    ? "EDIT MATERI"
-                    : "MATERI BARU"}
-                </span>
+                <span>{editingMateri ? "EDIT MATERI" : "MATERI BARU"}</span>
 
-                <h2>
-                  {editingMateri
-                    ? "Edit Materi"
-                    : "Tambah Materi"}
-                </h2>
+                <h2>{editingMateri ? "Edit Materi" : "Tambah Materi"}</h2>
               </div>
 
               <button
                 type="button"
                 className="dosen-materi-modal-close"
                 onClick={closeModal}
+                disabled={saving}
               >
                 <FaTimes />
               </button>
             </div>
 
-            {/* =================================================
-                FORM
-            ================================================= */}
+            {/* FORM */}
 
             <form onSubmit={handleSubmit}>
-              {/* =================================================
-                  GAMBAR
-              ================================================= */}
+              {/* GAMBAR */}
 
               <div className="dosen-materi-field">
                 <label>Gambar Materi</label>
 
                 <div className="dosen-materi-image-upload">
-                  {formData.image_url ? (
-                    <img
-                      src={formData.image_url}
-                      alt="Preview materi"
-                    />
+                  {previewUrl ? (
+                    <img src={previewUrl} alt="Preview materi" />
                   ) : (
                     <div className="dosen-materi-upload-placeholder">
                       <FaImage />
-
-                      <span>
-                        Pilih gambar untuk materi
-                      </span>
+                      <span>Pilih gambar untuk materi</span>
                     </div>
                   )}
                 </div>
 
                 <input
+                  ref={fileInputRef}
                   className="dosen-materi-file-input"
                   id="materi-image"
                   type="file"
-                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                  accept="image/png,image/jpeg,image/webp"
                   onChange={handleImageChange}
                 />
 
@@ -646,25 +705,16 @@ function DosenMateri() {
                   className="dosen-materi-upload-btn"
                 >
                   <FaImage />
-
-                  {formData.image_url
-                    ? "Ganti Gambar"
-                    : "Pilih Gambar"}
+                  {previewUrl ? "Ganti Gambar" : "Pilih Gambar"}
                 </label>
 
-                <small>
-                  Gunakan JPG, JPEG, PNG, atau WEBP.
-                </small>
+                <small>JPG, JPEG, PNG, atau WEBP. Maksimal 2 MB.</small>
               </div>
 
-              {/* =================================================
-                  JUDUL
-              ================================================= */}
+              {/* JUDUL */}
 
               <div className="dosen-materi-field">
-                <label htmlFor="materi-title">
-                  Judul Materi
-                </label>
+                <label htmlFor="materi-title">Judul Materi</label>
 
                 <input
                   id="materi-title"
@@ -673,17 +723,14 @@ function DosenMateri() {
                   placeholder="Contoh: Apa Itu Makhluk Hidup?"
                   value={formData.title}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
-              {/* =================================================
-                  SUBJUDUL
-              ================================================= */}
+              {/* SUBJUDUL */}
 
               <div className="dosen-materi-field">
-                <label htmlFor="materi-subtitle">
-                  Subjudul
-                </label>
+                <label htmlFor="materi-subtitle">Subjudul</label>
 
                 <input
                   id="materi-subtitle"
@@ -692,17 +739,14 @@ function DosenMateri() {
                   placeholder="Contoh: Mari mengenal dunia makhluk hidup"
                   value={formData.subtitle}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
-              {/* =================================================
-                  ISI MATERI
-              ================================================= */}
+              {/* ISI MATERI */}
 
               <div className="dosen-materi-field">
-                <label htmlFor="materi-content">
-                  Isi Materi
-                </label>
+                <label htmlFor="materi-content">Isi Materi</label>
 
                 <textarea
                   id="materi-content"
@@ -711,48 +755,44 @@ function DosenMateri() {
                   placeholder="Tuliskan isi materi pembelajaran..."
                   value={formData.content}
                   onChange={handleChange}
+                  required
                 />
 
                 <small>
-                  Tuliskan materi pembelajaran secara lengkap
-                  dan mudah dipahami mahasiswa.
+                  Tuliskan materi pembelajaran secara lengkap dan mudah dipahami
+                  mahasiswa.
                 </small>
               </div>
 
-              {/* =================================================
-                  URUTAN
-              ================================================= */}
+              {/* URUTAN */}
 
               <div className="dosen-materi-field">
-                <label htmlFor="materi-order">
-                  Urutan Materi
-                </label>
+                <label htmlFor="materi-order">Urutan Materi</label>
 
                 <input
                   id="materi-order"
                   name="order"
                   type="number"
                   min="1"
-                  placeholder="1"
+                  step="1"
                   value={formData.order}
                   onChange={handleChange}
+                  required
                 />
 
                 <small>
-                  Urutan menentukan posisi materi saat
-                  dipelajari mahasiswa.
+                  Urutan menentukan posisi materi saat dipelajari mahasiswa.
                 </small>
               </div>
 
-              {/* =================================================
-                  ACTION
-              ================================================= */}
+              {/* TOMBOL */}
 
               <div className="dosen-materi-modal-actions">
                 <button
                   type="button"
                   className="dosen-materi-cancel-btn"
                   onClick={closeModal}
+                  disabled={saving}
                 >
                   Batal
                 </button>
@@ -760,12 +800,14 @@ function DosenMateri() {
                 <button
                   type="submit"
                   className="dosen-materi-save-btn"
+                  disabled={saving}
                 >
                   <FaSave />
-
-                  {editingMateri
-                    ? "Simpan Perubahan"
-                    : "Simpan Materi"}
+                  {saving
+                    ? "Menyimpan..."
+                    : editingMateri
+                      ? "Simpan Perubahan"
+                      : "Simpan Materi"}
                 </button>
               </div>
             </form>

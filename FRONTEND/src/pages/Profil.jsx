@@ -1,130 +1,210 @@
+
+import { useEffect, useMemo, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import {
-  FaUser,
+  FaUserGraduate,
   FaIdCard,
-  FaChartLine,
   FaBookOpen,
   FaClipboardCheck,
-  FaTasks,
-  FaTrophy,
+  FaChartLine,
+  FaGraduationCap,
+  FaInfoCircle,
+  FaCalendarAlt,
+  FaLayerGroup,
 } from "react-icons/fa";
 
+import { fetchWithAuth } from "../service/authService";
 import "../css/Profil.css";
 
+const API_URL = "http://localhost:5000/api";
+
+/* =========================================================
+   DATA PROFIL SEMENTARA
+========================================================= */
+
+const mahasiswa = {
+  nama: "Hamirun",
+  nim: "20230001",
+  programStudi: "PGSD",
+};
+
+/* =========================================================
+   KOMPONEN PROFIL
+========================================================= */
+
 function Profil() {
-  // =========================================================
-  // DATA MAHASISWA
-  // Nantinya data ini bisa diganti dengan data dari backend
-  // =========================================================
+  const [pretestResults, setPretestResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const mahasiswa = {
-    nama: "Hamirun",
-    nim: "20230001",
+  /* =======================================================
+     AMBIL DATA NILAI PRETEST DARI BACKEND
+  ======================================================= */
 
-    nilai: {
-      pretest: 80,
-      kuis: 85,
-      tugas: 90,
-    },
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPretestResults = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetchWithAuth(
+          `${API_URL}/pretest-results/my`
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message || "Gagal mengambil nilai Pretest."
+          );
+        }
+
+        if (isMounted) {
+          setPretestResults(result.data || []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(
+            err.message || "Terjadi kesalahan saat mengambil nilai."
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadPretestResults();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /* =======================================================
+     RINGKASAN NILAI PRETEST
+  ======================================================= */
+
+  const ringkasanPretest = useMemo(() => {
+    const jumlah = pretestResults.length;
+
+    const totalNilai = pretestResults.reduce(
+      (total, item) => total + Number(item.score || 0),
+      0
+    );
+
+    const rataRata =
+      jumlah > 0 ? totalNilai / jumlah : null;
+
+    return {
+      jumlah,
+      rataRata,
+    };
+  }, [pretestResults]);
+
+  /* =======================================================
+     FORMAT TANGGAL
+  ======================================================= */
+
+  const formatTanggal = (tanggal) => {
+    if (!tanggal) return "-";
+
+    return new Date(tanggal).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   };
 
-  // =========================================================
-  // RATA-RATA
-  // =========================================================
-
-  const rataRata = Math.round(
-    (mahasiswa.nilai.pretest + mahasiswa.nilai.kuis + mahasiswa.nilai.tugas) /
-      3,
-  );
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <div className="profil-page">
       <Container fluid className="profil-container">
-        {/* =====================================================
+        {/* =================================================
             HEADER
-        ===================================================== */}
+        ================================================= */}
 
         <div className="profil-header">
-          <div>
-            <span className="profil-label">PROFIL MAHASISWA</span>
+          <span className="profil-label">
+            PROFIL MAHASISWA
+          </span>
 
-            <h1>Profil & Hasil Belajar</h1>
+          <h1>Profil dan Hasil Belajar</h1>
 
-            <p>
-              Lihat informasi diri dan perkembangan hasil belajar kamu selama
-              mengikuti pembelajaran di PAPASCI.
-            </p>
-          </div>
+          <p>
+            Lihat informasi akun dan hasil Pretest selama
+            mengikuti pembelajaran PAPASCI.
+          </p>
         </div>
 
-        {/* =====================================================
-            PROFILE + SCORE
-        ===================================================== */}
+        {/* =================================================
+            PROFILE + SUMMARY
+        ================================================= */}
 
-        <Row className="g-4">
-          {/* ===================================================
-              DATA MAHASISWA
-          =================================================== */}
+        <Row className="g-4 profil-top-grid">
+          {/* ===============================================
+              PROFILE CARD
+          =============================================== */}
 
-          <Col lg={5}>
+          <Col lg={4}>
             <div className="profile-card">
-              {/* PROFILE TOP */}
-
               <div className="profile-card-top">
                 <div className="profile-avatar">
-                  <FaUser />
+                  <FaUserGraduate />
                 </div>
 
                 <div className="profile-introduction">
-                  <span>MAHASISWA</span>
-
+                  <span>MAHASISWA PAPASCI</span>
                   <h2>{mahasiswa.nama}</h2>
-
-                  <p>Mahasiswa PGSD</p>
+                  <p>{mahasiswa.programStudi}</p>
                 </div>
               </div>
 
-              {/* PROFILE INFORMATION */}
-
               <div className="profile-information">
-                <div className="profile-info-item">
-                  <div className="profile-info-icon">
-                    <FaUser />
-                  </div>
-
-                  <div>
-                    <span>Nama Lengkap</span>
-                    <strong>{mahasiswa.nama}</strong>
-                  </div>
-                </div>
-
                 <div className="profile-info-item">
                   <div className="profile-info-icon">
                     <FaIdCard />
                   </div>
 
                   <div>
-                    <span>NIM</span>
+                    <span>Nomor Induk Mahasiswa</span>
                     <strong>{mahasiswa.nim}</strong>
+                  </div>
+                </div>
+
+                <div className="profile-info-item">
+                  <div className="profile-info-icon">
+                    <FaGraduationCap />
+                  </div>
+
+                  <div>
+                    <span>Program Studi</span>
+                    <strong>{mahasiswa.programStudi}</strong>
                   </div>
                 </div>
               </div>
             </div>
           </Col>
 
-          {/* ===================================================
-              HASIL BELAJAR
-          =================================================== */}
+          {/* ===============================================
+              PRETEST SUMMARY
+          =============================================== */}
 
-          <Col lg={7}>
+          <Col lg={8}>
             <div className="learning-score-card">
-              {/* SCORE HEADER */}
-
               <div className="score-card-header">
                 <div>
-                  <span className="score-label">HASIL BELAJAR</span>
+                  <span className="score-label">
+                    RINGKASAN AKADEMIK
+                  </span>
 
-                  <h2>Ringkasan Nilai</h2>
+                  <h2>Nilai Pretest</h2>
                 </div>
 
                 <div className="score-header-icon">
@@ -132,100 +212,211 @@ function Profil() {
                 </div>
               </div>
 
-              {/* SCORE LIST */}
-
-              <div className="score-list">
-                {/* PRETEST */}
-
-                <div className="score-item">
-                  <div className="score-item-left">
-                    <div className="score-icon pretest">
-                      <FaClipboardCheck />
-                    </div>
-
-                    <div>
-                      <strong>Nilai Pretest</strong>
-
-                      <span>Tes awal pembelajaran</span>
-                    </div>
-                  </div>
-
-                  <div className="score-value">{mahasiswa.nilai.pretest}</div>
+              {loading ? (
+                <div className="profil-loading">
+                  Memuat ringkasan nilai Pretest...
                 </div>
-
-                {/* KUIS */}
-
-                <div className="score-item">
-                  <div className="score-item-left">
-                    <div className="score-icon kuis">
-                      <FaBookOpen />
-                    </div>
-
-                    <div>
-                      <strong>Nilai Kuis</strong>
-
-                      <span>Hasil evaluasi pembelajaran</span>
-                    </div>
-                  </div>
-
-                  <div className="score-value">{mahasiswa.nilai.kuis}</div>
+              ) : error ? (
+                <div className="profil-error">
+                  {error}
                 </div>
+              ) : (
+                <>
+                  <div className="score-summary-grid">
+                    <div className="score-summary-item">
+                      <div className="summary-icon pretest">
+                        <FaBookOpen />
+                      </div>
 
-                {/* TUGAS */}
+                      <div className="summary-content">
+                        <span>Rata-rata Pretest</span>
 
-                <div className="score-item">
-                  <div className="score-item-left">
-                    <div className="score-icon tugas">
-                      <FaTasks />
+                        <strong>
+                          {ringkasanPretest.rataRata === null
+                            ? "—"
+                            : ringkasanPretest.rataRata.toFixed(1)}
+                        </strong>
+
+                        <small>
+                          Dari seluruh Pretest yang selesai
+                        </small>
+                      </div>
                     </div>
 
-                    <div>
-                      <strong>Nilai Tugas</strong>
+                    <div className="score-summary-item">
+                      <div className="summary-icon quiz">
+                        <FaClipboardCheck />
+                      </div>
 
-                      <span>Hasil pengerjaan tugas</span>
+                      <div className="summary-content">
+                        <span>Pretest Dikerjakan</span>
+
+                        <strong>
+                          {ringkasanPretest.jumlah}
+                        </strong>
+
+                        <small>
+                          Total hasil Pretest
+                        </small>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="score-value">{mahasiswa.nilai.tugas}</div>
-                </div>
-              </div>
+                  <div className="average-score">
+                    <div className="average-left">
+                      <div className="average-icon">
+                        <FaGraduationCap />
+                      </div>
 
-              {/* AVERAGE */}
+                      <div>
+                        <span>RATA-RATA NILAI PRETEST</span>
+                        <strong>
+                          Berdasarkan hasil yang tersimpan
+                        </strong>
+                      </div>
+                    </div>
 
-              <div className="average-score">
-                <div className="average-left">
-                  <div className="average-icon">
-                    <FaTrophy />
+                    <div className="average-value">
+                      {ringkasanPretest.rataRata === null
+                        ? "—"
+                        : ringkasanPretest.rataRata.toFixed(1)}
+                    </div>
                   </div>
-
-                  <div>
-                    <span>RATA-RATA HASIL BELAJAR</span>
-
-                    <strong>Performa pembelajaran kamu</strong>
-                  </div>
-                </div>
-
-                <div className="average-value">{rataRata}</div>
-              </div>
+                </>
+              )}
             </div>
           </Col>
         </Row>
 
-        {/* =====================================================
-            SCORE INFORMATION
-        ===================================================== */}
+        {/* =================================================
+            PRETEST HISTORY
+        ================================================= */}
+
+        <section className="assessment-history">
+          <div className="history-header">
+            <div>
+              <span className="score-label">
+                DETAIL HASIL BELAJAR
+              </span>
+
+              <h2>Riwayat Nilai Pretest</h2>
+
+              <p>
+                Daftar hasil Pretest yang sudah dikerjakan.
+              </p>
+            </div>
+
+            <div className="history-total">
+              <FaClipboardCheck />
+              <span>
+                {pretestResults.length} hasil
+              </span>
+            </div>
+          </div>
+
+          {/* ===============================================
+              LOADING / ERROR / EMPTY / TABLE
+          =============================================== */}
+
+          {loading ? (
+            <div className="history-state">
+              Memuat riwayat Pretest...
+            </div>
+          ) : error ? (
+            <div className="history-state error">
+              Riwayat Pretest tidak dapat dimuat.
+            </div>
+          ) : pretestResults.length === 0 ? (
+            <div className="history-empty">
+              <FaBookOpen />
+              <strong>Belum ada hasil Pretest</strong>
+              <p>
+                Hasil Pretest akan muncul di sini setelah kamu
+                menyelesaikan Pretest.
+              </p>
+            </div>
+          ) : (
+            <div className="history-table-wrapper">
+              <table className="history-table">
+                <thead>
+                  <tr>
+                    <th>Pretest</th>
+                    <th>Module</th>
+                    <th>Nilai</th>
+                    <th>Jawaban Benar</th>
+                    <th>Tanggal</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {pretestResults.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        <div className="history-activity">
+                          <div className="history-activity-icon pretest">
+                            <FaBookOpen />
+                          </div>
+
+                          <strong>
+                            {item.pretests?.title ||
+                              "Pretest"}
+                          </strong>
+                        </div>
+                      </td>
+
+                      <td>
+                        <span className="module-label-cell">
+                          <FaLayerGroup />
+                          {item.pretests?.module_id
+                            ? "Module"
+                            : "-"}
+                        </span>
+                      </td>
+
+                      <td>
+                        <strong className="history-score">
+                          {item.score}
+                        </strong>
+                      </td>
+
+                      <td>
+                        <span className="correct-answer-count">
+                          {item.correct_count}/
+                          {item.total_questions}
+                        </span>
+                      </td>
+
+                      <td>
+                        <span className="history-date">
+                          <FaCalendarAlt />
+                          {formatTanggal(item.submitted_at)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        {/* =================================================
+            NOTE
+        ================================================= */}
 
         <div className="profile-note">
           <div className="profile-note-icon">
-            <FaChartLine />
+            <FaInfoCircle />
           </div>
 
           <div>
-            <strong>Terus tingkatkan hasil belajarmu</strong>
+            <strong>Informasi Nilai</strong>
 
             <p>
-              Nilai pada halaman ini akan diperbarui sesuai hasil pretest, kuis,
-              dan tugas yang telah kamu kerjakan di PAPASCI.
+              Data nilai Pretest ditampilkan berdasarkan hasil
+              yang tersimpan di sistem PAPASCI. Nilai Quiz dan
+              Tugas akan ditambahkan setelah fitur penilaiannya
+              selesai dibuat.
             </p>
           </div>
         </div>

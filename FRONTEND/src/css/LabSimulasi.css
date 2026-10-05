@@ -1,14 +1,11 @@
 /* =========================================================
-   LAB PAGE
+   LAB SIMULASI - MAHASISWA
 ========================================================= */
 
 .lab-page {
   min-height: 100vh;
-
   background: #f7fbff;
-
   color: #172033;
-
   font-family: "Nunito", sans-serif;
 }
 
@@ -18,57 +15,41 @@
 
 .lab-hero {
   position: relative;
-
   overflow: hidden;
-
   padding: 70px 0 75px;
+  background: linear-gradient(135deg, #eef8ff 0%, #f7fbff 55%, #effbf5 100%);
+}
 
-  background: linear-gradient(135deg, #eef8ff 0%, #f7fbff 50%, #effbf5 100%);
+.lab-hero::before,
+.lab-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .lab-hero::before {
-  content: "";
-
-  position: absolute;
-
   width: 280px;
   height: 280px;
-
   top: -130px;
   right: 5%;
-
-  border-radius: 50%;
-
   background: rgba(47, 128, 237, 0.08);
 }
 
 .lab-hero::after {
-  content: "";
-
-  position: absolute;
-
   width: 220px;
   height: 220px;
-
   bottom: -130px;
   left: 5%;
-
-  border-radius: 50%;
-
   background: rgba(46, 203, 145, 0.08);
 }
 
 .lab-hero-content {
   position: relative;
-
   z-index: 2;
-
   display: grid;
-
   grid-template-columns: 1.05fr 0.95fr;
-
   align-items: center;
-
   gap: 50px;
 }
 
@@ -78,83 +59,56 @@
 
 .lab-eyebrow {
   display: inline-flex;
-
   align-items: center;
-
   gap: 8px;
-
   margin-bottom: 12px;
-
   color: #2f80ed;
-
   font-size: 12px;
-
   font-weight: 900;
-
   letter-spacing: 1.2px;
 }
 
 .lab-hero h1 {
-  margin: 0;
-
+  margin: 0 0 18px;
   font-family: "Baloo 2", sans-serif;
-
   font-size: clamp(45px, 5vw, 66px);
-
   font-weight: 800;
-
-  line-height: 0.98;
+  line-height: 1;
 }
 
 .lab-hero h1 span {
   display: block;
-
   color: #2f80ed;
 }
 
 .lab-hero-text > p {
   max-width: 510px;
-
+  margin-bottom: 22px;
   color: #667085;
-
   font-size: 14px;
-
   line-height: 1.8;
 }
 
 .lab-hero-buttons {
   display: flex;
-
   align-items: center;
-
   gap: 16px;
-
   flex-wrap: wrap;
 }
 
 .lab-explore-button {
   display: inline-flex !important;
-
   align-items: center;
-
+  justify-content: center;
   gap: 9px;
-
   padding: 12px 18px !important;
-
   border: none !important;
-
   border-radius: 12px !important;
-
   background: linear-gradient(135deg, #1684d5, #075aa1) !important;
-
-  color: #ffffff !important;
-
+  color: #fff !important;
   font-size: 12px !important;
-
   font-weight: 900 !important;
-
   box-shadow: 0 8px 20px rgba(47, 128, 237, 0.2);
-
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -162,15 +116,12 @@
 
 .lab-explore-button:hover {
   transform: translateY(-2px);
-
   box-shadow: 0 12px 25px rgba(47, 128, 237, 0.25);
 }
 
 .lab-hero-note {
   color: #98a2b3;
-
   font-size: 12px;
-
   font-weight: 700;
 }
 
@@ -181,78 +132,112 @@
 .lab-hero-visual {
   position: relative;
 
-  width: 360px;
-  height: 360px;
-
-  margin: auto;
+  width: 100%;
+  min-height: 360px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 }
+
+/* =========================================================
+   ORBIT
+========================================================= */
 
 .lab-orbit {
   position: absolute;
 
-  border: 1px dashed rgba(47, 128, 237, 0.25);
+  width: 260px;
+  height: 260px;
+
+  border: 2px solid rgba(47, 128, 237, 0.12);
 
   border-radius: 50%;
 
-  transform: rotate(-20deg);
+  pointer-events: none;
+
+  animation: labOrbitRotate 12s linear infinite;
 }
 
-.orbit-one {
-  width: 300px;
-  height: 150px;
+.lab-orbit::before {
+  content: "";
+
+  position: absolute;
+
+  width: 13px;
+  height: 13px;
+
+  top: -6px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #2f80ed;
+
+  box-shadow:
+    0 0 0 5px rgba(47, 128, 237, 0.08),
+    0 5px 12px rgba(47, 128, 237, 0.25);
 }
 
 .orbit-two {
-  width: 250px;
+  width: 320px;
   height: 320px;
 
-  transform: rotate(60deg);
+  border-color: rgba(46, 203, 145, 0.12);
+
+  animation: labOrbitRotateReverse 16s linear infinite;
 }
 
+.orbit-two::before {
+  background: #2ecb91;
+
+  box-shadow:
+    0 0 0 5px rgba(46, 203, 145, 0.08),
+    0 5px 12px rgba(46, 203, 145, 0.25);
+}
+
+/* =========================================================
+   FLASK UTAMA
+========================================================= */
+
 .lab-flask {
-  width: 150px;
-  height: 150px;
+  position: relative;
+  z-index: 3;
+
+  width: 145px;
+  height: 145px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
-  border-radius: 45px;
+  border-radius: 35px;
 
   background: #ffffff;
 
-  font-size: 82px;
+  font-size: 78px;
 
-  box-shadow: 0 20px 50px rgba(31, 41, 55, 0.1);
+  box-shadow:
+    0 20px 45px rgba(31, 41, 55, 0.12),
+    0 0 0 10px rgba(47, 128, 237, 0.04);
 
-  animation: flaskFloat 4s ease-in-out infinite;
+  animation: labFlaskFloat 4s ease-in-out infinite;
 }
 
-@keyframes flaskFloat {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-
-  50% {
-    transform: translateY(-10px) rotate(2deg);
-  }
-}
+/* =========================================================
+   ICON MELAYANG
+========================================================= */
 
 .lab-floating-icon {
   position: absolute;
+  z-index: 4;
 
   width: 58px;
   height: 58px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -262,48 +247,260 @@
 
   font-size: 27px;
 
-  box-shadow: 0 10px 30px rgba(31, 41, 55, 0.09);
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.1);
 
-  animation: floatingIcon 4s ease-in-out infinite;
+  animation: labFloatingIcon 4s ease-in-out infinite;
 }
 
+/* =========================================================
+   POSISI ICON
+========================================================= */
+
 .icon-one {
-  top: 30px;
-  left: 48px;
+  top: 25px;
+  left: 18%;
+
+  animation-delay: 0s;
 }
 
 .icon-two {
-  top: 25px;
-  right: 45px;
+  top: 65px;
+  right: 12%;
 
-  animation-delay: 0.6s;
+  animation-delay: 0.9s;
 }
 
 .icon-three {
-  right: 20px;
-  bottom: 70px;
+  bottom: 35px;
+  left: 25%;
 
-  animation-delay: 1s;
+  animation-delay: 1.6s;
 }
 
 .icon-four {
+  right: 20%;
   bottom: 20px;
-  left: 55px;
 
-  animation-delay: 1.4s;
+  animation-delay: 2.3s;
 }
 
-@keyframes floatingIcon {
+/* =========================================================
+   ANIMASI FLASK
+========================================================= */
+
+@keyframes labFlaskFloat {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-5px) rotate(-2deg);
   }
 
   50% {
-    transform: translateY(-7px);
+    transform: translateY(-12px) rotate(2deg);
+  }
+
+  75% {
+    transform: translateY(-5px) rotate(-1deg);
   }
 }
 
+/* =========================================================
+   ANIMASI ICON MELAYANG
+========================================================= */
+
+@keyframes labFloatingIcon {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-7px) rotate(-3deg);
+  }
+
+  50% {
+    transform: translateY(-14px) rotate(4deg);
+  }
+
+  75% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+}
+
+/* =========================================================
+   ANIMASI ORBIT
+========================================================= */
+
+@keyframes labOrbitRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes labOrbitRotateReverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* =========================================================
+   HOVER ICON
+========================================================= */
+
+.lab-floating-icon:hover {
+  animation-play-state: paused;
+
+  transform: scale(1.08);
+
+  box-shadow: 0 15px 30px rgba(31, 41, 55, 0.15);
+}
+
+.lab-flask:hover {
+  animation-play-state: paused;
+
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .lab-hero-visual {
+    min-height: 310px;
+  }
+
+  .lab-orbit {
+    width: 230px;
+    height: 230px;
+  }
+
+  .orbit-two {
+    width: 285px;
+    height: 285px;
+  }
+
+  .lab-flask {
+    width: 125px;
+    height: 125px;
+
+    font-size: 68px;
+  }
+
+  .lab-floating-icon {
+    width: 52px;
+    height: 52px;
+
+    font-size: 24px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+  .lab-hero-visual {
+    min-height: 260px;
+  }
+
+  .lab-orbit {
+    width: 190px;
+    height: 190px;
+  }
+
+  .orbit-two {
+    width: 235px;
+    height: 235px;
+  }
+
+  .lab-flask {
+    width: 105px;
+    height: 105px;
+
+    border-radius: 28px;
+
+    font-size: 57px;
+  }
+
+  .lab-floating-icon {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+  }
+
+  .icon-one {
+    top: 12px;
+    left: 8%;
+  }
+
+  .icon-two {
+    top: 38px;
+    right: 5%;
+  }
+
+  .icon-three {
+    bottom: 12px;
+    left: 15%;
+  }
+
+  .icon-four {
+    right: 10%;
+    bottom: 0;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .lab-hero-visual {
+    min-height: 230px;
+  }
+
+  .lab-orbit {
+    width: 165px;
+    height: 165px;
+  }
+
+  .orbit-two {
+    width: 205px;
+    height: 205px;
+  }
+
+  .lab-flask {
+    width: 90px;
+    height: 90px;
+
+    border-radius: 24px;
+
+    font-size: 50px;
+  }
+
+  .lab-floating-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 12px;
+
+    font-size: 19px;
+  }
+}
 /* =========================================================
    INFO
 ========================================================= */
@@ -314,88 +511,62 @@
 
 .lab-info-card {
   display: grid;
-
   grid-template-columns: auto 1fr auto;
-
   align-items: center;
-
   gap: 20px;
-
   padding: 22px 25px;
-
   border: 1px solid #e4edf5;
-
   border-radius: 18px;
-
-  background: #ffffff;
-
+  background: #fff;
   box-shadow: 0 8px 30px rgba(31, 41, 55, 0.04);
 }
 
 .lab-info-icon {
   width: 55px;
   height: 55px;
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   border-radius: 15px;
-
   background: #edf7ff;
-
   color: #2f80ed;
-
   font-size: 22px;
 }
 
 .lab-info-text h3 {
   margin: 0 0 4px;
-
   font-family: "Baloo 2", sans-serif;
-
   font-size: 20px;
-
   font-weight: 800;
 }
 
 .lab-info-text p {
   max-width: 620px;
-
   margin: 0;
-
   color: #667085;
-
-  font-size: 10px;
-
+  font-size: 12px;
   line-height: 1.7;
 }
 
 .lab-info-badge {
   display: flex;
-
   flex-direction: column;
-
   align-items: flex-end;
 }
 
 .lab-info-badge strong {
   color: #2f80ed;
-
   font-family: "Baloo 2", sans-serif;
-
   font-size: 25px;
 }
 
 .lab-info-badge span {
   color: #98a2b3;
-
-  font-size: 8px;
+  font-size: 10px;
 }
 
 /* =========================================================
-   SIMULATIONS
+   SIMULATIONS SECTION
 ========================================================= */
 
 .lab-simulations {
@@ -404,34 +575,25 @@
 
 .lab-section-heading {
   display: flex;
-
   align-items: flex-end;
-
   justify-content: space-between;
-
   gap: 20px;
-
-  margin-bottom: 22px;
+  margin-bottom: 25px;
 }
 
 .lab-section-heading > div:first-child > span {
   color: #2f80ed;
-
   font-size: 12px;
-
   font-weight: 900;
-
   letter-spacing: 1px;
 }
 
 .lab-section-heading h2 {
   margin: 5px 0 0;
-
   font-family: "Baloo 2", sans-serif;
-
   font-size: 35px;
-
   font-weight: 800;
+  line-height: 1.2;
 }
 
 /* =========================================================
@@ -439,40 +601,34 @@
 ========================================================= */
 
 .lab-search {
-  width: 240px;
-  height: 40px;
-
+  width: 260px;
+  min-height: 44px;
   display: flex;
-
   align-items: center;
-
-  gap: 9px;
-
-  padding: 0 12px;
-
+  gap: 10px;
+  padding: 0 14px;
   border: 1px solid #e4e7ec;
-
-  border-radius: 11px;
-
-  background: #ffffff;
-
+  border-radius: 12px;
+  background: #fff;
   color: #98a2b3;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.lab-search:focus-within {
+  border-color: #2f80ed;
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
 }
 
 .lab-search input {
   width: 100%;
-
   border: none;
-
   outline: none;
-
   background: transparent;
-
   color: #344054;
-
   font-family: inherit;
-
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .lab-search input::placeholder {
@@ -480,32 +636,28 @@
 }
 
 /* =========================================================
-   GRID
+   SIMULATION GRID
 ========================================================= */
 
 .simulation-grid {
   display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
 }
 
 /* =========================================================
-   CARD
+   SIMULATION CARD
 ========================================================= */
 
 .simulation-card {
+  min-width: 0;
   overflow: hidden;
-
+  display: flex;
+  flex-direction: column;
   border: 1px solid #e9eef3;
-
   border-radius: 18px;
-
-  background: #ffffff;
-
+  background: #fff;
   box-shadow: 0 8px 25px rgba(31, 41, 55, 0.045);
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -513,34 +665,27 @@
 
 .simulation-card:hover {
   transform: translateY(-5px);
-
   box-shadow: 0 15px 35px rgba(31, 41, 55, 0.09);
 }
 
 /* =========================================================
-   CARD VISUAL - IMAGE
+   SIMULATION IMAGE
 ========================================================= */
 
 .simulation-visual {
   position: relative;
-
   width: 100%;
   height: 190px;
-
   overflow: hidden;
-
   background: #eaf4ff;
 }
 
 .simulation-image {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
   object-position: center;
-
   transition: transform 0.45s ease;
 }
 
@@ -548,166 +693,185 @@
   transform: scale(1.05);
 }
 
-/* =========================================================
-   SUBJECT
-========================================================= */
-
-.simulation-subject {
-  position: absolute;
-
-  left: 15px;
-  bottom: 13px;
-
-  z-index: 3;
-
-  padding: 5px 9px;
-
-  border-radius: 7px;
-
-  background: rgba(255, 255, 255, 0.92);
-
-  color: #667085;
-
-  font-size: 11px;
-
-  font-weight: 900;
-
-  box-shadow: 0 4px 12px rgba(31, 41, 55, 0.08);
-
-  backdrop-filter: blur(5px);
-}
-
-/* =========================================================
-   RECOMMENDED
-========================================================= */
-
-.simulation-recommended {
-  position: absolute;
-
-  top: 12px;
-  left: 12px;
-
-  z-index: 4;
-
+.simulation-image-placeholder {
+  width: 100%;
+  height: 100%;
   display: flex;
-
   align-items: center;
-
-  gap: 4px;
-
-  padding: 5px 8px;
-
-  border-radius: 7px;
-
-  background: #ffffff;
-
-  color: #f5a623;
-
-  font-size: 10px;
-
-  font-weight: 900;
-
-  box-shadow: 0 5px 15px rgba(31, 41, 55, 0.05);
+  justify-content: center;
+  background: linear-gradient(135deg, #eaf4ff, #d9edff);
+  color: #2f80ed;
+  font-size: 48px;
 }
 
 /* =========================================================
-   CARD BODY
+   SIMULATION BODY
 ========================================================= */
 
 .simulation-body {
-  padding: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
 .simulation-body h3 {
-  min-height: 42px;
-
+  margin: 0 0 10px;
   font-family: "Baloo 2", sans-serif;
-
-  font-size: 20px;
-
+  font-size: 21px;
   font-weight: 800;
-
-  line-height: 1.2;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .simulation-body p {
-  min-height: 54px;
-
-  margin: 0 0 15px;
-
+  flex: 1;
+  margin: 0 0 20px;
   color: #667085;
-
-  font-size: 12px;
-
-  line-height: 1.65;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .simulation-button {
   width: 100%;
-
   display: flex !important;
-
   align-items: center;
-
   justify-content: center;
-
-  gap: 7px;
-
-  padding: 10px !important;
-
+  gap: 8px;
+  padding: 11px !important;
   border: none !important;
-
-  border-radius: 9px !important;
-
+  border-radius: 10px !important;
   background: #edf7ff !important;
-
   color: #2f80ed !important;
-
-  font-size: 12px !important;
-
+  font-size: 13px !important;
   font-weight: 900 !important;
-
-  transition: all 0.2s ease;
-}
-
-.simulation-button svg:last-child {
-  font-size: 8px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .simulation-button:hover {
   background: linear-gradient(135deg, #1684d5, #075aa1) !important;
+  color: #fff !important;
+}
 
-  color: #ffffff !important;
+.simulation-button:focus-visible,
+.lab-explore-button:focus-visible {
+  outline: 3px solid rgba(47, 128, 237, 0.35);
+  outline-offset: 3px;
 }
 
 /* =========================================================
-   EMPTY
+   LOADING
+========================================================= */
+
+.lab-loading {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #667085;
+  text-align: center;
+}
+
+.lab-loading-spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #dceeff;
+  border-top-color: #2f80ed;
+  border-radius: 50%;
+  animation: labSpinner 0.8s linear infinite;
+}
+
+@keyframes labSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lab-loading p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.lab-error {
+  padding: 45px 20px;
+  border: 1px solid #f4d6d6;
+  border-radius: 16px;
+  background: #fff8f8;
+  color: #9b3030;
+  text-align: center;
+}
+
+.lab-error-icon {
+  margin-bottom: 10px;
+  font-size: 35px;
+}
+
+.lab-error h3 {
+  margin: 0 0 8px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.lab-error p {
+  margin: 0 0 18px;
+  color: #8b5555;
+  font-size: 13px;
+}
+
+.lab-retry-button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #2f80ed;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  transition: background 0.2s ease;
+}
+
+.lab-retry-button:hover {
+  background: #075aa1;
+}
+
+/* =========================================================
+   EMPTY STATE
 ========================================================= */
 
 .lab-empty {
   padding: 60px 20px;
-
   text-align: center;
 }
 
-.lab-empty > div {
-  font-size: 35px;
+.lab-empty-icon {
+  margin-bottom: 12px;
+  color: #8dbce9;
+  font-size: 42px;
 }
 
 .lab-empty h3 {
   margin: 10px 0 5px;
-
   font-family: "Baloo 2", sans-serif;
-
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 800;
 }
 
 .lab-empty p {
   margin: 0;
-
   color: #98a2b3;
-
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 /* =========================================================
@@ -716,35 +880,25 @@
 
 .lab-source-note {
   display: flex;
-
   align-items: flex-start;
-
   gap: 10px;
-
   margin-top: 30px;
-
-  padding: 14px 16px;
-
+  padding: 15px 17px;
+  border: 1px solid #f4e9bc;
   border-radius: 12px;
-
   background: #fffdf2;
-
   color: #856404;
 }
 
 .lab-source-note svg {
   flex-shrink: 0;
-
   margin-top: 2px;
-
   color: #f5a623;
 }
 
 .lab-source-note p {
   margin: 0;
-
-  font-size: 9px;
-
+  font-size: 11px;
   line-height: 1.7;
 }
 
@@ -759,19 +913,17 @@
 @media (max-width: 991.98px) {
   .lab-hero-content {
     grid-template-columns: 1fr;
-
+    gap: 25px;
     text-align: center;
   }
 
   .lab-hero-text {
     max-width: 650px;
-
     margin: auto;
   }
 
   .lab-hero-text > p {
     margin-left: auto;
-
     margin-right: auto;
   }
 
@@ -780,12 +932,16 @@
   }
 
   .lab-hero-visual {
-    width: 310px;
-    height: 310px;
+    min-height: 280px;
+  }
+
+  .lab-hero-illustration {
+    width: 280px;
+    font-size: 90px;
   }
 
   .simulation-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -803,80 +959,36 @@
   }
 
   .lab-hero-text > p {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .lab-hero-visual {
-    width: 280px;
-    height: 280px;
+    min-height: 230px;
   }
 
-  .lab-flask {
-    width: 120px;
-    height: 120px;
-
-    border-radius: 35px;
-
-    font-size: 65px;
-  }
-
-  .lab-orbit.orbit-one {
-    width: 240px;
-    height: 120px;
-  }
-
-  .lab-orbit.orbit-two {
-    width: 210px;
-    height: 260px;
-  }
-
-  .lab-floating-icon {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 14px;
-
-    font-size: 22px;
-  }
-
-  .icon-one {
-    top: 20px;
-    left: 28px;
-  }
-
-  .icon-two {
-    top: 20px;
-    right: 25px;
-  }
-
-  .icon-three {
-    right: 8px;
-    bottom: 55px;
-  }
-
-  .icon-four {
-    bottom: 15px;
-    left: 30px;
+  .lab-hero-illustration {
+    width: 230px;
+    font-size: 75px;
   }
 
   .lab-info-card {
     grid-template-columns: auto 1fr;
-
     gap: 13px;
-
     padding: 18px;
   }
 
   .lab-info-badge {
     grid-column: 2;
-
     align-items: flex-start;
   }
 
   .lab-section-heading {
     align-items: flex-start;
-
     flex-direction: column;
+  }
+
+  .lab-section-heading h2 {
+    font-size: 30px;
   }
 
   .lab-search {
@@ -885,6 +997,11 @@
 
   .simulation-grid {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .simulation-visual {
+    height: 220px;
   }
 }
 
@@ -899,12 +1016,11 @@
 
   .lab-hero-buttons {
     flex-direction: column;
+    align-items: stretch;
   }
 
   .lab-explore-button {
     width: 100%;
-
-    justify-content: center;
   }
 
   .lab-hero-note {
@@ -913,7 +1029,6 @@
 
   .lab-info-card {
     grid-template-columns: 1fr;
-
     text-align: center;
   }
 
@@ -923,11 +1038,44 @@
 
   .lab-info-badge {
     grid-column: auto;
-
     align-items: center;
   }
 
+  .lab-info-text p {
+    font-size: 12px;
+  }
+
   .simulation-visual {
-    height: 170px;
+    height: 180px;
+  }
+
+  .simulation-body {
+    padding: 17px;
+  }
+
+  .simulation-body h3 {
+    font-size: 20px;
+  }
+
+  .lab-source-note {
+    padding: 13px;
+  }
+}
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-hero-illustration,
+  .lab-loading-spinner {
+    animation: none;
+  }
+
+  .simulation-card,
+  .simulation-image,
+  .simulation-button,
+  .lab-explore-button {
+    transition: none;
   }
 }

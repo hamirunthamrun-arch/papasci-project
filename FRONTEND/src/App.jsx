@@ -37,6 +37,7 @@ import DosenKompetensiPedagogik from "./pages/dosen/DosenKompetensiPedagogik";
 import DosenProfil from "./pages/dosen/DosenProfil";
 import AdminDosen from "./pages/admin/AdminDosen";
 import DosenMateri from "./pages/dosen/DosenMateri";
+import DosenKelolaFile from "./pages/dosen/DosenKelolaFile";
 
 function App() {
   return (
@@ -124,7 +125,7 @@ function App() {
 
           <Route
             path="/dosen/module/:moduleId/materi"
-            element={<DosenMateri/>}
+            element={<DosenMateri />}
           />
 
           <Route
@@ -186,6 +187,14 @@ function App() {
             element={
               <DosenLayout>
                 <DosenTugas />
+              </DosenLayout>
+            }
+          />
+          <Route
+            path="/dosen/tugas/kelola-file/:assignmentId"
+            element={
+              <DosenLayout>
+                <DosenKelolaFile />
               </DosenLayout>
             }
           />

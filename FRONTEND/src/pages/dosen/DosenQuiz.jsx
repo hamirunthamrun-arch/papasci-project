@@ -1,78 +1,37 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
-  FaQuestionCircle,
-  FaPlus,
+  FaBookOpen,
   FaEdit,
-  FaTrash,
-  FaSearch,
-  FaTimes,
+  FaPlus,
+  FaQuestionCircle,
   FaSave,
+  FaTimes,
+  FaTrash,
 } from "react-icons/fa";
-
 import { useNavigate } from "react-router-dom";
 
+import {
+  getQuizzes,
+  createQuiz,
+  updateQuiz,
+  deleteQuiz,
+} from "../../service/quizService";
+
+import { getModules } from "../../service/moduleService";
 import "../../css/dosen/DosenQuiz.css";
 
 /* =========================================================
-   DATA DUMMY QUIZ
+   FORM AWAL
 ========================================================= */
 
-const initialQuizzes = [
-  {
-    id: 1,
-    moduleId: 1,
-    moduleName: "Makhluk Hidup",
-    title: "Quiz Makhluk Hidup",
-    description:
-      "Evaluasi pemahaman mahasiswa setelah mempelajari materi makhluk hidup.",
-    questions: 10,
-    maxAttempts: 3,
-    status: "Publik",
-  },
-  {
-    id: 2,
-    moduleId: 2,
-    moduleName: "Gaya dan Gerak",
-    title: "Quiz Gaya dan Gerak",
-    description: "Evaluasi pemahaman mahasiswa mengenai gaya dan gerak.",
-    questions: 10,
-    maxAttempts: 3,
-    status: "Publik",
-  },
-  {
-    id: 3,
-    moduleId: 3,
-    moduleName: "Energi",
-    title: "Quiz Energi",
-    description: "Evaluasi pemahaman mahasiswa mengenai energi.",
-    questions: 8,
-    maxAttempts: 3,
-    status: "Draft",
-  },
-];
-
-/* =========================================================
-   DATA MODULE
-========================================================= */
-
-const modules = [
-  {
-    id: 1,
-    title: "Makhluk Hidup",
-  },
-  {
-    id: 2,
-    title: "Gaya dan Gerak",
-  },
-  {
-    id: 3,
-    title: "Energi",
-  },
-  {
-    id: 4,
-    title: "Air dan Perubahannya",
-  },
-];
+const initialForm = {
+  module_id: "",
+  title: "",
+  description: "",
+  question_count: 10,
+  max_attempts: 3,
+  status: "draft",
+};
 
 /* =========================================================
    COMPONENT
@@ -81,190 +40,258 @@ const modules = [
 function DosenQuiz() {
   const navigate = useNavigate();
 
-  const [quizzes, setQuizzes] = useState(initialQuizzes);
+  const [quizzes, setQuizzes] = useState([]);
+  const [modules, setModules] = useState([]);
 
-  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const [showModal, setShowModal] = useState(false);
-
   const [editingQuiz, setEditingQuiz] = useState(null);
+  const [formData, setFormData] = useState({ ...initialForm });
 
-  const [formData, setFormData] = useState({
-    moduleId: "",
-    title: "",
-    description: "",
-    questions: 10,
-    maxAttempts: 3,
-    status: "Draft",
-  });
+  /* =========================================================
+     MEMUAT ULANG DATA
+  ========================================================= */
 
-  /* =======================================================
-     FILTER
-  ======================================================= */
+  const loadData = useCallback(async () => {
+    try {
+      setError("");
 
-  const filteredQuizzes = quizzes.filter((quiz) => {
-    const keyword = search.toLowerCase();
+      const [quizData, moduleData] = await Promise.all([
+        getQuizzes(),
+        getModules(),
+      ]);
 
-    return (
-      quiz.title.toLowerCase().includes(keyword) ||
-      quiz.moduleName.toLowerCase().includes(keyword)
+      setQuizzes(Array.isArray(quizData) ? quizData : []);
+      setModules(Array.isArray(moduleData) ? moduleData : []);
+    } catch (err) {
+      console.error("Gagal memuat data:", err);
+      setError(err.message || "Gagal memuat data kuis.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /* =========================================================
+     PEMUATAN AWAL
+  ========================================================= */
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const [quizData, moduleData] = await Promise.all([
+          getQuizzes(),
+          getModules(),
+        ]);
+
+        if (!isMounted) return;
+
+        setQuizzes(Array.isArray(quizData) ? quizData : []);
+        setModules(Array.isArray(moduleData) ? moduleData : []);
+        setError("");
+      } catch (err) {
+        if (!isMounted) return;
+
+        console.error("Gagal memuat data:", err);
+        setError(err.message || "Gagal memuat data kuis.");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /* =========================================================
+     CEK APAKAH MODUL SUDAH MEMILIKI KUIS
+  ========================================================= */
+
+  const moduleHasQuiz = (moduleId) => {
+    return quizzes.some(
+      (quiz) =>
+        String(quiz.module_id) === String(moduleId) &&
+        quiz.id !== editingQuiz?.id,
     );
-  });
+  };
 
-  /* =======================================================
-     TAMBAH
-  ======================================================= */
+  /* =========================================================
+     TAMBAH KUIS
+  ========================================================= */
 
   const handleAdd = () => {
     setEditingQuiz(null);
-
-    setFormData({
-      moduleId: "",
-      title: "",
-      description: "",
-      questions: 10,
-      maxAttempts: 3,
-      status: "Draft",
-    });
-
+    setFormData({ ...initialForm });
+    setError("");
     setShowModal(true);
   };
 
-  /* =======================================================
-     EDIT
-  ======================================================= */
+  /* =========================================================
+     EDIT KUIS
+  ========================================================= */
 
   const handleEdit = (quiz) => {
     setEditingQuiz(quiz);
 
     setFormData({
-      moduleId: quiz.moduleId,
-      title: quiz.title,
-      description: quiz.description,
-      questions: quiz.questions,
-      maxAttempts: quiz.maxAttempts,
-      status: quiz.status,
+      module_id: quiz.module_id || "",
+      title: quiz.title || "",
+      description: quiz.description || "",
+      question_count: quiz.question_count || 10,
+      max_attempts: quiz.max_attempts || 3,
+      status: quiz.status || "draft",
     });
 
+    setError("");
     setShowModal(true);
   };
 
-  /* =======================================================
-     TUTUP MODAL
-  ======================================================= */
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setEditingQuiz(null);
-  };
-
-  /* =======================================================
-     INPUT
-  ======================================================= */
+  /* =========================================================
+     FORM CHANGE
+  ========================================================= */
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((prev) => ({
-      ...prev,
+    setFormData((previous) => ({
+      ...previous,
       [name]: value,
     }));
   };
 
-  /* =======================================================
-     SIMPAN
-  ======================================================= */
+  /* =========================================================
+     TUTUP MODAL
+  ========================================================= */
 
-  const handleSubmit = (event) => {
+  const closeModal = () => {
+    if (saving) return;
+
+    setShowModal(false);
+    setEditingQuiz(null);
+    setFormData({ ...initialForm });
+    setError("");
+  };
+
+  /* =========================================================
+     SIMPAN KUIS
+  ========================================================= */
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const selectedModule = modules.find(
-      (module) => module.id === Number(formData.moduleId),
-    );
+    if (!formData.module_id) {
+      alert("Module wajib dipilih.");
+      return;
+    }
 
-    if (!selectedModule) {
-      alert("Silakan pilih module.");
+    if (moduleHasQuiz(formData.module_id)) {
+      alert(
+        "Module ini sudah memiliki kuis. Satu module hanya boleh memiliki satu kuis.",
+      );
       return;
     }
 
     if (!formData.title.trim()) {
-      alert("Judul quiz wajib diisi.");
+      alert("Judul kuis wajib diisi.");
       return;
     }
 
     if (!formData.description.trim()) {
-      alert("Deskripsi quiz wajib diisi.");
+      alert("Deskripsi kuis wajib diisi.");
       return;
     }
 
-    if (editingQuiz) {
-      setQuizzes((prev) =>
-        prev.map((quiz) =>
-          quiz.id === editingQuiz.id
-            ? {
-                ...quiz,
-                moduleId: selectedModule.id,
-                moduleName: selectedModule.title,
-                title: formData.title,
-                description: formData.description,
-                questions: Number(formData.questions),
-                maxAttempts: Number(formData.maxAttempts),
-                status: formData.status,
-              }
-            : quiz,
-        ),
-      );
-
-      alert("Quiz berhasil diperbarui.");
-    } else {
-      const newQuiz = {
-        id: Date.now(),
-        moduleId: selectedModule.id,
-        moduleName: selectedModule.title,
-        title: formData.title,
-        description: formData.description,
-        questions: Number(formData.questions),
-        maxAttempts: Number(formData.maxAttempts),
-        status: formData.status,
-      };
-
-      setQuizzes((prev) => [...prev, newQuiz]);
-
-      alert("Quiz berhasil ditambahkan.");
+    if (!formData.question_count || Number(formData.question_count) < 1) {
+      alert("Jumlah soal minimal 1.");
+      return;
     }
 
-    handleCloseModal();
+    const payload = {
+      module_id: formData.module_id,
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      question_count: Number(formData.question_count),
+      max_attempts: Number(formData.max_attempts),
+      status: formData.status,
+    };
+
+    try {
+      setSaving(true);
+      setError("");
+
+      if (editingQuiz) {
+        await updateQuiz(editingQuiz.id, payload);
+      } else {
+        await createQuiz(payload);
+      }
+
+      await loadData();
+
+      setShowModal(false);
+      setEditingQuiz(null);
+      setFormData({ ...initialForm });
+    } catch (err) {
+      console.error("Gagal menyimpan kuis:", err);
+      alert(err.message || "Gagal menyimpan kuis.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  /* =======================================================
-     HAPUS
-  ======================================================= */
+  /* =========================================================
+     HAPUS KUIS
+  ========================================================= */
 
-  const handleDelete = (id) => {
-    const quiz = quizzes.find((item) => item.id === id);
-
+  const handleDelete = async (id) => {
     const confirmed = window.confirm(
-      `Apakah Anda yakin ingin menghapus "${quiz?.title}"?`,
+      "Apakah kamu yakin ingin menghapus kuis ini?",
     );
 
-    if (!confirmed) {
-      return;
+    if (!confirmed) return;
+
+    try {
+      await deleteQuiz(id);
+      await loadData();
+    } catch (err) {
+      console.error("Gagal menghapus kuis:", err);
+      alert(err.message || "Gagal menghapus kuis.");
     }
-
-    setQuizzes((prev) => prev.filter((item) => item.id !== id));
-
-    alert("Quiz berhasil dihapus.");
   };
 
-  /* =======================================================
-     RETURN
-  ======================================================= */
+  /* =========================================================
+     KELOLA SOAL
+  ========================================================= */
+
+  const handleQuestions = (id) => {
+    navigate(`/dosen/quiz/${id}/soal`);
+  };
+
+  /* =========================================================
+     GET MODULE
+  ========================================================= */
+
+  const getModuleTitle = (moduleId) => {
+    const module = modules.find((item) => String(item.id) === String(moduleId));
+
+    return module?.title || "Module tidak ditemukan";
+  };
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <div className="dosen-quiz-page">
-      {/* =================================================
-          HEADER
-      ================================================= */}
+      {/* HEADER */}
 
       <div className="dosen-quiz-header">
         <div>
@@ -291,36 +318,54 @@ function DosenQuiz() {
         </button>
       </div>
 
-      {/* =================================================
-          TOOLBAR
-      ================================================= */}
+      {/* INFO */}
 
-      <div className="dosen-quiz-toolbar">
-        <div className="dosen-quiz-search">
-          <FaSearch />
-
-          <input
-            type="text"
-            placeholder="Cari quiz atau module..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+      <div className="dosen-quiz-info">
+        <div className="dosen-quiz-info-icon">
+          <FaQuestionCircle />
         </div>
 
+        <div>
+          <strong>Tentang Kuis</strong>
+
+          <p>
+            Setiap module hanya memiliki satu kuis. Kuis digunakan untuk
+            mengevaluasi pemahaman mahasiswa setelah mempelajari materi.
+          </p>
+        </div>
+      </div>
+
+      {/* TOTAL */}
+
+      <div className="dosen-quiz-toolbar">
         <div className="dosen-quiz-total">
-          <strong>{filteredQuizzes.length}</strong>
+          <strong>{quizzes.length}</strong>
           <span>Quiz</span>
         </div>
       </div>
 
-      {/* =================================================
-          LIST
-      ================================================= */}
+      {/* ERROR */}
+
+      {error && (
+        <div className="dosen-quiz-error">
+          {error}
+
+          <button type="button" onClick={loadData}>
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
+      {/* GRID */}
 
       <div className="dosen-quiz-list">
-        {filteredQuizzes.length > 0 ? (
-          filteredQuizzes.map((quiz) => (
-            <div className="dosen-quiz-card" key={quiz.id}>
+        {loading ? (
+          <div className="dosen-quiz-empty">
+            <p>Memuat data kuis...</p>
+          </div>
+        ) : quizzes.length > 0 ? (
+          quizzes.map((quiz) => (
+            <article className="dosen-quiz-card" key={quiz.id}>
               {/* TOP */}
 
               <div className="dosen-quiz-card-top">
@@ -330,10 +375,10 @@ function DosenQuiz() {
 
                 <span
                   className={`dosen-quiz-status ${
-                    quiz.status === "Publik" ? "published" : "draft"
+                    quiz.status === "publik" ? "published" : "draft"
                   }`}
                 >
-                  {quiz.status}
+                  {quiz.status === "publik" ? "Publik" : "Draft"}
                 </span>
               </div>
 
@@ -341,9 +386,8 @@ function DosenQuiz() {
 
               <div className="dosen-quiz-card-content">
                 <span className="dosen-quiz-module">
-                  MODULE {String(quiz.moduleId).padStart(2, "0")}
-                  {" • "}
-                  {quiz.moduleName}
+                  <FaBookOpen />
+                  {getModuleTitle(quiz.module_id)}
                 </span>
 
                 <h3>{quiz.title}</h3>
@@ -356,13 +400,12 @@ function DosenQuiz() {
               <div className="dosen-quiz-info">
                 <div>
                   <FaQuestionCircle />
-                  <span>{quiz.questions} Soal</span>
+                  <span>{quiz.question_count} Soal</span>
                 </div>
 
                 <div>
                   <span className="attempt-icon">↻</span>
-
-                  <span>Maksimal {quiz.maxAttempts} Percobaan</span>
+                  <span>Maksimal {quiz.max_attempts} Percobaan</span>
                 </div>
               </div>
 
@@ -372,7 +415,7 @@ function DosenQuiz() {
                 <button
                   type="button"
                   className="dosen-quiz-question-btn"
-                  onClick={() => navigate(`/dosen/quiz/${quiz.id}/soal`)}
+                  onClick={() => handleQuestions(quiz.id)}
                 >
                   <FaQuestionCircle />
                   Kelola Soal
@@ -398,29 +441,27 @@ function DosenQuiz() {
                   Hapus
                 </button>
               </div>
-            </div>
+            </article>
           ))
         ) : (
           <div className="dosen-quiz-empty">
             <FaQuestionCircle />
 
-            <h3>Quiz tidak ditemukan</h3>
+            <h3>Belum ada kuis</h3>
 
-            <p>Tidak ada quiz yang sesuai dengan pencarian.</p>
+            <p>Tambahkan kuis untuk mulai mengelola evaluasi pembelajaran.</p>
           </div>
         )}
       </div>
 
-      {/* =================================================
-          MODAL
-      ================================================= */}
+      {/* MODAL TAMBAH / EDIT */}
 
       {showModal && (
         <div
           className="dosen-quiz-modal-overlay"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) {
-              handleCloseModal();
+              closeModal();
             }
           }}
         >
@@ -435,7 +476,8 @@ function DosenQuiz() {
               <button
                 type="button"
                 className="dosen-quiz-modal-close"
-                onClick={handleCloseModal}
+                onClick={closeModal}
+                disabled={saving}
               >
                 <FaTimes />
               </button>
@@ -445,32 +487,43 @@ function DosenQuiz() {
               {/* MODULE */}
 
               <div className="dosen-quiz-field">
-                <label htmlFor="quizModule">Module</label>
+                <label htmlFor="module_id">Module</label>
 
                 <select
-                  id="quizModule"
-                  name="moduleId"
-                  value={formData.moduleId}
+                  id="module_id"
+                  name="module_id"
+                  value={formData.module_id}
                   onChange={handleChange}
                   required
                 >
                   <option value="">Pilih Module</option>
 
-                  {modules.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {module.title}
-                    </option>
-                  ))}
+                  {modules.map((module) => {
+                    const alreadyHasQuiz = moduleHasQuiz(module.id);
+
+                    return (
+                      <option
+                        key={module.id}
+                        value={module.id}
+                        disabled={alreadyHasQuiz}
+                      >
+                        {module.title}
+                        {alreadyHasQuiz ? " (Sudah memiliki kuis)" : ""}
+                      </option>
+                    );
+                  })}
                 </select>
+
+                <small>Satu module hanya dapat memiliki satu kuis.</small>
               </div>
 
               {/* JUDUL */}
 
               <div className="dosen-quiz-field">
-                <label htmlFor="quizTitle">Judul Quiz</label>
+                <label htmlFor="title">Judul Quiz</label>
 
                 <input
-                  id="quizTitle"
+                  id="title"
                   name="title"
                   type="text"
                   placeholder="Contoh: Quiz Makhluk Hidup"
@@ -483,10 +536,10 @@ function DosenQuiz() {
               {/* DESKRIPSI */}
 
               <div className="dosen-quiz-field">
-                <label htmlFor="quizDescription">Deskripsi</label>
+                <label htmlFor="description">Deskripsi</label>
 
                 <textarea
-                  id="quizDescription"
+                  id="description"
                   name="description"
                   rows="4"
                   placeholder="Masukkan deskripsi quiz..."
@@ -499,14 +552,14 @@ function DosenQuiz() {
               {/* JUMLAH SOAL */}
 
               <div className="dosen-quiz-field">
-                <label htmlFor="quizQuestions">Jumlah Soal</label>
+                <label htmlFor="question_count">Jumlah Soal</label>
 
                 <input
-                  id="quizQuestions"
-                  name="questions"
+                  id="question_count"
+                  name="question_count"
                   type="number"
                   min="1"
-                  value={formData.questions}
+                  value={formData.question_count}
                   onChange={handleChange}
                   required
                 />
@@ -520,14 +573,14 @@ function DosenQuiz() {
               {/* MAKSIMAL PERCOBAAN */}
 
               <div className="dosen-quiz-field">
-                <label htmlFor="quizAttempts">
+                <label htmlFor="max_attempts">
                   Maksimal Percobaan Mahasiswa
                 </label>
 
                 <select
-                  id="quizAttempts"
-                  name="maxAttempts"
-                  value={formData.maxAttempts}
+                  id="max_attempts"
+                  name="max_attempts"
+                  value={formData.max_attempts}
                   onChange={handleChange}
                 >
                   <option value="1">1 Kali</option>
@@ -541,16 +594,16 @@ function DosenQuiz() {
               {/* STATUS */}
 
               <div className="dosen-quiz-field">
-                <label htmlFor="quizStatus">Status</label>
+                <label htmlFor="status">Status</label>
 
                 <select
-                  id="quizStatus"
+                  id="status"
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
                 >
-                  <option value="Publik">Publik</option>
-                  <option value="Draft">Draft</option>
+                  <option value="draft">Draft</option>
+                  <option value="publik">Publik</option>
                 </select>
 
                 <small>
@@ -565,16 +618,24 @@ function DosenQuiz() {
                 <button
                   type="button"
                   className="dosen-quiz-cancel-btn"
-                  onClick={handleCloseModal}
+                  onClick={closeModal}
+                  disabled={saving}
                 >
                   <FaTimes />
                   Batal
                 </button>
 
-                <button type="submit" className="dosen-quiz-save-btn">
+                <button
+                  type="submit"
+                  className="dosen-quiz-save-btn"
+                  disabled={saving}
+                >
                   <FaSave />
-
-                  {editingQuiz ? "Simpan Perubahan" : "Simpan Quiz"}
+                  {saving
+                    ? "Menyimpan..."
+                    : editingQuiz
+                      ? "Simpan Perubahan"
+                      : "Simpan Quiz"}
                 </button>
               </div>
             </form>

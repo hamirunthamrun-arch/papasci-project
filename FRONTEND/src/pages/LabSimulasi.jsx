@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Container, Button } from "react-bootstrap";
+
+import { useEffect, useState } from "react";
+import { Container, Button, Spinner, Alert } from "react-bootstrap";
+
 import {
   FaFlask,
   FaSearch,
@@ -9,111 +11,120 @@ import {
   FaPlay,
 } from "react-icons/fa";
 
+import { getSimulasi } from "../service/simulasiService";
 import "../css/LabSimulasi.css";
 
 /* =========================================================
-   DATA SIMULASI
+   KONFIGURASI STORAGE
 ========================================================= */
 
-const simulations = [
-  {
-    id: 1,
-    title: "Forces and Motion: Basics",
-    image:
-      "https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics-600.png",
-    color: "blue",
-    description: "Pelajari bagaimana gaya dapat memengaruhi gerak suatu benda.",
-    url: "https://phet.colorado.edu/en/simulations/forces-and-motion-basics",
-  },
-
-  {
-    id: 2,
-    title: "States of Matter: Basics",
-    image:
-      "https://phet.colorado.edu/sims/html/states-of-matter-basics/latest/states-of-matter-basics-600.png",
-    color: "cyan",
-    description:
-      "Amati bagaimana partikel bergerak pada benda padat, cair, dan gas.",
-    url: "https://phet.colorado.edu/en/simulations/states-of-matter-basics",
-
-  },
-
-  {
-    id: 3,
-    title: "Buoyancy: Basics",
-    image:
-      "https://phet.colorado.edu/sims/html/buoyancy-basics/latest/buoyancy-basics-600.png",
-    color: "green",
-    description:
-      "Eksplorasi mengapa benda dapat mengapung atau tenggelam di dalam air.",
-    url: "https://phet.colorado.edu/en/simulations/buoyancy-basics",
-
-  },
-
-  {
-    id: 4,
-    title: "Gravity and Orbits",
-    image:
-      "https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits-600.png",
-    color: "purple",
-    description:
-      "Jelajahi hubungan gravitasi dengan gerakan planet dan benda langit.",
-    url: "https://phet.colorado.edu/en/simulations/gravity-and-orbits",
-
-  },
-
-  {
-    id: 5,
-    title: "Energy Skate Park: Basics",
-    image:
-      "https://phet.colorado.edu/sims/html/energy-skate-park-basics/latest/energy-skate-park-basics-600.png",
-    color: "orange",
-    description:
-      "Amati perubahan energi saat seorang pemain bergerak di lintasan.",
-    url: "https://phet.colorado.edu/en/simulations/energy-skate-park-basics",
-  },
-
-  {
-    id: 6,
-    title: "Balloons and Static Electricity",
-    image:
-      "https://phet.colorado.edu/sims/html/balloons-and-static-electricity/latest/balloons-and-static-electricity-600.png",
-    color: "pink",
-    description:
-      "Cari tahu bagaimana listrik statis dapat membuat benda saling menarik.",
-    url: "https://phet.colorado.edu/en/simulations/balloons-and-static-electricity",
-  },
-
-  {
-    id: 7,
-    title: "Circuit Construction Kit: DC",
-    image:
-      "https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc-600.png",
-    color: "yellow",
-    description:
-      "Buat rangkaian listrik sederhana dan lihat bagaimana listrik mengalir.",
-    url: "https://phet.colorado.edu/en/simulations/circuit-construction-kit-dc",
-
-  },
-
-  {
-    id: 8,
-    title: "Build an Atom",
-    image:
-      "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom-600.png",
-    color: "red",
-    description:
-      "Bangun sebuah atom dengan menyusun proton, neutron, dan elektron.",
-    url: "https://phet.colorado.edu/en/simulations/build-an-atom",
-  },
-];
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const STORAGE_BUCKET = "media-storage";
 
 /* =========================================================
-   COMPONENT
+   HELPER URL GAMBAR
+========================================================= */
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return "";
+
+  // Jika sudah berupa URL lengkap
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  // Jika database menyimpan path gambar
+  const cleanPath = imagePath
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/");
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${cleanPath}`;
+};
+
+/* =========================================================
+   LAB SIMULASI
 ========================================================= */
 
 function LabSimulasi() {
+  const [simulations, setSimulations] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  /* =======================================================
+     AMBIL DATA SIMULASI DARI BACKEND
+  ======================================================= */
+
+  const fetchSimulations = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await getSimulasi();
+
+      // Pastikan respons berupa array
+      const simulationData = Array.isArray(data)
+        ? data
+        : data?.data || [];
+
+      // Mahasiswa hanya melihat simulasi publik
+      const publishedSimulations = simulationData.filter(
+        (item) => item.status === "public"
+      );
+
+      setSimulations(publishedSimulations);
+    } catch (err) {
+      setError(
+        err.message || "Gagal memuat daftar simulasi."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =======================================================
+     LOAD AWAL
+  ======================================================= */
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSimulations = async () => {
+      try {
+        const data = await getSimulasi();
+
+        if (!isMounted) return;
+
+        const simulationData = Array.isArray(data)
+          ? data
+          : data?.data || [];
+
+        const publishedSimulations = simulationData.filter(
+          (item) => item.status === "public"
+        );
+
+        setSimulations(publishedSimulations);
+        setError("");
+      } catch (err) {
+        if (isMounted) {
+          setError(
+            err.message || "Gagal memuat daftar simulasi."
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadSimulations();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   /* =======================================================
      SEARCH
@@ -122,10 +133,13 @@ function LabSimulasi() {
   const filteredSimulations = simulations.filter((simulation) => {
     const keyword = search.toLowerCase().trim();
 
+    const title = simulation.judul || simulation.title || "";
+    const description =
+      simulation.deskripsi || simulation.description || "";
+
     return (
-      simulation.title.toLowerCase().includes(keyword) ||
-      simulation.description.toLowerCase().includes(keyword) ||
-      simulation.category.toLowerCase().includes(keyword)
+      title.toLowerCase().includes(keyword) ||
+      description.toLowerCase().includes(keyword)
     );
   });
 
@@ -134,8 +148,14 @@ function LabSimulasi() {
   ======================================================= */
 
   const openSimulation = (url) => {
+    if (!url) return;
+
     window.open(url, "_blank", "noopener,noreferrer");
   };
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <div className="lab-page">
@@ -166,9 +186,11 @@ function LabSimulasi() {
                 <Button
                   className="lab-explore-button"
                   onClick={() => {
-                    document.getElementById("simulation-list")?.scrollIntoView({
-                      behavior: "smooth",
-                    });
+                    document
+                      .getElementById("simulation-list")
+                      ?.scrollIntoView({
+                        behavior: "smooth",
+                      });
                   }}
                 >
                   <FaPlay />
@@ -182,9 +204,7 @@ function LabSimulasi() {
               </div>
             </div>
 
-            {/* =================================================
-                HERO ILLUSTRATION
-            ================================================= */}
+            {/* HERO ILLUSTRATION */}
 
             <div className="lab-hero-visual">
               <div className="lab-orbit orbit-one" />
@@ -193,11 +213,8 @@ function LabSimulasi() {
               <div className="lab-flask">🧪</div>
 
               <div className="lab-floating-icon icon-one">⚛️</div>
-
               <div className="lab-floating-icon icon-two">🌍</div>
-
               <div className="lab-floating-icon icon-three">⚡</div>
-
               <div className="lab-floating-icon icon-four">🔬</div>
             </div>
           </div>
@@ -220,14 +237,13 @@ function LabSimulasi() {
 
               <p>
                 Di sini kamu bisa mencoba simulasi IPA interaktif dari PhET.
-                Kamu dapat mengubah berbagai kondisi, melakukan percobaan, dan
-                melihat apa yang terjadi.
+                Kamu dapat mengubah berbagai kondisi, melakukan percobaan,
+                dan melihat apa yang terjadi.
               </p>
             </div>
 
             <div className="lab-info-badge">
               <strong>PhET</strong>
-
               <span>Interactive Simulations</span>
             </div>
           </div>
@@ -243,13 +259,10 @@ function LabSimulasi() {
           <div className="lab-section-heading">
             <div>
               <span>PILIH SIMULASI</span>
-
               <h2>Mau mencoba apa hari ini? 🔬</h2>
             </div>
 
-            {/* =================================================
-                SEARCH
-            ================================================= */}
+            {/* SEARCH */}
 
             <div className="lab-search">
               <FaSearch />
@@ -263,79 +276,143 @@ function LabSimulasi() {
             </div>
           </div>
 
-          {/* =================================================
-              SIMULATION CARDS
-          ================================================= */}
+          {/* LOADING */}
 
-          <div className="simulation-grid">
-            {filteredSimulations.map((simulation) => (
-              <article className="simulation-card" key={simulation.id}>
-                {/* =================================================
-                    VISUAL
-                ================================================= */}
-
-                <div className="simulation-visual">
-                  <img
-                    src={simulation.image}
-                    alt={simulation.title}
-                    className="simulation-image"
-                  />
-
-                </div>
-
-                {/* =================================================
-                    CONTENT
-                ================================================= */}
-
-                <div className="simulation-body">
-
-                  <h3>{simulation.title}</h3>
-
-                  <p>{simulation.description}</p>
-
-                  <Button
-                    className="simulation-button"
-                    onClick={() => openSimulation(simulation.url)}
-                  >
-                    <FaPlay />
-                    Mulai Simulasi
-                    <FaExternalLinkAlt />
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* =================================================
-              EMPTY
-          ================================================= */}
-
-          {filteredSimulations.length === 0 && (
-            <div className="lab-empty">
-              <div>🔎</div>
-
-              <h3>Simulasi tidak ditemukan</h3>
-
-              <p>Coba gunakan kata pencarian lainnya.</p>
+          {loading && (
+            <div className="text-center py-5">
+              <Spinner animation="border" variant="primary" />
+              <p className="mt-3">
+                Memuat daftar simulasi...
+              </p>
             </div>
           )}
 
-          {/* =================================================
-              FOOTER NOTE
-          ================================================= */}
+          {/* ERROR */}
+
+          {!loading && error && (
+            <Alert variant="danger">
+              <p className="mb-2">{error}</p>
+
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={fetchSimulations}
+              >
+                Coba Lagi
+              </Button>
+            </Alert>
+          )}
+
+          {/* SIMULATION CARDS */}
+
+          {!loading && !error && filteredSimulations.length > 0 && (
+            <div className="simulation-grid">
+              {filteredSimulations.map((simulation) => (
+                <SimulationCard
+                  key={simulation.id}
+                  simulation={simulation}
+                  onOpen={openSimulation}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* EMPTY */}
+
+          {!loading && !error && filteredSimulations.length === 0 && (
+            <div className="lab-empty">
+              <div>🔎</div>
+
+              <h3>
+                {simulations.length === 0
+                  ? "Belum Ada Simulasi"
+                  : "Simulasi tidak ditemukan"}
+              </h3>
+
+              <p>
+                {simulations.length === 0
+                  ? "Simulasi yang telah dipublikasikan dosen akan muncul di sini."
+                  : "Coba gunakan kata pencarian lainnya."}
+              </p>
+            </div>
+          )}
+
+          {/* FOOTER NOTE */}
 
           <div className="lab-source-note">
             <FaLightbulb />
 
             <p>
-              Simulasi akan dibuka di website resmi
-              <strong> PhET Interactive Simulations</strong>. Pastikan
-              perangkatmu terhubung ke internet.
+              Simulasi dapat dibuka melalui tautan yang disediakan dosen.
+              Pastikan perangkatmu terhubung ke internet.
             </p>
           </div>
         </Container>
       </section>
     </div>
+  );
+}
+
+/* =========================================================
+   SIMULATION CARD
+========================================================= */
+
+function SimulationCard({ simulation, onOpen }) {
+  const title = simulation.judul || simulation.title || "Simulasi IPA";
+  const description =
+    simulation.deskripsi ||
+    simulation.description ||
+    "Belum ada deskripsi simulasi.";
+
+  const imagePath =
+    simulation.image_path || simulation.image_url || simulation.image;
+
+  const imageUrl = getImageUrl(imagePath);
+
+  const simulationUrl =
+    simulation.link_simulasi || simulation.url;
+
+  return (
+    <article className="simulation-card">
+      {/* VISUAL */}
+
+      <div className="simulation-visual">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={title}
+            className="simulation-image"
+            loading="lazy"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+        ) : (
+          <div className="simulation-image-placeholder">
+            <FaFlask />
+            <span>Simulasi PAPASCI</span>
+          </div>
+        )}
+      </div>
+
+      {/* CONTENT */}
+
+      <div className="simulation-body">
+        <h3>{title}</h3>
+
+        <p>{description}</p>
+
+        <Button
+          className="simulation-button"
+          onClick={() => onOpen(simulationUrl)}
+          disabled={!simulationUrl}
+        >
+          <FaPlay />
+          Mulai Simulasi
+          <FaExternalLinkAlt />
+        </Button>
+      </div>
+    </article>
   );
 }
 

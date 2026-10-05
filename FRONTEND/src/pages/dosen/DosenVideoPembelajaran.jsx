@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FaChalkboardTeacher,
   FaEdit,
@@ -10,64 +10,42 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 
+import {
+  getVideoPembelajaran,
+  createVideoPembelajaran,
+  updateVideoPembelajaran,
+  deleteVideoPembelajaran,
+} from "../../service/videoPembelajaranService";
+
 import "../../css/dosen/DosenVideoPembelajaran.css";
-
-/* =========================================================
-   DATA DUMMY VIDEO
-========================================================= */
-
-const initialVideos = [
-  {
-    id: 1,
-    title: "Mengenal Makhluk Hidup",
-    description:
-      "Video pembelajaran mengenai pengertian dan ciri-ciri makhluk hidup untuk mahasiswa PGSD.",
-    youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-
-  {
-    id: 2,
-    title: "Gaya dan Gerak",
-    description:
-      "Video pembelajaran yang membahas konsep gaya dan gerak serta contoh penerapannya dalam kehidupan sehari-hari.",
-    youtubeUrl: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
-  },
-
-  {
-    id: 3,
-    title: "Pembelajaran Energi untuk Anak SD",
-    description:
-      "Contoh penyampaian materi energi yang dapat digunakan sebagai referensi pembelajaran IPA di sekolah dasar.",
-    youtubeUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
-  },
-
-  {
-    id: 4,
-    title: "Eksperimen Sederhana Perubahan Wujud Air",
-    description:
-      "Contoh kegiatan eksperimen sederhana mengenai perubahan wujud air yang dapat diterapkan dalam pembelajaran.",
-    youtubeUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
-  },
-];
 
 /* =========================================================
    AMBIL YOUTUBE ID
 ========================================================= */
 
 const getYoutubeId = (url) => {
-  if (!url) {
-    return "";
-  }
+  if (!url) return "";
 
   try {
     const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.replace(/^www\./, "");
 
-    if (parsedUrl.hostname.includes("youtu.be")) {
-      return parsedUrl.pathname.replace("/", "");
+    if (hostname === "youtu.be") {
+      return parsedUrl.pathname.split("/").filter(Boolean)[0] || "";
     }
 
-    if (parsedUrl.hostname.includes("youtube.com")) {
-      return parsedUrl.searchParams.get("v") || "";
+    if (
+      hostname === "youtube.com" ||
+      hostname === "m.youtube.com" ||
+      hostname === "youtube-nocookie.com"
+    ) {
+      if (parsedUrl.pathname === "/watch") {
+        return parsedUrl.searchParams.get("v") || "";
+      }
+
+      const match = parsedUrl.pathname.match(/^\/(?:embed|shorts)\/([^/?]+)/);
+
+      return match ? match[1] : "";
     }
 
     return "";
@@ -91,16 +69,30 @@ const getYoutubeThumbnail = (url) => {
 };
 
 /* =========================================================
+   VALIDASI URL
+========================================================= */
+
+const isValidYoutubeUrl = (url) => {
+  return Boolean(getYoutubeId(url));
+};
+
+/* =========================================================
    COMPONENT
 ========================================================= */
 
 function DosenVideoPembelajaran() {
-  const [videos, setVideos] = useState(initialVideos);
-
+  const [videos, setVideos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
+  const [pageError, setPageError] = useState("");
+  const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -110,17 +102,90 @@ function DosenVideoPembelajaran() {
   });
 
   /* =======================================================
+     AMBIL DATA
+  ======================================================= */
+
+  const loadVideos = async (showLoading = false) => {
+    try {
+      if (showLoading) setLoading(true);
+
+      setPageError("");
+
+      const data = await getVideoPembelajaran();
+
+      const formattedVideos = (Array.isArray(data) ? data : []).map(
+        (video) => ({
+          id: video.id,
+          title: video.judul || "",
+          description: video.deskripsi || "",
+          youtubeUrl: video.link || "",
+        }),
+      );
+
+      setVideos(formattedVideos);
+    } catch (error) {
+      setPageError(
+        error.message || "Gagal mengambil daftar video pembelajaran.",
+      );
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const data = await getVideoPembelajaran();
+
+        if (isMounted) {
+          const formattedVideos = (Array.isArray(data) ? data : []).map(
+            (video) => ({
+              id: video.id,
+              title: video.judul || "",
+              description: video.deskripsi || "",
+              youtubeUrl: video.link || "",
+            }),
+          );
+
+          setVideos(formattedVideos);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setPageError(
+            error.message || "Gagal mengambil daftar video pembelajaran.",
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /* =======================================================
      FILTER VIDEO
   ======================================================= */
 
-  const filteredVideos = videos.filter((video) => {
-    const keyword = searchTerm.toLowerCase();
+  const filteredVideos = useMemo(() => {
+    const keyword = searchTerm.toLowerCase().trim();
 
-    return (
-      video.title.toLowerCase().includes(keyword) ||
-      video.description.toLowerCase().includes(keyword)
+    if (!keyword) return videos;
+
+    return videos.filter(
+      (video) =>
+        video.title.toLowerCase().includes(keyword) ||
+        video.description.toLowerCase().includes(keyword),
     );
-  });
+  }, [videos, searchTerm]);
 
   /* =======================================================
      RESET FORM
@@ -134,19 +199,21 @@ function DosenVideoPembelajaran() {
     });
 
     setEditingVideo(null);
+    setFormError("");
   };
 
   /* =======================================================
-     BUKA TAMBAH
+     TAMBAH
   ======================================================= */
 
   const handleAdd = () => {
     resetForm();
+    setSuccessMessage("");
     setShowModal(true);
   };
 
   /* =======================================================
-     BUKA EDIT
+     EDIT
   ======================================================= */
 
   const handleEdit = (video) => {
@@ -158,11 +225,13 @@ function DosenVideoPembelajaran() {
       youtubeUrl: video.youtubeUrl,
     });
 
+    setFormError("");
+    setSuccessMessage("");
     setShowModal(true);
   };
 
   /* =======================================================
-     INPUT FORM
+     INPUT
   ======================================================= */
 
   const handleChange = (event) => {
@@ -175,92 +244,105 @@ function DosenVideoPembelajaran() {
   };
 
   /* =======================================================
-     SIMPAN VIDEO
+     SIMPAN
   ======================================================= */
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (
-      !formData.title.trim() ||
-      !formData.description.trim() ||
-      !formData.youtubeUrl.trim()
-    ) {
-      alert("Judul, deskripsi, dan URL YouTube wajib diisi.");
+    const title = formData.title.trim();
+    const description = formData.description.trim();
+    const youtubeUrl = formData.youtubeUrl.trim();
+
+    if (!title) {
+      setFormError("Judul video harus diisi.");
       return;
     }
 
-    const youtubeId = getYoutubeId(formData.youtubeUrl);
-
-    if (!youtubeId) {
-      alert("URL YouTube tidak valid.");
+    if (!description) {
+      setFormError("Deskripsi video harus diisi.");
       return;
     }
 
-    if (editingVideo) {
-      setVideos((previous) =>
-        previous.map((video) =>
-          video.id === editingVideo.id
-            ? {
-                ...video,
-                ...formData,
-              }
-            : video,
-        ),
-      );
-
-      alert("Video berhasil diperbarui.");
-    } else {
-      const newVideo = {
-        id: Date.now(),
-        ...formData,
-      };
-
-      setVideos((previous) => [
-        newVideo,
-        ...previous,
-      ]);
-
-      alert("Video berhasil ditambahkan.");
+    if (!youtubeUrl) {
+      setFormError("URL YouTube harus diisi.");
+      return;
     }
 
-    setShowModal(false);
-    resetForm();
+    if (!isValidYoutubeUrl(youtubeUrl)) {
+      setFormError("Masukkan URL YouTube yang valid.");
+      return;
+    }
+
+    const videoData = {
+      judul: title,
+      deskripsi: description,
+      link: youtubeUrl,
+    };
+
+    setSaving(true);
+    setFormError("");
+    setSuccessMessage("");
+
+    try {
+      if (editingVideo) {
+        await updateVideoPembelajaran(editingVideo.id, videoData);
+        setSuccessMessage("Video berhasil diperbarui.");
+      } else {
+        await createVideoPembelajaran(videoData);
+        setSuccessMessage("Video berhasil ditambahkan.");
+      }
+
+      setShowModal(false);
+      resetForm();
+
+      await loadVideos();
+    } catch (error) {
+      setFormError(error.message || "Gagal menyimpan video pembelajaran.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   /* =======================================================
-     HAPUS VIDEO
+     HAPUS
   ======================================================= */
 
-  const handleDelete = (id) => {
-    const video = videos.find(
-      (item) => item.id === id,
-    );
+  const handleDelete = async (id) => {
+    const video = videos.find((item) => item.id === id);
 
-    if (!video) {
-      return;
-    }
+    if (!video) return;
 
     const confirmed = window.confirm(
       `Apakah kamu yakin ingin menghapus video "${video.title}"?`,
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
-    setVideos((previous) =>
-      previous.filter(
-        (item) => item.id !== id,
-      ),
-    );
+    setDeletingId(id);
+    setPageError("");
+    setSuccessMessage("");
+
+    try {
+      await deleteVideoPembelajaran(id);
+
+      setSuccessMessage("Video berhasil dihapus.");
+
+      await loadVideos();
+    } catch (error) {
+      setPageError(error.message || "Gagal menghapus video pembelajaran.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   /* =======================================================
      TUTUP MODAL
   ======================================================= */
 
-  const closeModal = () => {
+  const handleCloseModal = () => {
+    if (saving) return;
+
     setShowModal(false);
     resetForm();
   };
@@ -271,30 +353,19 @@ function DosenVideoPembelajaran() {
 
   return (
     <div className="dosen-video-page">
-
-      {/* ===================================================
-          HEADER
-      =================================================== */}
+      {/* HEADER */}
 
       <div className="dosen-video-header">
-
         <div className="dosen-video-title">
-
           <div className="dosen-video-title-icon">
             <FaChalkboardTeacher />
           </div>
 
           <div>
-
             <h1>Video Pembelajaran</h1>
 
-            <p>
-              Kelola video pembelajaran dan video
-              mengajar untuk mahasiswa.
-            </p>
-
+            <p>Kelola video pembelajaran dan video mengajar untuk mahasiswa.</p>
           </div>
-
         </div>
 
         <button
@@ -305,26 +376,41 @@ function DosenVideoPembelajaran() {
           <FaPlus />
           Tambah Video
         </button>
-
       </div>
 
-      {/* ===================================================
-          TOOLBAR
-      =================================================== */}
+      {/* PESAN */}
+
+      {successMessage && (
+        <div className="alert alert-success" role="status">
+          {successMessage}
+        </div>
+      )}
+
+      {pageError && (
+        <div className="alert alert-danger" role="alert">
+          {pageError}
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-danger ms-2"
+            onClick={() => loadVideos(true)}
+          >
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
+      {/* TOOLBAR */}
 
       <div className="dosen-video-toolbar">
-
         <div className="dosen-video-search">
-
           <FaSearch />
 
           <input
             type="text"
             placeholder="Cari video pembelajaran..."
             value={searchTerm}
-            onChange={(event) =>
-              setSearchTerm(event.target.value)
-            }
+            onChange={(event) => setSearchTerm(event.target.value)}
           />
 
           {searchTerm && (
@@ -337,190 +423,137 @@ function DosenVideoPembelajaran() {
               <FaTimes />
             </button>
           )}
-
         </div>
 
-        <span className="dosen-video-total">
-          {filteredVideos.length} Video
-        </span>
-
+        <span className="dosen-video-total">{filteredVideos.length} Video</span>
       </div>
 
-      {/* ===================================================
-          VIDEO GRID
-      =================================================== */}
+      {/* VIDEO GRID */}
 
-      <div className="dosen-video-grid">
+      {loading ? (
+        <div className="dosen-video-empty">
+          <FaYoutube />
+          <h3>Memuat video pembelajaran...</h3>
+        </div>
+      ) : filteredVideos.length === 0 ? (
+        <div className="dosen-video-empty">
+          <FaYoutube />
 
-        {filteredVideos.length > 0 ? (
+          <h3>
+            {searchTerm
+              ? "Video tidak ditemukan"
+              : "Belum ada video pembelajaran"}
+          </h3>
 
-          filteredVideos.map((video) => {
+          <p>
+            {searchTerm
+              ? "Coba gunakan kata pencarian yang berbeda."
+              : "Klik Tambah Video untuk membuat data baru."}
+          </p>
+        </div>
+      ) : (
+        <div className="dosen-video-grid">
+          {filteredVideos.map((video) => (
+            <div className="dosen-video-card" key={video.id}>
+              {/* IMAGE */}
 
-            const thumbnail =
-              getYoutubeThumbnail(
-                video.youtubeUrl,
-              );
+              <div className="dosen-video-card-image">
+                <img
+                  src={getYoutubeThumbnail(video.youtubeUrl)}
+                  alt={video.title}
+                />
 
-            return (
-              <div
-                className="dosen-video-card"
-                key={video.id}
-              >
-
-                {/* IMAGE */}
-
-                <div className="dosen-video-card-image">
-
-                  <img
-                    src={thumbnail}
-                    alt={video.title}
-                  />
-
-                  <div className="dosen-video-youtube-icon">
-                    <FaYoutube />
-                  </div>
-
+                <div className="dosen-video-youtube-icon">
+                  <FaYoutube />
                 </div>
-
-                {/* CONTENT */}
-
-                <div className="dosen-video-card-content">
-
-                  <h3>{video.title}</h3>
-
-                  <p>
-                    {video.description}
-                  </p>
-
-                  <div className="dosen-video-url">
-
-                    <FaYoutube />
-
-                    <span>
-                      {video.youtubeUrl}
-                    </span>
-
-                  </div>
-
-                  {/* ACTION */}
-
-                  <div className="dosen-video-card-actions">
-
-                    <button
-                      type="button"
-                      className="dosen-video-edit-btn"
-                      onClick={() =>
-                        handleEdit(video)
-                      }
-                    >
-                      <FaEdit />
-                      Edit
-                    </button>
-
-                    <button
-                      type="button"
-                      className="dosen-video-delete-btn"
-                      onClick={() =>
-                        handleDelete(video.id)
-                      }
-                      aria-label={`Hapus ${video.title}`}
-                    >
-                      <FaTrash />
-                      Hapus
-                    </button>
-
-                  </div>
-
-                </div>
-
               </div>
-            );
-          })
 
-        ) : (
+              {/* CONTENT */}
 
-          <div className="dosen-video-empty">
+              <div className="dosen-video-card-content">
+                <h3>{video.title}</h3>
 
-            <FaYoutube />
+                <p>{video.description}</p>
 
-            <h3>
-              Video tidak ditemukan
-            </h3>
+                <div className="dosen-video-url">
+                  <FaYoutube />
 
-            <p>
-              Tidak ada video yang sesuai
-              dengan pencarian "{searchTerm}".
-            </p>
+                  <span title={video.youtubeUrl}>{video.youtubeUrl}</span>
+                </div>
 
-          </div>
+                {/* ACTION */}
 
-        )}
+                <div className="dosen-video-card-actions">
+                  <button
+                    type="button"
+                    className="dosen-video-edit-btn"
+                    onClick={() => handleEdit(video)}
+                  >
+                    <FaEdit />
+                    Edit
+                  </button>
 
-      </div>
+                  <button
+                    type="button"
+                    className="dosen-video-delete-btn"
+                    onClick={() => handleDelete(video.id)}
+                    disabled={deletingId === video.id}
+                  >
+                    <FaTrash />
+                    {deletingId === video.id ? "Menghapus..." : "Hapus"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* ===================================================
-          MODAL TAMBAH / EDIT
-      =================================================== */}
+      {/* MODAL TAMBAH / EDIT */}
 
       {showModal && (
-
         <div
           className="dosen-video-modal-overlay"
           onMouseDown={(event) => {
-
-            if (
-              event.target ===
-              event.currentTarget
-            ) {
-              closeModal();
+            if (event.target === event.currentTarget) {
+              handleCloseModal();
             }
-
           }}
         >
-
           <div className="dosen-video-modal">
-
-            {/* MODAL HEADER */}
+            {/* HEADER MODAL */}
 
             <div className="dosen-video-modal-header">
-
               <div>
-
                 <span>
-                  {editingVideo
-                    ? "EDIT VIDEO"
-                    : "VIDEO PEMBELAJARAN"}
+                  {editingVideo ? "EDIT VIDEO" : "VIDEO PEMBELAJARAN"}
                 </span>
 
-                <h2>
-                  {editingVideo
-                    ? "Edit Video"
-                    : "Tambah Video Baru"}
-                </h2>
-
+                <h2>{editingVideo ? "Edit Video" : "Tambah Video Baru"}</h2>
               </div>
 
               <button
                 type="button"
                 className="dosen-video-close-btn"
-                onClick={closeModal}
+                onClick={handleCloseModal}
+                disabled={saving}
               >
                 <FaTimes />
               </button>
-
             </div>
 
             {/* FORM */}
 
-            <form
-              className="dosen-video-form"
-              onSubmit={handleSubmit}
-            >
+            <form className="dosen-video-form" onSubmit={handleSubmit}>
+              {formError && (
+                <div className="alert alert-danger" role="alert">
+                  {formError}
+                </div>
+              )}
 
               {/* JUDUL */}
 
               <div className="dosen-video-form-group">
-
                 <label htmlFor="video-title">
                   Judul Video
                   <span>*</span>
@@ -533,14 +566,14 @@ function DosenVideoPembelajaran() {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Contoh: Mengenal Makhluk Hidup"
+                  disabled={saving}
+                  required
                 />
-
               </div>
 
               {/* DESKRIPSI */}
 
               <div className="dosen-video-form-group">
-
                 <label htmlFor="video-description">
                   Deskripsi
                   <span>*</span>
@@ -553,21 +586,20 @@ function DosenVideoPembelajaran() {
                   onChange={handleChange}
                   placeholder="Masukkan deskripsi video..."
                   rows="4"
+                  disabled={saving}
+                  required
                 />
-
               </div>
 
-              {/* YOUTUBE URL */}
+              {/* URL YOUTUBE */}
 
               <div className="dosen-video-form-group">
-
                 <label htmlFor="video-youtube-url">
                   URL YouTube
                   <span>*</span>
                 </label>
 
                 <div className="dosen-video-input-icon">
-
                   <FaYoutube />
 
                   <input
@@ -577,49 +609,38 @@ function DosenVideoPembelajaran() {
                     value={formData.youtubeUrl}
                     onChange={handleChange}
                     placeholder="https://www.youtube.com/watch?v=..."
+                    disabled={saving}
+                    required
                   />
-
                 </div>
 
                 <small>
-                  Masukkan link video YouTube yang
-                  akan ditampilkan kepada mahasiswa.
+                  Masukkan link video YouTube yang akan ditampilkan kepada
+                  mahasiswa.
                 </small>
-
               </div>
 
-              {/* THUMBNAIL PREVIEW */}
+              {/* PREVIEW THUMBNAIL */}
 
-              {formData.youtubeUrl &&
-                getYoutubeId(
-                  formData.youtubeUrl,
-                ) && (
+              {formData.youtubeUrl && getYoutubeId(formData.youtubeUrl) && (
+                <div className="dosen-video-thumbnail-preview">
+                  <span>Preview Thumbnail</span>
 
-                  <div className="dosen-video-thumbnail-preview">
-
-                    <span>
-                      Preview Thumbnail
-                    </span>
-
-                    <img
-                      src={getYoutubeThumbnail(
-                        formData.youtubeUrl,
-                      )}
-                      alt="Preview thumbnail"
-                    />
-
-                  </div>
-
-                )}
+                  <img
+                    src={getYoutubeThumbnail(formData.youtubeUrl)}
+                    alt="Preview thumbnail"
+                  />
+                </div>
+              )}
 
               {/* FOOTER */}
 
               <div className="dosen-video-modal-footer">
-
                 <button
                   type="button"
                   className="dosen-video-cancel-btn"
-                  onClick={closeModal}
+                  onClick={handleCloseModal}
+                  disabled={saving}
                 >
                   <FaTimes />
                   Batal
@@ -628,24 +649,21 @@ function DosenVideoPembelajaran() {
                 <button
                   type="submit"
                   className="dosen-video-save-btn"
+                  disabled={saving}
                 >
                   <FaSave />
 
-                  {editingVideo
-                    ? "Simpan Perubahan"
-                    : "Simpan Video"}
+                  {saving
+                    ? "Menyimpan..."
+                    : editingVideo
+                      ? "Simpan Perubahan"
+                      : "Simpan Video"}
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
-
       )}
-
     </div>
   );
 }

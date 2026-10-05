@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Container, Button } from "react-bootstrap";
+import { useEffect, useMemo, useState } from "react";
+import { Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import {
   FaGraduationCap,
   FaFilePdf,
@@ -9,119 +10,17 @@ import {
   FaClock,
   FaStar,
   FaBookOpen,
-  FaClipboardCheck,
   FaPlay,
   FaYoutube,
+  FaExclamationCircle,
+  FaSpinner,
 } from "react-icons/fa";
 
+import { getAssignments } from "../service/assignmentService";
+import { getVideoPembelajaran } from "../service/videoPembelajaranService";
+import { getSubmissionByStudent } from "../service/assignmentSubmissionService";
+
 import "../css/Microteaching.css";
-
-/* =========================================================
-   DATA TUGAS
-   Sementara menggunakan data dummy
-========================================================= */
-
-const tugasList = [
-  {
-    id: 1,
-
-    title: "Buatlah Video Pembelajaran IPA SD, Konteks Lokal Papua",
-
-
-    description:
-      "Amatilah tumbuhan yang ada di sekitar rumahmu dan temukan bagian-bagian serta fungsi dari tumbuhan tersebut.",
-
-    deadline: "10 September 2026",
-
-    status: "belum",
-
-    image:
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=80",
-
-    color: "green",
-
-    pdf: "/pdf/tugas-tumbuhan.pdf",
-  },
-
-  {
-    id: 2,
-
-    title: "Problem Based Learning (PBL)",
-
-    description:
-      "Temukan contoh gaya yang terjadi dalam kehidupan sehari-hari dan jelaskan pengaruh gaya tersebut terhadap benda.",
-
-    deadline: "15 September 2026",
-
-    status: "dikumpulkan",
-
-    image:
-      "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=80",
-
-    color: "blue",
-
-    pdf: "/pdf/tugas-gaya.pdf",
-  },
-
-  {
-    id: 3,
-
-    title: "Focus Group Discussion (FGD)",
-
-    description:
-      "Lakukan eksperimen sederhana tentang perubahan energi kemudian dokumentasikan hasil percobaanmu.",
-
-    deadline: "20 September 2026",
-
-    status: "dinilai",
-
-    image:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=80",
-
-    color: "yellow",
-
-    pdf: "/pdf/tugas-energi.pdf",
-
-    score: 90,
-  },
-];
-
-/* =========================================================
-   DATA VIDEO MENGAJAR DOSEN
-   Sementara menggunakan data dummy YouTube
-========================================================= */
-
-const videoDosenList = [
-  {
-    id: 1,
-
-    title: "Praktik Mengajar IPA SD - Bagian dan Fungsi Tumbuhan",
-
-    lecturer: "Dosen PGSD",
-
-    description:
-      "Contoh praktik pembelajaran IPA tentang bagian dan fungsi tumbuhan dengan pendekatan kontekstual.",
-
-    youtubeId: "VIDEO_ID_1",
-
-    duration: "12:45",
-  },
-
-  {
-    id: 2,
-
-    title: "Pembelajaran IPA SD - Gaya dan Gerak",
-
-    lecturer: "Dosen PGSD",
-
-    description:
-      "Video pembelajaran yang menunjukkan bagaimana konsep gaya dan gerak dapat dijelaskan melalui contoh kehidupan sehari-hari.",
-
-    youtubeId: "VIDEO_ID_2",
-
-    duration: "15:20",
-  },
-];
 
 /* =========================================================
    STATUS
@@ -145,35 +44,375 @@ const statusConfig = {
 };
 
 /* =========================================================
+   HELPER - MENDAPATKAN USER YANG SEDANG LOGIN
+========================================================= */
+
+const getCurrentUser = () => {
+  let userData = null;
+
+  /*
+   * Prioritaskan localStorage
+   * jika pasangan token lengkap tersedia.
+   */
+
+  if (
+    localStorage.getItem("access_token") &&
+    localStorage.getItem("refresh_token")
+  ) {
+    userData = localStorage.getItem("user");
+  }
+
+  /*
+   * Jika tidak ada, gunakan sessionStorage.
+   */
+
+  if (!userData) {
+    userData = sessionStorage.getItem("user");
+  }
+
+  if (!userData) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(userData);
+  } catch (error) {
+    console.error("Gagal membaca data user:", error);
+    return null;
+  }
+};
+
+/* =========================================================
+   HELPER - FORMAT TANGGAL
+========================================================= */
+
+const formatDate = (date) => {
+  if (!date) {
+    return "-";
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return parsedDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
+/* =========================================================
+   HELPER - AMBIL YOUTUBE ID
+========================================================= */
+
+const getYoutubeId = (url) => {
+  if (!url) {
+    return "";
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+
+    const hostname = parsedUrl.hostname.replace(/^www\./, "");
+
+    /* -----------------------------------------------------
+       https://youtu.be/VIDEO_ID
+    ----------------------------------------------------- */
+
+    if (hostname === "youtu.be") {
+      return parsedUrl.pathname.split("/").filter(Boolean)[0] || "";
+    }
+
+    /* -----------------------------------------------------
+       youtube.com
+    ----------------------------------------------------- */
+
+    if (
+      hostname === "youtube.com" ||
+      hostname === "m.youtube.com" ||
+      hostname === "youtube-nocookie.com"
+    ) {
+      /* -----------------------------------------------
+         https://www.youtube.com/watch?v=VIDEO_ID
+      ----------------------------------------------- */
+
+      if (parsedUrl.pathname === "/watch") {
+        return parsedUrl.searchParams.get("v") || "";
+      }
+
+      /* -----------------------------------------------
+         https://www.youtube.com/embed/VIDEO_ID
+         https://www.youtube.com/shorts/VIDEO_ID
+      ----------------------------------------------- */
+
+      const match = parsedUrl.pathname.match(/^\/(?:embed|shorts)\/([^/?]+)/);
+
+      return match ? match[1] : "";
+    }
+
+    return "";
+  } catch {
+    return "";
+  }
+};
+
+/* =========================================================
+   HELPER - THUMBNAIL YOUTUBE
+========================================================= */
+
+const getYoutubeThumbnail = (url) => {
+  const youtubeId = getYoutubeId(url);
+
+  /*
+   * Jika link YouTube tidak valid
+   */
+
+  if (!youtubeId) {
+    return "https://placehold.co/800x450/eaf4ff/1769aa?text=Video+Pembelajaran";
+  }
+
+  /*
+   * Gunakan HQ Default
+   */
+
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+};
+
+/* =========================================================
+   HELPER - BUKA YOUTUBE
+========================================================= */
+
+const openYoutube = (url) => {
+  if (!url) {
+    return;
+  }
+
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
+/* =========================================================
    COMPONENT
 ========================================================= */
 
 function Microteaching() {
+  const navigate = useNavigate();
+
+  const [assignments, setAssignments] = useState([]);
+
+  const [videos, setVideos] = useState([]);
+
   const [activeFilter, setActiveFilter] = useState("semua");
 
-  const [search] = useState("");
+  const [loadingAssignments, setLoadingAssignments] = useState(true);
+
+  const [loadingVideos, setLoadingVideos] = useState(true);
+
+  const [assignmentError, setAssignmentError] = useState("");
+
+  const [videoError, setVideoError] = useState("");
+
+  /* =======================================================
+     AMBIL DATA TUGAS + STATUS SUBMISSION
+  ======================================================= */
+
+  useEffect(() => {
+    const loadAssignments = async () => {
+      try {
+        setLoadingAssignments(true);
+        setAssignmentError("");
+
+        /* =================================================
+           USER LOGIN
+        ================================================= */
+
+        const currentUser = getCurrentUser();
+
+        if (!currentUser?.id) {
+          throw new Error(
+            "Data pengguna tidak ditemukan. Silakan login kembali.",
+          );
+        }
+
+        /* =================================================
+           AMBIL SEMUA ASSIGNMENT
+        ================================================= */
+
+        const assignmentData = await getAssignments();
+
+        const assignmentList = Array.isArray(assignmentData)
+          ? assignmentData
+          : [];
+
+        /* =================================================
+           AMBIL SUBMISSION SETIAP TUGAS
+        ================================================= */
+
+        const submissionResults = await Promise.all(
+          assignmentList.map(async (assignment) => {
+            try {
+              const submission = await getSubmissionByStudent(
+                assignment.id,
+                currentUser.id,
+              );
+
+              return {
+                assignmentId: assignment.id,
+
+                submission: submission || null,
+              };
+            } catch (error) {
+              /*
+               * Jika mahasiswa belum mengumpulkan
+               * tugas, dianggap belum dikerjakan.
+               */
+
+              console.log(
+                `Belum ada submission untuk tugas ${assignment.id}:`,
+                error.message,
+              );
+
+              return {
+                assignmentId: assignment.id,
+
+                submission: null,
+              };
+            }
+          }),
+        );
+
+        /* =================================================
+           GABUNGKAN ASSIGNMENT + SUBMISSION
+        ================================================= */
+
+        const mergedAssignments = assignmentList.map((assignment) => {
+          const submissionData = submissionResults.find(
+            (item) => item.assignmentId === assignment.id,
+          );
+
+          const submission = submissionData?.submission;
+
+          return {
+            ...assignment,
+
+            /*
+             * STATUS DIAMBIL DARI
+             * assignment_submissions.status
+             *
+             * Jika belum ada submission,
+             * status = belum.
+             */
+
+            status: submission?.status || "belum",
+
+            /*
+             * NILAI DIAMBIL DARI
+             * assignment_submissions.score
+             */
+
+            score:
+              submission?.score !== null && submission?.score !== undefined
+                ? submission.score
+                : null,
+
+            /*
+             * Simpan ID submission
+             * jika nantinya diperlukan.
+             */
+
+            submission_id: submission?.id || null,
+          };
+        });
+
+        setAssignments(mergedAssignments);
+      } catch (error) {
+        console.error("Gagal mengambil tugas:", error);
+
+        setAssignmentError(error.message || "Gagal mengambil daftar tugas.");
+      } finally {
+        setLoadingAssignments(false);
+      }
+    };
+
+    loadAssignments();
+  }, []);
+
+  /* =======================================================
+     AMBIL VIDEO DOSEN
+  ======================================================= */
+
+  useEffect(() => {
+    const loadVideos = async () => {
+      try {
+        setLoadingVideos(true);
+        setVideoError("");
+
+        const data = await getVideoPembelajaran();
+
+        /*
+         * -------------------------------------------------
+         * DATA DARI API DOSEN
+         *
+         * API mengembalikan:
+         * id
+         * judul
+         * deskripsi
+         * link
+         * -------------------------------------------------
+         */
+
+        const formattedVideos = (Array.isArray(data) ? data : []).map(
+          (video) => ({
+            id: video.id,
+
+            title: video.judul || "",
+
+            description: video.deskripsi || "",
+
+            youtubeUrl: video.link || "",
+          }),
+        );
+
+        setVideos(formattedVideos);
+      } catch (error) {
+        console.error("Gagal mengambil video pembelajaran:", error);
+
+        setVideoError(error.message || "Gagal mengambil video pembelajaran.");
+      } finally {
+        setLoadingVideos(false);
+      }
+    };
+
+    loadVideos();
+  }, []);
 
   /* =======================================================
      FILTER TUGAS
   ======================================================= */
 
-  const filteredTugas = tugasList.filter((tugas) => {
-    const matchFilter =
-      activeFilter === "semua" || tugas.status === activeFilter;
+  const filteredTugas = useMemo(() => {
+    return assignments.filter((tugas) => {
+      /*
+       * Status sudah berasal dari
+       * assignment_submissions.
+       */
 
-    const matchSearch =
-      tugas.title.toLowerCase().includes(search.toLowerCase()) ||
-      tugas.material.toLowerCase().includes(search.toLowerCase());
+      const status = tugas.status || "belum";
 
-    return matchFilter && matchSearch;
-  });
+      const matchFilter = activeFilter === "semua" || status === activeFilter;
+
+      return matchFilter;
+    });
+  }, [assignments, activeFilter]);
 
   /* =======================================================
-     NAVIGATE DETAIL
+     NAVIGATE DETAIL TUGAS
   ======================================================= */
 
   const lihatTugas = (id) => {
-    window.location.href = `/microteaching/tugas/${id}`;
+    navigate(`/microteaching/tugas/${id}`);
   };
 
   return (
@@ -185,8 +424,6 @@ function Microteaching() {
       <section className="micro-hero">
         <Container>
           <div className="micro-hero-content">
-            {/* TEXT */}
-
             <div className="micro-hero-text">
               <div className="micro-eyebrow">
                 <FaGraduationCap />
@@ -199,10 +436,23 @@ function Microteaching() {
               </h1>
 
               <p>
-                Kerjakan tugas IPA dengan menyenangkan. Baca tugas, lakukan
-                aktivitasnya, lalu kumpulkan hasil pekerjaanmu melalui link.
+                Pelajari contoh pembelajaran dari dosen, kerjakan tugas
+                Microteaching, dan tunjukkan kemampuanmu dalam mengajar IPA SD.
               </p>
 
+              <div className="micro-hero-info">
+                <div>
+                  <FaBookOpen />
+
+                  <span>Materi & Tugas</span>
+                </div>
+
+                <div>
+                  <FaPlay />
+
+                  <span>Video Pembelajaran</span>
+                </div>
+              </div>
             </div>
 
             {/* ILLUSTRATION */}
@@ -227,12 +477,14 @@ function Microteaching() {
       </section>
 
       {/* ===================================================
-          VIDEO MENGAJAR DOSEN
+          VIDEO PEMBELAJARAN DOSEN
       =================================================== */}
 
       <section className="micro-lecturer-video">
         <Container>
-          {/* HEADER */}
+          {/* =================================================
+              HEADER VIDEO
+          ================================================= */}
 
           <div className="video-section-header">
             <div>
@@ -243,8 +495,8 @@ function Microteaching() {
               <h2>Lihat Contoh Mengajar dari Dosen 🎥</h2>
 
               <p>
-                Amati bagaimana dosen menyampaikan materi IPA, mengelola
-                pembelajaran, dan membangun interaksi dengan peserta didik.
+                Amati bagaimana dosen menyampaikan pembelajaran IPA, menjelaskan
+                materi, dan membangun interaksi dalam kegiatan belajar.
               </p>
             </div>
 
@@ -253,61 +505,155 @@ function Microteaching() {
             </div>
           </div>
 
-          {/* VIDEO GRID */}
+          {/* =================================================
+              LOADING VIDEO
+          ================================================= */}
 
-          <div className="lecturer-video-grid">
-            {videoDosenList.map((video) => (
-              <article className="lecturer-video-card" key={video.id}>
-                {/* VIDEO */}
+          {loadingVideos && (
+            <div className="micro-loading">
+              <FaSpinner className="loading-spinner" />
 
-                <div className="lecturer-video-wrapper">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.youtubeId}`}
-                    title={video.title}
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
+              <span>Memuat video pembelajaran...</span>
+            </div>
+          )}
 
-                  {/* DURASI */}
+          {/* =================================================
+              ERROR VIDEO
+          ================================================= */}
 
-                  <span className="video-duration">{video.duration}</span>
+          {!loadingVideos && videoError && (
+            <div className="micro-error">
+              <FaExclamationCircle />
 
-                  {/* YOUTUBE */}
+              <div>
+                <strong>Video belum dapat dimuat</strong>
 
-                  <div className="youtube-badge">
-                    <FaYoutube />
-                  </div>
-                </div>
+                <p>{videoError}</p>
+              </div>
+            </div>
+          )}
 
-                {/* CONTENT */}
+          {/* =================================================
+              VIDEO LIST
+          ================================================= */}
 
-                <div className="lecturer-video-content">
-                  {/* TITLE */}
+          {!loadingVideos && !videoError && videos.length > 0 && (
+            <div className="lecturer-video-grid">
+              {videos.map((video) => {
+                const youtubeUrl = video.youtubeUrl || "";
 
-                  <h3>{video.title}</h3>
+                const thumbnail = getYoutubeThumbnail(youtubeUrl);
 
-                  {/* DESCRIPTION */}
+                const title = video.title || "Video Pembelajaran IPA";
 
-                  <p>{video.description}</p>
+                const description =
+                  video.description ||
+                  "Video pembelajaran IPA untuk membantu mahasiswa memahami praktik mengajar.";
 
-                  {/* LECTURER */}
+                return (
+                  <article
+                    className={`lecturer-video-card ${
+                      youtubeUrl ? "clickable" : ""
+                    }`}
+                    key={video.id}
+                    onClick={() => openYoutube(youtubeUrl)}
+                    role={youtubeUrl ? "button" : undefined}
+                    tabIndex={youtubeUrl ? 0 : undefined}
+                    onKeyDown={(event) => {
+                      if (
+                        youtubeUrl &&
+                        (event.key === "Enter" || event.key === " ")
+                      ) {
+                        event.preventDefault();
 
-                  <div className="video-lecturer">
-                    <div className="lecturer-avatar">
-                      <FaGraduationCap />
+                        openYoutube(youtubeUrl);
+                      }
+                    }}
+                  >
+                    {/* ===================================
+                          THUMBNAIL
+                      =================================== */}
+
+                    <div className="lecturer-video-wrapper">
+                      {youtubeUrl ? (
+                        <img
+                          src={thumbnail}
+                          alt={`Thumbnail ${title}`}
+                          className="youtube-thumbnail"
+                        />
+                      ) : (
+                        <div className="video-unavailable">
+                          <FaYoutube />
+
+                          <span>Video tidak tersedia</span>
+                        </div>
+                      )}
+
+                      {/* DARK OVERLAY */}
+
+                      {youtubeUrl && (
+                        <div className="youtube-thumbnail-overlay" />
+                      )}
+
+                      {/* PLAY BUTTON */}
+
+                      {youtubeUrl && (
+                        <div className="youtube-play-button">
+                          <FaPlay />
+                        </div>
+                      )}
+
+                      {/* YOUTUBE BADGE */}
+
+                      {youtubeUrl && (
+                        <div className="youtube-badge">
+                          <FaYoutube />
+                        </div>
+                      )}
                     </div>
 
-                    <div>
-                      <span>Pengajar</span>
+                    {/* ===================================
+                          CONTENT
+                      =================================== */}
 
-                      <strong>{video.lecturer}</strong>
+                    <div className="lecturer-video-content">
+                      <h3>{title}</h3>
+
+                      <p>{description}</p>
+
+                      {/* WATCH LABEL */}
+
+                      {youtubeUrl && (
+                        <div className="watch-youtube">
+                          <FaYoutube />
+
+                          <span>Tonton di YouTube</span>
+
+                          <FaArrowRight />
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+
+          {/* =================================================
+              EMPTY VIDEO
+          ================================================= */}
+
+          {!loadingVideos && !videoError && videos.length === 0 && (
+            <div className="micro-empty video-empty">
+              <div>
+                <FaYoutube />
+              </div>
+
+              <h3>Belum ada video pembelajaran</h3>
+
+              <p>Video pembelajaran dari dosen akan muncul di sini.</p>
+            </div>
+          )}
         </Container>
       </section>
 
@@ -359,7 +705,9 @@ function Microteaching() {
 
       <section className="micro-tasks">
         <Container>
-          {/* HEADER */}
+          {/* =================================================
+              HEADER
+          ================================================= */}
 
           <div className="micro-section-header">
             <div>
@@ -367,11 +715,13 @@ function Microteaching() {
 
               <h2>Tugas Microteaching 📚</h2>
 
-              <p>Yuk selesaikan tugas-tugas IPA kamu!</p>
+              <p>Yuk selesaikan tugas-tugas Microteaching kamu!</p>
             </div>
           </div>
 
-          {/* FILTER */}
+          {/* =================================================
+              FILTER
+          ================================================= */}
 
           <div className="micro-filter">
             <button
@@ -407,89 +757,160 @@ function Microteaching() {
             </button>
           </div>
 
-          {/* TASK GRID */}
+          {/* =================================================
+              LOADING
+          ================================================= */}
 
-          <div className="micro-task-grid">
-            {filteredTugas.map((tugas) => (
-              <article className="micro-task-card" key={tugas.id}>
-                {/* VISUAL */}
+          {loadingAssignments && (
+            <div className="micro-loading">
+              <FaSpinner className="loading-spinner" />
 
-                <div className="task-visual">
-                  <img
-                    src={tugas.image}
-                    alt={tugas.title}
-                    className="task-image"
-                  />
-
-                  <div className="task-image-overlay"></div>
-
-                  <div className="task-pdf">
-                    <FaFilePdf />
-                  </div>
-
-                </div>
-
-                {/* BODY */}
-
-                <div className="task-body">
-                  {/* STATUS */}
-
-                  <div className="task-status">
-                    <span className={`status-${tugas.status}`}>
-                      {statusConfig[tugas.status].icon}
-
-                      {statusConfig[tugas.status].label}
-                    </span>
-
-                    {tugas.score && (
-                      <span className="task-score">⭐ {tugas.score}</span>
-                    )}
-                  </div>
-
-                  {/* TITLE */}
-
-                  <h3>{tugas.title}</h3>
-                  
-
-                  {/* DESCRIPTION */}
-
-                  <p>{tugas.description}</p>
-
-                  {/* DEADLINE */}
-
-                  <div className="task-deadline">
-                    <FaCalendarAlt />
-
-                    <span>Batas pengumpulan</span>
-
-                    <strong>{tugas.deadline}</strong>
-                  </div>
-
-                  {/* BUTTON */}
-
-                  <Button
-                    className="task-button"
-                    onClick={() => lihatTugas(tugas.id)}
-                  >
-                    Lihat Tugas
-                    <FaArrowRight />
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* EMPTY */}
-
-          {filteredTugas.length === 0 && (
-            <div className="micro-empty">
-              <div>🔎</div>
-
-              <h3>Tugas tidak ditemukan</h3>
-
-              <p>Coba gunakan kata pencarian atau filter yang berbeda.</p>
+              <span>Memuat daftar tugas...</span>
             </div>
           )}
+
+          {/* =================================================
+              ERROR
+          ================================================= */}
+
+          {!loadingAssignments && assignmentError && (
+            <div className="micro-error">
+              <FaExclamationCircle />
+
+              <div>
+                <strong>Tugas belum dapat dimuat</strong>
+
+                <p>{assignmentError}</p>
+              </div>
+            </div>
+          )}
+
+          {/* =================================================
+              TASK GRID
+          ================================================= */}
+
+          {!loadingAssignments &&
+            !assignmentError &&
+            filteredTugas.length > 0 && (
+              <div className="micro-task-grid">
+                {filteredTugas.map((tugas) => {
+                  /*
+                   * STATUS SUDAH BERASAL DARI
+                   * assignment_submissions
+                   */
+
+                  const status = tugas.status || "belum";
+
+                  const title =
+                    tugas.title ||
+                    tugas.name ||
+                    tugas.judul ||
+                    "Tugas Microteaching";
+
+                  const description =
+                    tugas.description ||
+                    tugas.deskripsi ||
+                    "Kerjakan tugas sesuai petunjuk yang diberikan.";
+
+                  const deadline =
+                    tugas.deadline || tugas.due_date || tugas.dueDate;
+
+                  const image =
+                    tugas.image ||
+                    tugas.image_url ||
+                    tugas.thumbnail ||
+                    "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=80";
+
+                  return (
+                    <article className="micro-task-card" key={tugas.id}>
+                      {/* =================================
+                            VISUAL
+                        ================================= */}
+
+                      <div className="task-visual">
+                        <img src={image} alt={title} className="task-image" />
+
+                        <div className="task-image-overlay" />
+
+                        <div className="task-pdf">
+                          <FaFilePdf />
+                        </div>
+                      </div>
+
+                      {/* =================================
+                            BODY
+                        ================================= */}
+
+                      <div className="task-body">
+                        {/* STATUS */}
+
+                        <div className="task-status">
+                          <span className={`status-${status}`}>
+                            {statusConfig[status]?.icon || <FaClock />}
+
+                            {statusConfig[status]?.label || "Belum Dikerjakan"}
+                          </span>
+
+                          {/* NILAI */}
+
+                          {tugas.score !== null &&
+                            tugas.score !== undefined && (
+                              <span className="task-score">
+                                ⭐ {tugas.score}
+                              </span>
+                            )}
+                        </div>
+
+                        {/* TITLE */}
+
+                        <h3>{title}</h3>
+
+                        {/* DESCRIPTION */}
+
+                        <p>{description}</p>
+
+                        {/* DEADLINE */}
+
+                        <div className="task-deadline">
+                          <FaCalendarAlt />
+
+                          <span>Batas pengumpulan</span>
+
+                          <strong>{formatDate(deadline)}</strong>
+                        </div>
+
+                        {/* BUTTON */}
+
+                        <button
+                          type="button"
+                          className="task-button"
+                          onClick={() => lihatTugas(tugas.id)}
+                        >
+                          Lihat Tugas
+                          <FaArrowRight />
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+
+          {/* =================================================
+              EMPTY
+          ================================================= */}
+
+          {!loadingAssignments &&
+            !assignmentError &&
+            filteredTugas.length === 0 && (
+              <div className="micro-empty">
+                <div>🔎</div>
+
+                <h3>Tugas tidak ditemukan</h3>
+
+                <p>Coba gunakan kata pencarian atau filter yang berbeda.</p>
+              </div>
+            )}
         </Container>
       </section>
     </div>
