@@ -1,6 +1,6 @@
 const supabase = require('../config/supabaseClient');
 
-// 1. Mengambil semua daftar profil (untuk tabel list user di Admin Panel)
+// 1. Mengambil semua daftar user (Mahasiswa/Dosen)
 const getAllProfiles = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -15,42 +15,43 @@ const getAllProfiles = async (req, res) => {
   }
 };
 
-// 2. Mengambil detail profil berdasarkan ID
-const getProfileById = async (req, res) => {
+// 2. Tambah User Baru oleh Admin (Otomatis buat akun Auth + Profiles)
+const createUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { data, error } = await supabase
+    const { nama, email, password, nim, nidn, role, status } = req.body;
+
+    // Buat akun di Supabase Auth terlebih dahulu
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: email,
+      password: password || 'defaultpassword123', // Password default jika tidak diisi
+      email_confirm: true,
+      user_metadata: { nama, role, nim: nim || null, nidn: nidn || null }
+    });
+
+    if (authError) throw authError;
+
+    // Masukkan/perbarui data tambahan ke tabel profiles
+    const userId = authData.user.id;
+    const { data, error: profileError } = await supabase
       .from('profiles')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) throw error;
-    if (!data) return res.status(404).json({ success: false, message: 'Profil tidak ditemukan' });
-
-    res.status(200).json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-// 3. Memperbarui / Edit profil (misal: ganti nama atau mengubah role user jadi 'teacher' / 'student')
-const updateProfile = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nama_lengkap, role } = req.body;
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ nama_lengkap, role })
-      .eq('id', id)
+      .upsert([
+        {
+          id: userId,
+          nama_lengkap: nama,
+          email: email,
+          role: role || 'mahasiswa',
+          nim: nim || null,
+          nidn: nidn || null,
+          status: status || 'Aktif'
+        }
+      ])
       .select();
 
-    if (error) throw error;
+    if (profileError) throw profileError;
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: 'Profil berhasil diperbarui',
+      message: 'Akun berhasil ditambahkan!',
       data: data[0]
     });
   } catch (err) {
@@ -58,27 +59,38 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// 4. Menghapus profil
-const deleteProfile = async (req, res) => {
+// 3. Update Profil / User
+const updateProfile = async (req, res) => {
   try {
     const { id } = req.params;
+    const { nama, email, nim, nidn, status, role } = req.body;
 
-    // Catatan: Menghapus dari tabel profiles. 
-    // Jika ingin menghapus akun autentikasinya juga, idealnya dihapus via Supabase Admin Auth API.
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
-      .delete()
-      .eq('id', id);
+      .update({ nama_lengkap: nama, email, nim, nidn, status, role })
+      .eq('id', id)
+      .select();
 
     if (error) throw error;
-
-    res.status(200).json({
-      success: true,
-      message: 'Profil berhasil dihapus'
-    });
+    res.status(200).json({ success: true, message: 'Profil berhasil diperbarui', data: data[0] });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-module.exports = { getAllProfiles, getProfileById, updateProfile, deleteProfile };
+// 4. Hapus Profil / User
+const deleteProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Hapus dari tabel profiles (dan idealnya auth jika didukung service role)
+    const { error } = await supabase.from('profiles').delete().eq('id', id);
+    if (error) throw error;
+
+    res.status(200).json({ success: true, message: 'User berhasil dihapus' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = { getAllProfiles, createUser, updateProfile, deleteProfile };

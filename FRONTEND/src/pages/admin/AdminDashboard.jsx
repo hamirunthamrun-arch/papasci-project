@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   FaUserGraduate,
   FaChalkboardTeacher,
@@ -6,7 +7,44 @@ import {
 
 import "../../css/admin/AdminDashboard.css";
 
+const API_URL = "http://localhost:5000/api"; // Alamat base URL backend Express Anda
+
 const AdminDashboard = () => {
+  const [stats, setStats] = useState({
+    totalMahasiswa: 0,
+    totalDosen: 0,
+  });
+
+  // Ambil data user dari backend untuk dihitung jumlahnya
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`${API_URL}/users`);
+      const result = await response.json();
+
+      if (result.success && Array.isArray(result.data)) {
+        // Hitung jumlah berdasarkan role
+        const mahasiswaCount = result.data.filter(
+          (user) => user.role === "mahasiswa" || !user.role
+        ).length;
+
+        const dosenCount = result.data.filter(
+          (user) => user.role === "dosen"
+        ).length;
+
+        setStats({
+          totalMahasiswa: mahasiswaCount,
+          totalDosen: dosenCount,
+        });
+      }
+    } catch (error) {
+      console.error("Gagal memuat data statistik dashboard:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   return (
     <div className="admin-dashboard">
       {/* Header */}
@@ -27,7 +65,7 @@ const AdminDashboard = () => {
 
           <div>
             <span>Total Mahasiswa</span>
-            <h2>120</h2>
+            <h2>{stats.totalMahasiswa}</h2>
           </div>
         </div>
 
@@ -39,7 +77,7 @@ const AdminDashboard = () => {
 
           <div>
             <span>Total Dosen</span>
-            <h2>8</h2>
+            <h2>{stats.totalDosen}</h2>
           </div>
         </div>
       </div>
