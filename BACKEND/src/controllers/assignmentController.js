@@ -11,7 +11,42 @@ const getAccessToken = (req) => {
     return null;
   }
 
-  return authHeader.replace("Bearer ", "");
+  return authHeader.slice("Bearer ".length).trim() || null;
+};
+
+// =========================================================
+// MENGIDENTIFIKASI ERROR AUTENTIKASI SUPABASE
+// =========================================================
+
+const isAuthError = (error) => {
+  const message = error?.message || "";
+
+  return (
+    error?.code === "PGRST301" ||
+    /expected 3 parts in jwt|jwt expired|invalid jwt|invalid token/i.test(
+      message
+    )
+  );
+};
+
+// =========================================================
+// PENANGANAN ERROR CONTROLLER
+// =========================================================
+
+const handleControllerError = (res, error, logMessage, fallbackMessage) => {
+  console.error(logMessage, error);
+
+  if (isAuthError(error)) {
+    return res.status(401).json({
+      success: false,
+      message: "Session tidak valid. Silakan perbarui session.",
+    });
+  }
+
+  return res.status(500).json({
+    success: false,
+    message: fallbackMessage,
+  });
 };
 
 // =========================================================
@@ -33,8 +68,7 @@ const getAllAssignments = async (req, res) => {
 
     const { data, error } = await supabase
       .from("assignments")
-      .select(
-        `
+      .select(`
         id,
         title,
         description,
@@ -43,8 +77,7 @@ const getAllAssignments = async (req, res) => {
         is_active,
         created_at,
         updated_at
-      `,
-      )
+      `)
       .order("created_at", {
         ascending: false,
       });
@@ -58,12 +91,12 @@ const getAllAssignments = async (req, res) => {
       data,
     });
   } catch (err) {
-    console.error("Get all assignments error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return handleControllerError(
+      res,
+      err,
+      "Get all assignments error:",
+      "Gagal mengambil daftar tugas."
+    );
   }
 };
 
@@ -88,8 +121,7 @@ const getAssignmentById = async (req, res) => {
 
     const { data, error } = await supabase
       .from("assignments")
-      .select(
-        `
+      .select(`
         id,
         title,
         description,
@@ -98,8 +130,7 @@ const getAssignmentById = async (req, res) => {
         is_active,
         created_at,
         updated_at
-      `,
-      )
+      `)
       .eq("id", id)
       .single();
 
@@ -119,12 +150,12 @@ const getAssignmentById = async (req, res) => {
       data,
     });
   } catch (err) {
-    console.error("Get assignment by id error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return handleControllerError(
+      res,
+      err,
+      "Get assignment by id error:",
+      "Gagal mengambil detail tugas."
+    );
   }
 };
 
@@ -143,7 +174,13 @@ const createAssignment = async (req, res) => {
       });
     }
 
-    const { title, description, image_path, deadline, is_active } = req.body;
+    const {
+      title,
+      description,
+      image_path,
+      deadline,
+      is_active,
+    } = req.body;
 
     // Validasi judul
     if (!title || !title.trim()) {
@@ -166,8 +203,7 @@ const createAssignment = async (req, res) => {
           is_active: is_active ?? true,
         },
       ])
-      .select(
-        `
+      .select(`
         id,
         title,
         description,
@@ -176,8 +212,7 @@ const createAssignment = async (req, res) => {
         is_active,
         created_at,
         updated_at
-      `,
-      )
+      `)
       .single();
 
     if (error) {
@@ -190,12 +225,12 @@ const createAssignment = async (req, res) => {
       data,
     });
   } catch (err) {
-    console.error("Create assignment error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return handleControllerError(
+      res,
+      err,
+      "Create assignment error:",
+      "Gagal menambahkan tugas."
+    );
   }
 };
 
@@ -216,7 +251,13 @@ const updateAssignment = async (req, res) => {
 
     const { id } = req.params;
 
-    const { title, description, image_path, deadline, is_active } = req.body;
+    const {
+      title,
+      description,
+      image_path,
+      deadline,
+      is_active,
+    } = req.body;
 
     const updateData = {};
 
@@ -252,7 +293,7 @@ const updateAssignment = async (req, res) => {
       updateData.is_active = is_active;
     }
 
-    // Tidak ada data
+    // Tidak ada data yang diperbarui
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
         success: false,
@@ -268,8 +309,7 @@ const updateAssignment = async (req, res) => {
       .from("assignments")
       .update(updateData)
       .eq("id", id)
-      .select(
-        `
+      .select(`
         id,
         title,
         description,
@@ -278,8 +318,7 @@ const updateAssignment = async (req, res) => {
         is_active,
         created_at,
         updated_at
-      `,
-      )
+      `)
       .single();
 
     if (error) {
@@ -299,12 +338,12 @@ const updateAssignment = async (req, res) => {
       data,
     });
   } catch (err) {
-    console.error("Update assignment error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return handleControllerError(
+      res,
+      err,
+      "Update assignment error:",
+      "Gagal memperbarui tugas."
+    );
   }
 };
 
@@ -351,12 +390,12 @@ const deleteAssignment = async (req, res) => {
       data,
     });
   } catch (err) {
-    console.error("Delete assignment error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return handleControllerError(
+      res,
+      err,
+      "Delete assignment error:",
+      "Gagal menghapus tugas."
+    );
   }
 };
 

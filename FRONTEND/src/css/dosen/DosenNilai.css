@@ -42,12 +42,12 @@
 }
 
 .dosen-nilai-title-icon {
-  width: 56px;
-  height: 56px;
-  flex: 0 0 56px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
   border-radius: 16px;
   background: linear-gradient(135deg, #2f80ed, #1769c2);
   color: #fff;
@@ -311,20 +311,6 @@
   min-width: 0;
 }
 
-.dosen-nilai-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 45px;
-  height: 45px;
-  flex: 0 0 45px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #dcecff, #c9e1ff);
-  color: #2776d2;
-  font-size: 16px;
-  font-weight: 800;
-}
-
 .dosen-nilai-student-info > div:last-child {
   min-width: 0;
 }
@@ -345,6 +331,65 @@
   font-weight: 600;
   line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   FOTO PROFIL MAHASISWA
+========================================================= */
+
+.dosen-nilai-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  flex: 0 0 45px;
+  overflow: hidden;
+  border: 2px solid #e3efff;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dcecff, #c9e1ff);
+  color: #2776d2;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Foto dari Supabase */
+
+.dosen-nilai-profile-photo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Inisial nama jika foto tidak tersedia */
+
+.dosen-nilai-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #2776d2;
+  font-size: inherit;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* Ukuran foto pada modal detail */
+
+.dosen-nilai-avatar.large {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  font-size: 20px;
+  border-width: 2px;
 }
 
 /* =========================================================
@@ -495,13 +540,6 @@
   align-items: center;
   gap: 13px;
   min-width: 0;
-}
-
-.dosen-nilai-avatar.large {
-  width: 50px;
-  height: 50px;
-  flex: 0 0 50px;
-  font-size: 18px;
 }
 
 .dosen-nilai-modal-student > div:last-child {
@@ -753,7 +791,7 @@
 
 /* Angka nilai */
 
-.dosen-nilai-task-score strong {
+.dosen-nilai-task-score > strong {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -770,7 +808,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Label nilai dan status */
+/* Label status */
 
 .dosen-nilai-task-score > span {
   display: inline-flex;
@@ -790,12 +828,28 @@
   overflow-wrap: anywhere;
 }
 
-/* Status belum dikumpulkan */
+/* Belum dikumpulkan */
 
 .dosen-nilai-task-score .not-graded {
   border-color: #fecdd3;
   background: #fff1f2;
   color: #be123c;
+}
+
+/* Sudah dinilai */
+
+.dosen-nilai-task-score .graded-label {
+  border-color: #bbf7d0;
+  background: #e5f6ec;
+  color: #198754;
+}
+
+/* Sudah dikumpulkan, belum dinilai */
+
+.dosen-nilai-task-score .waiting-label {
+  border-color: #fde68a;
+  background: #fff4d6;
+  color: #b7791f;
 }
 
 /* =========================================================
@@ -1033,10 +1087,10 @@
   }
 
   .dosen-nilai-avatar.large {
-    width: 43px;
-    height: 43px;
-    flex-basis: 43px;
-    font-size: 16px;
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+    font-size: 17px;
   }
 
   .dosen-nilai-modal-body {
@@ -1262,7 +1316,7 @@
     gap: 7px;
   }
 
-  .dosen-nilai-task-score strong {
+  .dosen-nilai-task-score > strong {
     min-width: 46px;
     min-height: 36px;
     font-size: 17px;
@@ -1276,19 +1330,6 @@
   .dosen-nilai-modal-footer {
     padding: 12px;
   }
-}
-
-/* =========================================================
-   AKSESIBILITAS: FOKUS KEYBOARD
-========================================================= */
-
-.dosen-nilai-view-button:focus-visible,
-.dosen-nilai-search-clear:focus-visible,
-.dosen-nilai-empty button:focus-visible,
-.dosen-nilai-close-button:focus-visible,
-.dosen-nilai-modal-footer button:focus-visible {
-  outline: 3px solid rgba(47, 128, 237, 0.35);
-  outline-offset: 2px;
 }
 
 /* =========================================================

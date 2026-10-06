@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
-import {
-  fetchWithAuth,
-  clearSession,
-} from "../service/authService";
+import { fetchWithAuth, clearSession } from "../service/authService";
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
@@ -16,68 +14,62 @@ const ProtectedRoute = ({ allowedRoles }) => {
   useEffect(() => {
     let isMounted = true;
 
+    const handleSessionExpired = () => {
+      clearSession();
+
+      if (!isMounted) return;
+
+      setUser(null);
+      setAuthorized(false);
+      setLoading(false);
+
+      navigate("/login", {
+        replace: true,
+        state: { from: location },
+      });
+    };
+
+    window.addEventListener("auth:session-expired", handleSessionExpired);
+
     const checkSession = async () => {
       try {
         const response = await fetchWithAuth(
-          "http://localhost:5000/api/auth/me"
+          "http://localhost:5000/api/auth/me",
         );
 
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          throw new Error(
-            result.message || "Session tidak valid."
-          );
+          throw new Error(result.message || "Session tidak valid.");
         }
 
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         const currentUser = result.user;
 
-        /*
-         * Simpan data user terbaru.
-         *
-         * Kita pertahankan storage yang sedang digunakan.
-         */
         const storage = localStorage.getItem("refresh_token")
           ? localStorage
           : sessionStorage;
 
-        storage.setItem(
-          "user",
-          JSON.stringify(currentUser)
-        );
+        storage.setItem("user", JSON.stringify(currentUser));
 
-        /*
-         * Cek role.
-         */
-        if (
-          allowedRoles &&
-          !allowedRoles.includes(currentUser.role)
-        ) {
-          setUser(currentUser);
+        setUser(currentUser);
+
+        if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
           setAuthorized(false);
           setLoading(false);
           return;
         }
 
-        setUser(currentUser);
         setAuthorized(true);
         setLoading(false);
       } catch (error) {
-        console.error(
-          "Session validation error:",
-          error
-        );
+        console.error("Session validation error:", error);
 
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         clearSession();
-
+        setUser(null);
         setAuthorized(false);
         setLoading(false);
       }
@@ -87,13 +79,11 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
     return () => {
       isMounted = false;
-    };
-  }, [allowedRoles]);
 
-  /*
-   * Jangan langsung redirect sebelum
-   * pemeriksaan session selesai.
-   */
+      window.removeEventListener("auth:session-expired", handleSessionExpired);
+    };
+  }, [allowedRoles, location, navigate]);
+
   if (loading) {
     return (
       <div
@@ -104,26 +94,15 @@ const ProtectedRoute = ({ allowedRoles }) => {
           justifyContent: "center",
         }}
       >
+        Memeriksa sesi...
       </div>
     );
   }
 
-  /*
-   * Session tidak valid.
-   */
   if (!authorized && !user) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location }}
-      />
-    );
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  /*
-   * User login tetapi role tidak sesuai.
-   */
   if (!authorized && user) {
     if (user.role === "admin") {
       return <Navigate to="/admin" replace />;

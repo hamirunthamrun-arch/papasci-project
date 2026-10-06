@@ -1,12 +1,42 @@
 /* =========================================================
-   DOSEN PENGUMPULAN TUGAS
+   HALAMAN DOSEN PENGUMPULAN
 ========================================================= */
 
 .dosen-submission-page {
-  min-height: 100%;
+  --submission-primary: #1769aa;
+  --submission-primary-dark: #104d85;
+  --submission-primary-light: #eaf4ff;
+  --submission-text: #18324b;
+  --submission-muted: #738398;
+  --submission-border: #e2eaf3;
+
+  width: 100%;
+  min-width: 0;
   padding: 28px;
+  color: var(--submission-text);
   background: #f5f8fc;
-  color: #243b53;
+  box-sizing: border-box;
+}
+
+.dosen-submission-page *,
+.dosen-submission-page *::before,
+.dosen-submission-page *::after {
+  box-sizing: border-box;
+}
+
+.dosen-submission-page button,
+.dosen-submission-page input,
+.dosen-submission-page select {
+  font: inherit;
+}
+
+.dosen-submission-page button {
+  cursor: pointer;
+}
+
+.dosen-submission-page button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 /* =========================================================
@@ -14,61 +44,52 @@
 ========================================================= */
 
 .dosen-submission-header {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .dosen-submission-title {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 18px;
 }
 
 .dosen-submission-title-icon {
-  width: 52px;
-  height: 52px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
-  border-radius: 14px;
-
-  background: #e8f1fc;
-  color: #2865ae;
-
-  font-size: 22px;
+  width: 58px;
+  height: 58px;
+  color: #fff;
+  background: linear-gradient(135deg, #2385d1, #12549b);
+  border-radius: 17px;
+  box-shadow: 0 8px 20px rgba(23, 105, 170, 0.2);
+  font-size: 23px;
 }
 
 .dosen-submission-eyebrow {
-  display: block;
-
-  margin-bottom: 4px;
-
-  color: #2865ae;
-
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--submission-primary);
   font-size: 11px;
   font-weight: 800;
-
-  letter-spacing: 1.3px;
+  letter-spacing: 1.8px;
 }
 
 .dosen-submission-title h1 {
-  margin: 0;
-
-  color: #173b70;
-
-  font-size: 27px;
+  margin: 0 0 8px;
+  color: #173451;
+  font-size: clamp(24px, 3vw, 32px);
   font-weight: 800;
+  line-height: 1.25;
 }
 
 .dosen-submission-title p {
-  margin: 5px 0 0;
-
-  color: #718096;
-
+  max-width: 650px;
+  margin: 0;
+  color: var(--submission-muted);
   font-size: 14px;
+  line-height: 1.7;
 }
 
 /* =========================================================
@@ -79,120 +100,81 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 24px;
-
-  padding: 18px 20px;
-
-  margin-bottom: 20px;
-
-  background: #ffffff;
-
-  border: 1px solid #e1e9f2;
-
-  border-radius: 14px;
-
-  box-shadow: 0 3px 12px rgba(31, 67, 104, 0.04);
+  gap: 22px;
+  margin-bottom: 22px;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid var(--submission-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(28, 57, 87, 0.035);
 }
 
 .dosen-submission-assignment-label {
   display: flex;
   align-items: center;
-
   gap: 13px;
+  min-width: 0;
 }
 
 .dosen-submission-assignment-label > svg {
-  width: 38px;
-  height: 38px;
-
-  padding: 10px;
-
-  border-radius: 10px;
-
-  background: #edf5ff;
-  color: #2865ae;
+  flex-shrink: 0;
+  color: var(--submission-primary);
+  font-size: 24px;
 }
 
 .dosen-submission-assignment-label div {
   display: flex;
   flex-direction: column;
-
-  gap: 3px;
+  gap: 5px;
 }
 
 .dosen-submission-assignment-label span {
-  color: #25486f;
-
-  font-size: 14px;
+  color: #18324b;
+  font-size: 15px;
   font-weight: 800;
 }
 
 .dosen-submission-assignment-label small {
-  color: #8493a7;
-
+  color: var(--submission-muted);
   font-size: 12px;
+  line-height: 1.5;
 }
 
 .dosen-submission-select-wrapper {
   position: relative;
-
-  width: min(430px, 100%);
+  width: min(390px, 48%);
+  flex-shrink: 0;
 }
 
 .dosen-submission-select-wrapper select {
   width: 100%;
-
-  appearance: none;
-
-  padding: 12px 42px 12px 14px;
-
-  border: 1px solid #d4e0ee;
-  border-radius: 10px;
-
+  min-height: 48px;
+  padding: 12px 42px 12px 15px;
+  color: #18324b;
+  background: #f8fbff;
+  border: 1px solid #d8e4f1;
+  border-radius: 11px;
   outline: none;
-
-  background: #ffffff;
-
-  color: #25486f;
-
-  font-family: inherit;
+  appearance: none;
   font-size: 13px;
   font-weight: 600;
-
-  cursor: pointer;
-
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .dosen-submission-select-wrapper select:focus {
-  border-color: #5794d2;
-
-  box-shadow: 0 0 0 3px rgba(40, 101, 174, 0.1);
-}
-
-.dosen-submission-select-wrapper select:disabled {
-  background: #f5f7fa;
-
-  color: #9aa7b5;
-
-  cursor: not-allowed;
+  border-color: var(--submission-primary);
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.1);
 }
 
 .dosen-submission-select-wrapper > svg {
   position: absolute;
-
   top: 50%;
-  right: 15px;
-
-  transform: translateY(-50%);
-
+  right: 16px;
+  color: #71849a;
   pointer-events: none;
-
-  color: #718096;
-
+  transform: translateY(-50%);
   font-size: 12px;
 }
 
@@ -203,535 +185,466 @@
 .dosen-submission-error {
   display: flex;
   flex-direction: column;
-
-  gap: 4px;
-
-  padding: 13px 16px;
-
-  margin-bottom: 20px;
-
-  border: 1px solid #f0caca;
-  border-radius: 10px;
-
-  background: #fff5f5;
-
-  color: #9b3434;
-
+  gap: 6px;
+  margin-bottom: 22px;
+  padding: 16px 18px;
+  color: #9f2929;
+  background: #fff0f0;
+  border: 1px solid #ffd0d0;
+  border-left: 4px solid #dc3545;
+  border-radius: 12px;
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .dosen-submission-error strong {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .dosen-submission-error span {
-  color: #a95757;
-
-  font-size: 12px;
+  line-height: 1.6;
 }
 
 /* =========================================================
-   STATISTICS
+   STATISTIK
 ========================================================= */
 
 .dosen-submission-stats {
   display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 16px;
-
-  margin-bottom: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
 }
 
 .dosen-submission-stat-card {
   display: flex;
   align-items: center;
+  gap: 15px;
+  min-width: 0;
+  padding: 21px;
+  background: #fff;
+  border: 1px solid var(--submission-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(28, 57, 87, 0.035);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
 
-  gap: 13px;
-
-  min-height: 86px;
-
-  padding: 16px 18px;
-
-  background: #ffffff;
-
-  border: 1px solid #e3eaf3;
-  border-radius: 13px;
-
-  box-shadow: 0 3px 12px rgba(31, 67, 104, 0.035);
+.dosen-submission-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px rgba(28, 57, 87, 0.07);
 }
 
 .dosen-submission-stat-icon {
-  width: 43px;
-  height: 43px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
-  border-radius: 11px;
-
-  font-size: 17px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 19px;
 }
 
 .dosen-submission-stat-icon.blue {
-  background: #eaf3ff;
-  color: #2865ae;
+  color: #1769aa;
+  background: #e8f3ff;
 }
 
 .dosen-submission-stat-icon.green {
-  background: #eaf8f0;
-  color: #398054;
+  color: #168454;
+  background: #e4f8ed;
 }
 
 .dosen-submission-stat-icon.orange {
-  background: #fff5e7;
-  color: #d48a28;
+  color: #b7791f;
+  background: #fff3db;
 }
 
-.dosen-submission-stat-card div:last-child {
+.dosen-submission-stat-card > div:last-child {
   display: flex;
   flex-direction: column;
-
-  gap: 2px;
+  gap: 6px;
+  min-width: 0;
 }
 
 .dosen-submission-stat-card span {
-  color: #7a8a9e;
-
+  color: var(--submission-muted);
   font-size: 12px;
+  line-height: 1.5;
 }
 
 .dosen-submission-stat-card strong {
-  color: #173b70;
-
-  font-size: 23px;
+  color: #173451;
+  font-size: 27px;
   font-weight: 800;
+  line-height: 1;
 }
 
 /* =========================================================
-   SELECTED TASK
+   TUGAS TERPILIH
 ========================================================= */
 
 .dosen-submission-selected-task {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 20px;
-
-  padding: 17px 20px;
-
-  margin-bottom: 20px;
-
-  border-radius: 13px;
-
-  background: linear-gradient(135deg, #edf6ff 0%, #f7fbff 100%);
-
-  border: 1px solid #dceafb;
+  margin-bottom: 22px;
+  padding: 23px 25px;
+  color: #fff;
+  background: linear-gradient(120deg, #1769aa, #123f78);
+  border-radius: 17px;
+  box-shadow: 0 8px 22px rgba(23, 105, 170, 0.15);
 }
 
-.dosen-submission-selected-task span {
+.dosen-submission-selected-task > div:first-child {
+  min-width: 0;
+}
+
+.dosen-submission-selected-task > div:first-child > span {
   display: block;
-
-  margin-bottom: 5px;
-
-  color: #5681ac;
-
+  margin-bottom: 8px;
+  color: #d6eaff;
   font-size: 10px;
   font-weight: 800;
-
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .dosen-submission-selected-task h2 {
   margin: 0;
-
-  color: #173b70;
-
-  font-size: 17px;
+  color: #fff;
+  font-size: 19px;
   font-weight: 800;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .dosen-submission-selected-count {
   display: flex;
   align-items: center;
-
-  gap: 7px;
-
-  padding: 9px 13px;
-
-  border-radius: 9px;
-
-  background: #ffffff;
-
-  border: 1px solid #dce7f2;
-
-  white-space: nowrap;
+  gap: 11px;
+  flex-shrink: 0;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
 }
 
 .dosen-submission-selected-count strong {
-  color: #2865ae;
-
-  font-size: 17px;
+  font-size: 25px;
+  font-weight: 800;
 }
 
 .dosen-submission-selected-count span {
-  margin: 0;
-
-  color: #728399;
-
+  max-width: 100px;
+  color: #e2efff;
   font-size: 11px;
-
-  letter-spacing: 0;
+  line-height: 1.5;
 }
 
 /* =========================================================
-   TOOLBAR
+   TOOLBAR DAN PENCARIAN
 ========================================================= */
 
 .dosen-submission-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 16px;
-
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .dosen-submission-search {
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: min(100%, 440px);
+  min-height: 48px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid var(--submission-border);
+  border-radius: 12px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
 
-  width: min(390px, 100%);
+.dosen-submission-search:focus-within {
+  border-color: var(--submission-primary);
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.08);
 }
 
 .dosen-submission-search > svg {
-  position: absolute;
-
-  left: 13px;
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  color: #91a0b2;
-
-  font-size: 13px;
-
-  pointer-events: none;
+  flex-shrink: 0;
+  color: #7a8da2;
+  font-size: 15px;
 }
 
 .dosen-submission-search input {
   width: 100%;
-
-  padding: 11px 40px 11px 37px;
-
-  border: 1px solid #d8e2ed;
-  border-radius: 10px;
-
+  min-width: 0;
+  padding: 13px 0;
+  color: #18324b;
+  background: transparent;
+  border: none;
   outline: none;
-
-  background: #ffffff;
-
-  color: #29445f;
-
-  font-family: inherit;
   font-size: 13px;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
 .dosen-submission-search input::placeholder {
-  color: #a0acb9;
-}
-
-.dosen-submission-search input:focus {
-  border-color: #5794d2;
-
-  box-shadow: 0 0 0 3px rgba(40, 101, 174, 0.08);
-}
-
-.dosen-submission-search input:disabled {
-  background: #f4f6f8;
-
-  cursor: not-allowed;
+  color: #98a7b8;
 }
 
 .dosen-submission-search-clear {
-  position: absolute;
-
-  right: 10px;
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  width: 24px;
-  height: 24px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 0;
-
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  color: #70849b;
+  background: #edf2f7;
   border: none;
-  border-radius: 50%;
-
-  background: #edf1f5;
-
-  color: #708197;
-
-  cursor: pointer;
+  border-radius: 8px;
+  font-size: 12px;
 }
 
 .dosen-submission-search-clear:hover {
-  background: #e1e7ee;
-
-  color: #42566c;
+  color: #c62828;
+  background: #fff0f0;
 }
 
 .dosen-submission-total {
-  color: #718096;
-
+  flex-shrink: 0;
+  color: var(--submission-muted);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* =========================================================
-   CONTENT
+   KONTEN TABEL
 ========================================================= */
 
 .dosen-submission-content {
-  background: #ffffff;
-
-  border: 1px solid #e2e9f1;
-  border-radius: 14px;
-
-  box-shadow: 0 3px 14px rgba(31, 67, 104, 0.04);
-
-  overflow: hidden;
+  min-width: 0;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--submission-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(28, 57, 87, 0.035);
 }
 
 .dosen-submission-list-header {
-  padding: 19px 20px;
-
-  border-bottom: 1px solid #e9eef4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 23px;
 }
 
 .dosen-submission-list-header h2 {
-  margin: 0;
-
-  color: #25486f;
-
-  font-size: 17px;
+  margin: 0 0 7px;
+  color: #173451;
+  font-size: 19px;
   font-weight: 800;
 }
 
 .dosen-submission-list-header p {
-  margin: 4px 0 0;
-
-  color: #8593a4;
-
+  margin: 0;
+  color: var(--submission-muted);
   font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
-   TABLE
+   TABEL
 ========================================================= */
 
 .dosen-submission-table-wrapper {
   width: 100%;
-
   overflow-x: auto;
+  border: 1px solid var(--submission-border);
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .dosen-submission-table {
   width: 100%;
-
-  border-collapse: collapse;
-
-  min-width: 930px;
+  min-width: 850px;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
 }
 
 .dosen-submission-table thead {
-  background: #f8fafc;
+  background: #f2f7fd;
 }
 
 .dosen-submission-table th {
-  padding: 12px 15px;
-
-  border-bottom: 1px solid #e3eaf2;
-
-  color: #718096;
-
-  font-size: 10px;
+  padding: 16px 15px;
+  color: #58718b;
+  border-bottom: 1px solid var(--submission-border);
+  font-size: 11px;
   font-weight: 800;
-
-  text-align: left;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.5px;
-
   white-space: nowrap;
 }
 
 .dosen-submission-table td {
-  padding: 14px 15px;
-
-  border-bottom: 1px solid #edf1f5;
-
+  padding: 17px 15px;
+  color: #334d66;
+  border-bottom: 1px solid #edf1f6;
+  font-size: 12px;
   vertical-align: middle;
-}
-
-.dosen-submission-table tbody tr {
-  transition: background 0.15s ease;
-}
-
-.dosen-submission-table tbody tr:hover {
-  background: #fbfdff;
 }
 
 .dosen-submission-table tbody tr:last-child td {
   border-bottom: none;
 }
 
+.dosen-submission-table tbody tr {
+  transition: background 0.2s;
+}
+
+.dosen-submission-table tbody tr:hover {
+  background: #f8fbff;
+}
+
 /* =========================================================
-   STUDENT
+   IDENTITAS MAHASISWA
 ========================================================= */
 
 .dosen-submission-student {
   display: flex;
   align-items: center;
-
-  gap: 10px;
-
-  min-width: 185px;
+  gap: 12px;
+  min-width: 180px;
 }
 
-.dosen-submission-avatar {
-  width: 36px;
-  height: 36px;
+.dosen-submission-student-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
 
+.dosen-submission-student-details strong {
+  color: #1a3652;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dosen-submission-student-details span {
+  color: #8091a4;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   FOTO PROFIL / AVATAR
+========================================================= */
+
+.dosen-submission-avatar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
-  border-radius: 10px;
-
-  background: #eaf3ff;
-
-  color: #2865ae;
-
-  font-size: 13px;
+  width: 46px;
+  height: 46px;
+  color: #fff;
+  background: linear-gradient(135deg, #2b91d9, #15579a);
+  border: 2px solid #e4f1ff;
+  border-radius: 50%;
+  overflow: hidden;
+  font-size: 17px;
   font-weight: 800;
 }
 
 .dosen-submission-avatar.large {
-  width: 48px;
-  height: 48px;
-
-  border-radius: 12px;
-
-  font-size: 17px;
+  width: 62px;
+  height: 62px;
+  font-size: 23px;
 }
 
-.dosen-submission-student > div:last-child,
-.dosen-submission-grade-info > div:last-child {
+.dosen-submission-profile-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+}
+
+.dosen-submission-avatar-fallback {
   display: flex;
-  flex-direction: column;
-
-  gap: 3px;
-}
-
-.dosen-submission-student strong,
-.dosen-submission-grade-info strong {
-  color: #29445f;
-
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.dosen-submission-student span,
-.dosen-submission-grade-info span {
-  color: #8a98a9;
-
-  font-size: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  font-size: inherit;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 /* =========================================================
-   DATE
+   TANGGAL PENGUMPULAN
 ========================================================= */
 
 .dosen-submission-date {
   display: flex;
   flex-direction: column;
-
-  gap: 3px;
-
+  gap: 5px;
   white-space: nowrap;
 }
 
 .dosen-submission-date span {
-  color: #40566e;
-
-  font-size: 11px;
-  font-weight: 600;
+  color: #334d66;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .dosen-submission-date small {
-  color: #9aa7b5;
-
-  font-size: 10px;
+  color: #8796a7;
+  font-size: 11px;
 }
 
 /* =========================================================
-   LINK
+   LINK TUGAS
 ========================================================= */
 
 .dosen-submission-link-btn {
   display: inline-flex;
   align-items: center;
-
-  gap: 6px;
-
-  padding: 7px 10px;
-
-  border: 1px solid #d9e7f5;
+  justify-content: center;
+  gap: 8px;
+  min-height: 35px;
+  padding: 9px 11px;
+  color: #1769aa;
+  background: #eaf4ff;
+  border: 1px solid #d7eaff;
   border-radius: 8px;
-
-  background: #f5faff;
-
-  color: #2865ae;
-
   font-size: 11px;
-  font-weight: 700;
-
+  font-weight: 800;
   text-decoration: none;
-
   white-space: nowrap;
-
   transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background 0.2s,
+    color 0.2s;
 }
 
 .dosen-submission-link-btn:hover {
-  background: #eaf4ff;
+  color: #fff;
+  background: #1769aa;
+}
 
-  border-color: #bfd8ef;
-
-  color: #205890;
-
-  transform: translateY(-1px);
+.dosen-submission-no-score {
+  color: #95a2b1;
+  font-size: 12px;
 }
 
 /* =========================================================
@@ -741,106 +654,78 @@
 .dosen-submission-status {
   display: inline-flex;
   align-items: center;
-
-  gap: 5px;
-
-  padding: 6px 9px;
-
-  border-radius: 20px;
-
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
   font-size: 10px;
-  font-weight: 700;
-
+  font-weight: 800;
   white-space: nowrap;
 }
 
 .dosen-submission-status.graded {
-  background: #eaf8f0;
-
-  color: #398054;
+  color: #168454;
+  background: #e5f7ed;
 }
 
 .dosen-submission-status.waiting {
-  background: #fff5e7;
-
-  color: #c27b20;
+  color: #a66a0c;
+  background: #fff3d9;
 }
 
 /* =========================================================
-   SCORE
+   NILAI
 ========================================================= */
 
 .dosen-submission-score {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-
-  gap: 4px;
+  gap: 6px;
+  color: #c18a19;
+  white-space: nowrap;
 }
 
 .dosen-submission-score svg {
-  color: #e5a52e;
-
   font-size: 12px;
 }
 
 .dosen-submission-score strong {
-  color: #25486f;
-
-  font-size: 14px;
+  color: #25445f;
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .dosen-submission-score span {
-  color: #96a2b0;
-
-  font-size: 10px;
-}
-
-.dosen-submission-no-score {
-  color: #a0acb9;
-
-  font-size: 12px;
+  color: #8a9bad;
+  font-size: 11px;
 }
 
 /* =========================================================
-   GRADE BUTTON
+   TOMBOL NILAI
 ========================================================= */
 
 .dosen-submission-grade-btn {
   display: inline-flex;
   align-items: center;
-
-  gap: 6px;
-
-  padding: 7px 11px;
-
-  border: none;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 9px 12px;
+  color: #fff;
+  background: #1769aa;
+  border: 1px solid #1769aa;
   border-radius: 8px;
-
-  background: #2865ae;
-
-  color: #ffffff;
-
-  font-family: inherit;
-
   font-size: 11px;
-  font-weight: 700;
-
-  cursor: pointer;
-
+  font-weight: 800;
   white-space: nowrap;
-
   transition:
-    background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    background 0.2s,
+    transform 0.2s;
 }
 
-.dosen-submission-grade-btn:hover {
-  background: #205890;
-
+.dosen-submission-grade-btn:hover:not(:disabled) {
+  background: #104d85;
   transform: translateY(-1px);
-
-  box-shadow: 0 4px 10px rgba(40, 101, 174, 0.15);
 }
 
 /* =========================================================
@@ -848,130 +733,106 @@
 ========================================================= */
 
 .dosen-submission-loading {
-  min-height: 260px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  padding: 40px;
-
+  min-height: 280px;
+  padding: 35px 20px;
   text-align: center;
 }
 
 .dosen-submission-spinner {
-  width: 30px;
-  height: 30px;
-
-  margin-bottom: 15px;
-
-  border: 3px solid #dce8f5;
-  border-top-color: #2865ae;
-
-  border-radius: 50%;
-
-  animation: dosenSubmissionSpin 0.8s linear infinite;
+  display: inline-block;
+  animation: dosen-submission-spin 0.9s linear infinite;
 }
 
-@keyframes dosenSubmissionSpin {
+.dosen-submission-loading > svg {
+  margin-bottom: 17px;
+  color: #1769aa;
+  font-size: 35px;
+}
+
+.dosen-submission-loading h3 {
+  margin: 0 0 8px;
+  color: #23435f;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.dosen-submission-loading p {
+  margin: 0;
+  color: #8191a4;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+@keyframes dosen-submission-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
   to {
     transform: rotate(360deg);
   }
 }
 
-.dosen-submission-loading h3 {
-  margin: 0 0 5px;
-
-  color: #25486f;
-
-  font-size: 14px;
-}
-
-.dosen-submission-loading p {
-  margin: 0;
-
-  color: #8a98a9;
-
-  font-size: 12px;
-}
-
 /* =========================================================
-   EMPTY
+   DATA KOSONG
 ========================================================= */
 
 .dosen-submission-empty {
-  min-height: 270px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  padding: 40px 20px;
-
+  min-height: 290px;
+  padding: 35px 20px;
   text-align: center;
 }
 
 .dosen-submission-empty-icon {
-  width: 52px;
-  height: 52px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-bottom: 13px;
-
-  border-radius: 14px;
-
-  background: #edf3f9;
-
-  color: #7c91a8;
-
-  font-size: 21px;
+  width: 65px;
+  height: 65px;
+  margin-bottom: 18px;
+  color: #1769aa;
+  background: #eaf4ff;
+  border-radius: 20px;
+  font-size: 26px;
 }
 
 .dosen-submission-empty h3 {
-  margin: 0 0 6px;
-
-  color: #42566c;
-
-  font-size: 15px;
+  margin: 0 0 9px;
+  color: #23435f;
+  font-size: 17px;
+  font-weight: 800;
 }
 
 .dosen-submission-empty p {
-  max-width: 430px;
-
-  margin: 0 0 16px;
-
-  color: #8a98a9;
-
+  max-width: 440px;
+  margin: 0 0 18px;
+  color: #8191a4;
   font-size: 12px;
-
-  line-height: 1.6;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 
-.dosen-submission-empty button {
-  padding: 8px 14px;
-
-  border: none;
-  border-radius: 8px;
-
-  background: #2865ae;
-
-  color: #ffffff;
-
-  font-family: inherit;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  cursor: pointer;
+.dosen-submission-empty > button {
+  padding: 10px 16px;
+  color: #1769aa;
+  background: #eaf4ff;
+  border: 1px solid #d7eaff;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 800;
 }
 
-.dosen-submission-empty button:hover {
-  background: #205890;
+.dosen-submission-empty > button:hover {
+  color: #fff;
+  background: #1769aa;
 }
 
 /* =========================================================
@@ -980,327 +841,308 @@
 
 .dosen-submission-modal-overlay {
   position: fixed;
-
+  z-index: 1050;
   inset: 0;
-
-  z-index: 9999;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 20px;
-
-  background: rgba(20, 42, 67, 0.58);
-
-  backdrop-filter: blur(3px);
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-.dosen-submission-grade-modal {
-  width: min(470px, 100%);
-
-  max-height: calc(100vh - 40px);
-
+  padding: 22px;
+  background: rgba(12, 31, 53, 0.58);
+  backdrop-filter: blur(5px);
   overflow-y: auto;
-
-  background: #ffffff;
-
-  border-radius: 16px;
-
-  box-shadow: 0 22px 60px rgba(18, 45, 75, 0.25);
-
-  animation: dosenSubmissionModalIn 0.2s ease;
+  animation: dosen-submission-fade-in 0.2s ease;
 }
 
-@keyframes dosenSubmissionModalIn {
+@keyframes dosen-submission-fade-in {
   from {
     opacity: 0;
-
-    transform: translateY(10px) scale(0.98);
   }
 
   to {
     opacity: 1;
+  }
+}
 
+/* =========================================================
+   MODAL PENILAIAN
+========================================================= */
+
+.dosen-submission-grade-modal {
+  width: min(100%, 540px);
+  max-height: calc(100vh - 44px);
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  overflow-y: auto;
+  animation: dosen-submission-modal-in 0.25s ease;
+}
+
+@keyframes dosen-submission-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
 /* =========================================================
-   MODAL HEADER
+   HEADER MODAL
 ========================================================= */
 
 .dosen-submission-modal-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: 15px;
+  padding: 23px 25px;
+  background: linear-gradient(120deg, #1769aa, #123f78);
+}
 
-  gap: 20px;
-
-  padding: 20px 21px;
-
-  background: linear-gradient(135deg, #2865ae 0%, #173b70 100%);
-
-  border-radius: 16px 16px 0 0;
+.dosen-submission-modal-header > div {
+  min-width: 0;
 }
 
 .dosen-submission-modal-header span {
   display: block;
-
-  margin-bottom: 5px;
-
-  color: rgba(255, 255, 255, 0.7);
-
-  font-size: 9px;
+  margin-bottom: 7px;
+  color: #d7eaff;
+  font-size: 10px;
   font-weight: 800;
-
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .dosen-submission-modal-header h2 {
   margin: 0;
-
-  color: #ffffff;
-
-  font-size: 19px;
+  color: #fff;
+  font-size: 20px;
   font-weight: 800;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .dosen-submission-close-btn {
-  width: 31px;
-  height: 31px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
-  border: none;
-  border-radius: 8px;
-
-  background: rgba(255, 255, 255, 0.12);
-
-  color: #ffffff;
-
-  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  transition: background 0.2s;
 }
 
-.dosen-submission-close-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
+.dosen-submission-close-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* =========================================================
-   FORM
+   FORM MODAL
 ========================================================= */
 
 .dosen-submission-grade-form {
-  padding: 21px;
+  padding: 25px;
 }
+
+/* =========================================================
+   INFORMASI MAHASISWA DALAM MODAL
+========================================================= */
 
 .dosen-submission-grade-info {
   display: flex;
   align-items: center;
+  gap: 15px;
+  margin-bottom: 22px;
+  padding: 17px;
+  background: #f5f9ff;
+  border: 1px solid #e4edf8;
+  border-radius: 13px;
+}
 
-  gap: 12px;
+.dosen-submission-grade-info > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
 
-  padding-bottom: 17px;
+.dosen-submission-grade-info strong {
+  color: #203d58;
+  font-size: 14px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
 
-  margin-bottom: 17px;
-
-  border-bottom: 1px solid #edf1f5;
+.dosen-submission-grade-info span {
+  color: #7b8da1;
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
-   MODAL TASK LINK
+   INFORMASI HASIL TUGAS
 ========================================================= */
 
 .dosen-submission-modal-task {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 15px;
-
-  padding: 13px 14px;
-
-  margin-bottom: 20px;
-
-  border: 1px solid #dfe9f3;
-  border-radius: 10px;
-
-  background: #f7faff;
+  gap: 14px;
+  margin-bottom: 25px;
+  padding: 17px;
+  border: 1px solid var(--submission-border);
+  border-radius: 12px;
 }
 
-.dosen-submission-modal-task div {
+.dosen-submission-modal-task > div {
   display: flex;
   flex-direction: column;
-
-  gap: 3px;
+  gap: 6px;
+  min-width: 0;
 }
 
-.dosen-submission-modal-task span {
-  color: #7e91a6;
-
-  font-size: 9px;
+.dosen-submission-modal-task > div > span {
+  color: #8092a6;
+  font-size: 10px;
   font-weight: 800;
-
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
 }
 
 .dosen-submission-modal-task strong {
-  color: #40566e;
-
-  font-size: 11px;
+  color: #25435f;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
-.dosen-submission-modal-task a {
+.dosen-submission-modal-task > a {
   display: inline-flex;
   align-items: center;
-
-  gap: 5px;
-
+  justify-content: center;
+  gap: 7px;
   flex-shrink: 0;
-
-  padding: 7px 9px;
-
-  border-radius: 7px;
-
-  background: #2865ae;
-
-  color: #ffffff;
-
-  font-size: 10px;
-  font-weight: 700;
-
+  padding: 10px 12px;
+  color: #1769aa;
+  background: #eaf4ff;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
   text-decoration: none;
 }
 
-.dosen-submission-modal-task a:hover {
-  background: #205890;
+.dosen-submission-modal-task > a:hover {
+  color: #fff;
+  background: #1769aa;
+}
+
+.dosen-submission-modal-task > span {
+  color: #8796a7;
+  font-size: 11px;
+  text-align: right;
 }
 
 /* =========================================================
-   SCORE FORM
+   INPUT NILAI
 ========================================================= */
 
 .dosen-submission-form-group {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .dosen-submission-form-group > label {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color: #29445f;
-
-  font-size: 12px;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #27435e;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .dosen-submission-form-group > label span {
-  margin-left: 3px;
-
-  color: #d64b4b;
+  color: #dc3545;
 }
 
 .dosen-submission-score-input {
   display: flex;
   align-items: center;
-
-  overflow: hidden;
-
-  border: 1px solid #d3deea;
-  border-radius: 10px;
-
-  background: #ffffff;
-
+  gap: 12px;
+  min-height: 55px;
+  padding: 0 15px;
+  background: #f8fbff;
+  border: 1px solid #dce7f3;
+  border-radius: 12px;
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .dosen-submission-score-input:focus-within {
-  border-color: #5794d2;
-
-  box-shadow: 0 0 0 3px rgba(40, 101, 174, 0.08);
+  border-color: #1769aa;
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.09);
 }
 
 .dosen-submission-score-input > svg {
-  margin-left: 13px;
-
-  color: #e5a52e;
-
-  font-size: 16px;
+  flex-shrink: 0;
+  color: #d5a024;
+  font-size: 18px;
 }
 
 .dosen-submission-score-input input {
-  flex: 1;
-
+  width: 100%;
   min-width: 0;
-
-  padding: 13px 10px;
-
-  border: none;
-
-  outline: none;
-
+  padding: 14px 0;
+  color: #203d58;
   background: transparent;
-
-  color: #173b70;
-
-  font-family: inherit;
-
-  font-size: 20px;
+  border: none;
+  outline: none;
+  font-size: 18px;
   font-weight: 800;
 }
 
 .dosen-submission-score-input input::-webkit-inner-spin-button,
 .dosen-submission-score-input input::-webkit-outer-spin-button {
   margin: 0;
-
-  appearance: none;
+  -webkit-appearance: none;
 }
 
 .dosen-submission-score-input input[type="number"] {
   appearance: textfield;
+  -moz-appearance: textfield;
 }
 
 .dosen-submission-score-input > span {
-  padding-right: 14px;
-
-  color: #8a98a9;
-
+  flex-shrink: 0;
+  color: #8293a5;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.dosen-submission-form-group small {
-  display: block;
-
-  margin-top: 6px;
-
-  color: #9aa7b5;
-
-  font-size: 10px;
+.dosen-submission-form-group > small {
+  color: #8494a6;
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 /* =========================================================
-   MODAL FOOTER
+   FOOTER MODAL
 ========================================================= */
 
 .dosen-submission-grade-footer {
   display: flex;
   justify-content: flex-end;
-
-  gap: 9px;
-
-  padding-top: 4px;
+  gap: 11px;
+  margin-top: 28px;
+  padding-top: 21px;
+  border-top: 1px solid #e9eff6;
 }
 
 .dosen-submission-cancel-btn,
@@ -1308,65 +1150,43 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  gap: 7px;
-
-  min-height: 38px;
-
-  padding: 0 15px;
-
-  border-radius: 8px;
-
-  font-family: inherit;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  cursor: pointer;
-
+  gap: 8px;
+  min-height: 43px;
+  padding: 11px 17px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 800;
   transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+    background 0.2s,
+    transform 0.2s;
 }
 
 .dosen-submission-cancel-btn {
-  border: 1px solid #d8e1eb;
-
-  background: #ffffff;
-
-  color: #607287;
+  color: #52677c;
+  background: #edf2f7;
+  border: 1px solid #e0e7ef;
 }
 
-.dosen-submission-cancel-btn:hover {
-  background: #f4f7fa;
+.dosen-submission-cancel-btn:hover:not(:disabled) {
+  background: #e1e9f1;
 }
 
 .dosen-submission-save-btn {
-  border: none;
-
-  background: #2865ae;
-
-  color: #ffffff;
+  color: #fff;
+  background: #1769aa;
+  border: 1px solid #1769aa;
 }
 
 .dosen-submission-save-btn:hover:not(:disabled) {
-  background: #205890;
-
+  background: #104d85;
   transform: translateY(-1px);
 }
 
-.dosen-submission-save-btn:disabled,
-.dosen-submission-cancel-btn:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-}
-
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE TABLET
 ========================================================= */
 
-@media (max-width: 1050px) {
+@media (max-width: 992px) {
   .dosen-submission-page {
     padding: 22px;
   }
@@ -1375,58 +1195,101 @@
     gap: 12px;
   }
 
-  .dosen-submission-assignment-section {
-    align-items: flex-start;
-
-    flex-direction: column;
+  .dosen-submission-stat-card {
+    gap: 11px;
+    padding: 17px;
   }
 
-  .dosen-submission-select-wrapper {
-    width: 100%;
+  .dosen-submission-stat-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 17px;
+  }
+
+  .dosen-submission-stat-card strong {
+    font-size: 24px;
+  }
+
+  .dosen-submission-content {
+    padding: 20px;
   }
 }
 
-@media (max-width: 760px) {
+/* =========================================================
+   RESPONSIVE HP
+========================================================= */
+
+@media (max-width: 768px) {
   .dosen-submission-page {
-    padding: 18px;
+    padding: 17px;
+  }
+
+  .dosen-submission-header {
+    margin-bottom: 22px;
   }
 
   .dosen-submission-title {
-    align-items: flex-start;
+    gap: 13px;
+  }
+
+  .dosen-submission-title-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    font-size: 19px;
   }
 
   .dosen-submission-title h1 {
-    font-size: 23px;
+    font-size: 24px;
   }
 
   .dosen-submission-title p {
     font-size: 12px;
   }
 
+  .dosen-submission-assignment-section {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .dosen-submission-select-wrapper {
+    width: 100%;
+  }
+
   .dosen-submission-stats {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .dosen-submission-stat-card {
-    min-height: 72px;
+    padding: 16px;
+  }
+
+  .dosen-submission-stat-card strong {
+    font-size: 23px;
   }
 
   .dosen-submission-selected-task {
     align-items: flex-start;
-
     flex-direction: column;
+    gap: 16px;
+    padding: 19px;
+  }
+
+  .dosen-submission-selected-task h2 {
+    font-size: 17px;
   }
 
   .dosen-submission-selected-count {
     width: 100%;
-
-    justify-content: center;
   }
 
   .dosen-submission-toolbar {
     align-items: stretch;
-
     flex-direction: column;
+    gap: 11px;
   }
 
   .dosen-submission-search {
@@ -1437,47 +1300,66 @@
     align-self: flex-end;
   }
 
-  .dosen-submission-modal-overlay {
-    align-items: flex-end;
+  .dosen-submission-content {
+    padding: 17px 13px;
+    border-radius: 14px;
+  }
 
-    padding: 0;
+  .dosen-submission-list-header {
+    margin-bottom: 17px;
+  }
+
+  .dosen-submission-list-header h2 {
+    font-size: 17px;
+  }
+
+  .dosen-submission-list-header p {
+    font-size: 11px;
+  }
+
+  .dosen-submission-table {
+    min-width: 820px;
+  }
+
+  .dosen-submission-modal-overlay {
+    align-items: flex-start;
+    padding: 12px;
   }
 
   .dosen-submission-grade-modal {
-    width: 100%;
-
-    max-height: 92vh;
-
-    border-radius: 17px 17px 0 0;
+    max-height: calc(100vh - 24px);
+    margin: auto 0;
+    border-radius: 16px;
   }
 
   .dosen-submission-modal-header {
-    border-radius: 17px 17px 0 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .dosen-submission-page {
-    padding: 14px;
+    padding: 19px;
   }
 
-  .dosen-submission-title-icon {
-    width: 44px;
-    height: 44px;
-
-    border-radius: 11px;
-
+  .dosen-submission-modal-header h2 {
     font-size: 18px;
   }
 
+  .dosen-submission-grade-form {
+    padding: 19px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE HP KECIL
+========================================================= */
+
+@media (max-width: 420px) {
+  .dosen-submission-page {
+    padding: 12px;
+  }
+
   .dosen-submission-title h1 {
-    font-size: 20px;
+    font-size: 21px;
   }
 
   .dosen-submission-title p {
     font-size: 11px;
-
-    line-height: 1.5;
   }
 
   .dosen-submission-assignment-section {
@@ -1488,46 +1370,39 @@
     align-items: flex-start;
   }
 
-  .dosen-submission-selected-task {
-    padding: 15px;
+  .dosen-submission-assignment-label small {
+    font-size: 11px;
   }
 
   .dosen-submission-selected-task h2 {
     font-size: 15px;
   }
 
-  .dosen-submission-list-header {
-    padding: 16px;
+  .dosen-submission-content {
+    padding: 15px 10px;
   }
 
-  .dosen-submission-list-header h2 {
-    font-size: 15px;
+  .dosen-submission-grade-info {
+    gap: 11px;
+    padding: 13px;
   }
 
-  .dosen-submission-list-header p {
-    line-height: 1.5;
-  }
-
-  .dosen-submission-grade-form {
-    padding: 17px;
+  .dosen-submission-avatar.large {
+    width: 52px;
+    height: 52px;
   }
 
   .dosen-submission-modal-task {
     align-items: flex-start;
-
     flex-direction: column;
   }
 
-  .dosen-submission-modal-task a {
-    width: 100%;
-
-    justify-content: center;
+  .dosen-submission-modal-task > a {
+    align-self: flex-start;
   }
 
   .dosen-submission-grade-footer {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
+    flex-direction: column-reverse;
   }
 
   .dosen-submission-cancel-btn,

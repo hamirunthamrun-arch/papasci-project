@@ -11,8 +11,11 @@ import {
   FaSave,
   FaClipboardList,
   FaChevronDown,
+  FaUserGraduate,
+  FaSpinner,
 } from "react-icons/fa";
 
+import { getAccessToken } from "../../service/authService";
 import { getAssignments } from "../../service/assignmentService";
 import {
   getSubmissionsByAssignment,
@@ -22,15 +25,115 @@ import {
 import "../../css/dosen/DosenPengumpulan.css";
 
 /* =========================================================
+   KONFIGURASI SUPABASE
+========================================================= */
+
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(
+  /\/+$/,
+  "",
+);
+
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+
+const STORAGE_BUCKET = "media-storage";
+
+/* =========================================================
+   HEADER AUTENTIKASI
+========================================================= */
+
+const getProfileHeaders = () => {
+  const token = getAccessToken();
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error("Konfigurasi Supabase belum tersedia di file .env.");
+  }
+
+  if (!token) {
+    throw new Error("Sesi login tidak ditemukan. Silakan login kembali.");
+  }
+
+  return {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${token}`,
+  };
+};
+
+/* =========================================================
+   URL FOTO PROFIL
+========================================================= */
+
+const getProfileAvatarUrl = (path) => {
+  if (!path || typeof path !== "string") {
+    return "";
+  }
+
+  // Jika avatar_url sudah berupa URL lengkap.
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  // Jika avatar_url berisi path Storage.
+  const cleanPath = path.replace(/^\/+/, "");
+
+  const encodedPath = cleanPath.split("/").map(encodeURIComponent).join("/");
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
+};
+
+/* =========================================================
+   AMBIL PROFIL MAHASISWA BERDASARKAN USER ID
+========================================================= */
+
+const getProfilesByIds = async (userIds) => {
+  const ids = [...new Set(userIds.filter(Boolean).map(String))];
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const headers = getProfileHeaders();
+
+  const query = new URLSearchParams({
+    select: "id,nama_lengkap,email,nim,avatar_url",
+    id: `in.(${ids.join(",")})`,
+  });
+
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/profiles?${query.toString()}`,
+    {
+      method: "GET",
+      headers,
+    },
+  );
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      result.message ||
+        result.error_description ||
+        result.error ||
+        `Gagal mengambil profil mahasiswa (${response.status}).`,
+    );
+  }
+
+  return Array.isArray(result) ? result : [];
+};
+
+/* =========================================================
    FORMAT TANGGAL
 ========================================================= */
 
 const formatDateTime = (dateString) => {
-  if (!dateString) return "-";
+  if (!dateString) {
+    return "-";
+  }
 
   const date = new Date(dateString);
 
-  if (Number.isNaN(date.getTime())) return "-";
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
 
   return date.toLocaleDateString("id-ID", {
     day: "2-digit",
@@ -40,25 +143,30 @@ const formatDateTime = (dateString) => {
 };
 
 /* =========================================================
-   FORMAT JAM
+   FORMAT JAM WIT
 ========================================================= */
 
 const formatTime = (dateString) => {
-  if (!dateString) return "-";
+  if (!dateString) {
+    return "-";
+  }
 
   const date = new Date(dateString);
 
-  if (Number.isNaN(date.getTime())) return "-";
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
 
   return `${date.toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Asia/Jayapura",
   })} WIT`;
 };
 
 /* =========================================================
-   NORMALISASI STATUS PENILAIAN
+   STATUS PENILAIAN
 ========================================================= */
 
 const isGraded = (submission) => {
@@ -71,19 +179,56 @@ const isGraded = (submission) => {
 };
 
 /* =========================================================
-   COMPONENT
+   KOMPONEN AVATAR MAHASISWA
+   Tanpa useEffect untuk mereset status gambar
+========================================================= */
+
+function StudentAvatar({ name, avatarUrl, large = false }) {
+  const [failedImageUrl, setFailedImageUrl] = useState("");
+
+  const initial = (name || "Mahasiswa").trim().charAt(0).toUpperCase();
+
+  const imageUrl = getProfileAvatarUrl(avatarUrl);
+
+  const imageFailed = Boolean(avatarUrl) && failedImageUrl === avatarUrl;
+
+  return (
+    <div
+      className={`dosen-submission-avatar${large ? " large" : ""}`}
+      aria-label={`Foto profil ${name || "mahasiswa"}`}
+    >
+      {imageUrl && !imageFailed ? (
+        <img
+          src={imageUrl}
+          alt={`Foto profil ${name || "mahasiswa"}`}
+          className="dosen-submission-profile-photo"
+          onError={() => {
+            setFailedImageUrl(avatarUrl);
+          }}
+        />
+      ) : (
+        <span className="dosen-submission-avatar-fallback">
+          {initial || <FaUserGraduate />}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* =========================================================
+   COMPONENT DOSEN PENGUMPULAN
 ========================================================= */
 
 function DosenPengumpulan() {
   /* =======================================================
-     STATE ASSIGNMENT
+     STATE TUGAS
   ======================================================= */
 
   const [assignments, setAssignments] = useState([]);
   const [selectedAssignmentId, setSelectedAssignmentId] = useState("");
 
   /* =======================================================
-     STATE SUBMISSION
+     STATE PENGUMPULAN
   ======================================================= */
 
   const [submissions, setSubmissions] = useState([]);
@@ -95,16 +240,19 @@ function DosenPengumpulan() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [loadingAssignments, setLoadingAssignments] = useState(true);
+
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
+
   const [savingGrade, setSavingGrade] = useState(false);
 
   const [error, setError] = useState("");
 
   /* =======================================================
-     STATE MODAL
+     STATE MODAL PENILAIAN
   ======================================================= */
 
   const [showGradeModal, setShowGradeModal] = useState(false);
+
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
   const [gradeData, setGradeData] = useState({
@@ -125,23 +273,24 @@ function DosenPengumpulan() {
 
         const data = await getAssignments();
 
-        if (!isMounted) return;
+        if (!isMounted) {
+          return;
+        }
 
         const assignmentList = Array.isArray(data) ? data : [];
 
         setAssignments(assignmentList);
 
-        if (assignmentList.length > 0) {
-          setSelectedAssignmentId(String(assignmentList[0].id));
-        } else {
-          setSelectedAssignmentId("");
-        }
+        setSelectedAssignmentId(
+          assignmentList.length > 0 ? String(assignmentList[0].id) : "",
+        );
       } catch (err) {
         console.error("Get assignments error:", err);
 
         if (isMounted) {
           setAssignments([]);
           setSelectedAssignmentId("");
+
           setError(err.message || "Gagal mengambil daftar tugas.");
         }
       } finally {
@@ -159,7 +308,7 @@ function DosenPengumpulan() {
   }, []);
 
   /* =======================================================
-     AMBIL SUBMISSION BERDASARKAN TUGAS
+     AMBIL PENGUMPULAN DAN FOTO PROFIL
   ======================================================= */
 
   useEffect(() => {
@@ -179,14 +328,74 @@ function DosenPengumpulan() {
 
         const data = await getSubmissionsByAssignment(selectedAssignmentId);
 
-        if (!isMounted) return;
+        if (!isMounted) {
+          return;
+        }
 
-        setSubmissions(Array.isArray(data) ? data : []);
+        const submissionList = Array.isArray(data) ? data : [];
+
+        /* ===============================================
+           AMBIL PROFIL MAHASISWA
+        =============================================== */
+
+        let profileMap = new Map();
+
+        const studentIds = submissionList
+          .map((submission) => submission.student_id)
+          .filter(Boolean);
+
+        if (studentIds.length > 0) {
+          try {
+            const profiles = await getProfilesByIds(studentIds);
+
+            profileMap = new Map(
+              profiles.map((profile) => [String(profile.id), profile]),
+            );
+          } catch (profileError) {
+            console.error(
+              "Gagal mengambil foto profil mahasiswa:",
+              profileError,
+            );
+
+            // Pengumpulan tetap ditampilkan meskipun
+            // data foto profil gagal diambil.
+          }
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
+        /* ===============================================
+           GABUNGKAN SUBMISSION DAN PROFIL
+        =============================================== */
+
+        const enrichedSubmissions = submissionList.map((submission) => {
+          const profile = profileMap.get(String(submission.student_id || ""));
+
+          return {
+            ...submission,
+
+            student_name:
+              profile?.nama_lengkap ||
+              submission.student_name ||
+              submission.studentName ||
+              "Mahasiswa",
+
+            student_nim:
+              profile?.nim || submission.student_nim || submission.nim || "-",
+
+            student_avatar_url: profile?.avatar_url || "",
+          };
+        });
+
+        setSubmissions(enrichedSubmissions);
       } catch (err) {
         console.error("Get submissions error:", err);
 
         if (isMounted) {
           setSubmissions([]);
+
           setError(err.message || "Gagal mengambil pengumpulan tugas.");
         }
       } finally {
@@ -204,7 +413,7 @@ function DosenPengumpulan() {
   }, [selectedAssignmentId]);
 
   /* =======================================================
-     TUGAS TERPILIH
+     TUGAS YANG DIPILIH
   ======================================================= */
 
   const selectedAssignment = useMemo(() => {
@@ -214,7 +423,7 @@ function DosenPengumpulan() {
   }, [assignments, selectedAssignmentId]);
 
   /* =======================================================
-     SEARCH
+     PENCARIAN MAHASISWA
   ======================================================= */
 
   const filteredSubmissions = useMemo(() => {
@@ -244,14 +453,12 @@ function DosenPengumpulan() {
   }, [submissions, searchTerm]);
 
   /* =======================================================
-     STATISTIK
+     STATISTIK PENGUMPULAN
   ======================================================= */
 
   const totalSubmissions = submissions.length;
 
-  const totalGraded = submissions.filter((submission) =>
-    isGraded(submission),
-  ).length;
+  const totalGraded = submissions.filter(isGraded).length;
 
   const totalWaiting = totalSubmissions - totalGraded;
 
@@ -260,7 +467,9 @@ function DosenPengumpulan() {
   ======================================================= */
 
   const closeGradeModal = () => {
-    if (savingGrade) return;
+    if (savingGrade) {
+      return;
+    }
 
     setShowGradeModal(false);
     setSelectedSubmission(null);
@@ -324,9 +533,11 @@ function DosenPengumpulan() {
   const handleSaveGrade = async (event) => {
     event.preventDefault();
 
-    if (!selectedSubmission) return;
+    if (!selectedSubmission) {
+      return;
+    }
 
-    if (gradeData.score === "" || gradeData.score.trim() === "") {
+    if (gradeData.score.trim() === "") {
       alert("Nilai wajib diisi.");
       return;
     }
@@ -346,10 +557,6 @@ function DosenPengumpulan() {
       setSavingGrade(true);
       setError("");
 
-      /* ===============================================
-         UPDATE MELALUI SERVICE
-      =============================================== */
-
       const updatedSubmission = await updateAssignmentSubmission(
         selectedSubmission.id,
         {
@@ -359,7 +566,7 @@ function DosenPengumpulan() {
       );
 
       /* ===============================================
-         UPDATE DATA TABEL TANPA RELOAD
+         PERBARUI STATE TANPA RELOAD
       =============================================== */
 
       setSubmissions((previous) =>
@@ -370,6 +577,9 @@ function DosenPengumpulan() {
                 ...(updatedSubmission || {}),
                 score: numericScore,
                 status: "dinilai",
+
+                // Pertahankan data foto profil.
+                student_avatar_url: submission.student_avatar_url,
               }
             : submission,
         ),
@@ -412,9 +622,7 @@ function DosenPengumpulan() {
 
   return (
     <div className="dosen-submission-page">
-      {/* =================================================
-          HEADER
-      ================================================= */}
+      {/* HEADER */}
 
       <div className="dosen-submission-header">
         <div className="dosen-submission-title">
@@ -435,9 +643,7 @@ function DosenPengumpulan() {
         </div>
       </div>
 
-      {/* =================================================
-          PILIH TUGAS
-      ================================================= */}
+      {/* PILIH TUGAS */}
 
       <div className="dosen-submission-assignment-section">
         <div className="dosen-submission-assignment-label">
@@ -473,9 +679,7 @@ function DosenPengumpulan() {
         </div>
       </div>
 
-      {/* =================================================
-          ERROR
-      ================================================= */}
+      {/* PESAN ERROR */}
 
       {error && (
         <div className="dosen-submission-error" role="alert">
@@ -484,9 +688,7 @@ function DosenPengumpulan() {
         </div>
       )}
 
-      {/* =================================================
-          STATISTICS
-      ================================================= */}
+      {/* STATISTIK */}
 
       <div className="dosen-submission-stats">
         <div className="dosen-submission-stat-card">
@@ -523,9 +725,7 @@ function DosenPengumpulan() {
         </div>
       </div>
 
-      {/* =================================================
-          ASSIGNMENT INFO
-      ================================================= */}
+      {/* INFORMASI TUGAS */}
 
       {selectedAssignment && (
         <div className="dosen-submission-selected-task">
@@ -546,9 +746,7 @@ function DosenPengumpulan() {
         </div>
       )}
 
-      {/* =================================================
-          SEARCH
-      ================================================= */}
+      {/* PENCARIAN */}
 
       <div className="dosen-submission-toolbar">
         <div className="dosen-submission-search">
@@ -579,9 +777,7 @@ function DosenPengumpulan() {
         </span>
       </div>
 
-      {/* =================================================
-          SUBMISSION LIST
-      ================================================= */}
+      {/* DAFTAR PENGUMPULAN */}
 
       <div className="dosen-submission-content">
         <div className="dosen-submission-list-header">
@@ -605,7 +801,7 @@ function DosenPengumpulan() {
 
         {loadingAssignments || loadingSubmissions ? (
           <div className="dosen-submission-loading">
-            <div className="dosen-submission-spinner" />
+            <FaSpinner className="dosen-submission-spinner" />
 
             <h3>Memuat pengumpulan...</h3>
 
@@ -639,18 +835,20 @@ function DosenPengumpulan() {
 
                       <td>
                         <div className="dosen-submission-student">
-                          <div className="dosen-submission-avatar">
-                            {studentName.charAt(0).toUpperCase()}
-                          </div>
+                          <StudentAvatar
+                            name={studentName}
+                            avatarUrl={submission.student_avatar_url}
+                          />
 
-                          <div>
+                          <div className="dosen-submission-student-details">
                             <strong>{studentName}</strong>
+
                             <span>NIM: {studentNim}</span>
                           </div>
                         </div>
                       </td>
 
-                      {/* WAKTU */}
+                      {/* TANGGAL */}
 
                       <td>
                         <div className="dosen-submission-date">
@@ -761,9 +959,7 @@ function DosenPengumpulan() {
         )}
       </div>
 
-      {/* =================================================
-          MODAL PENILAIAN
-      ================================================= */}
+      {/* MODAL PENILAIAN */}
 
       {showGradeModal && selectedSubmission && (
         <div
@@ -780,7 +976,7 @@ function DosenPengumpulan() {
             aria-modal="true"
             aria-labelledby="dosen-grade-modal-title"
           >
-            {/* HEADER */}
+            {/* HEADER MODAL */}
 
             <div className="dosen-submission-modal-header">
               <div>
@@ -802,18 +998,20 @@ function DosenPengumpulan() {
               </button>
             </div>
 
-            {/* FORM */}
+            {/* FORM NILAI */}
 
             <form
               className="dosen-submission-grade-form"
               onSubmit={handleSaveGrade}
             >
-              {/* DATA MAHASISWA */}
+              {/* PROFIL MAHASISWA */}
 
               <div className="dosen-submission-grade-info">
-                <div className="dosen-submission-avatar large">
-                  {getStudentName(selectedSubmission).charAt(0).toUpperCase()}
-                </div>
+                <StudentAvatar
+                  name={getStudentName(selectedSubmission)}
+                  avatarUrl={selectedSubmission.student_avatar_url}
+                  large
+                />
 
                 <div>
                   <strong>{getStudentName(selectedSubmission)}</strong>
@@ -822,11 +1020,12 @@ function DosenPengumpulan() {
                 </div>
               </div>
 
-              {/* LINK TUGAS */}
+              {/* LINK HASIL TUGAS */}
 
               <div className="dosen-submission-modal-task">
                 <div>
                   <span>HASIL TUGAS</span>
+
                   <strong>Tugas yang dikumpulkan</strong>
                 </div>
 
@@ -844,12 +1043,11 @@ function DosenPengumpulan() {
                 )}
               </div>
 
-              {/* NILAI */}
+              {/* INPUT NILAI */}
 
               <div className="dosen-submission-form-group score">
                 <label htmlFor="submission-score">
-                  Nilai
-                  <span>*</span>
+                  Nilai <span>*</span>
                 </label>
 
                 <div className="dosen-submission-score-input">
@@ -876,7 +1074,7 @@ function DosenPengumpulan() {
                 <small>Masukkan nilai antara 0 sampai 100.</small>
               </div>
 
-              {/* FOOTER */}
+              {/* TOMBOL MODAL */}
 
               <div className="dosen-submission-grade-footer">
                 <button
@@ -893,7 +1091,11 @@ function DosenPengumpulan() {
                   className="dosen-submission-save-btn"
                   disabled={savingGrade}
                 >
-                  <FaSave />
+                  {savingGrade ? (
+                    <FaSpinner className="dosen-submission-spinner" />
+                  ) : (
+                    <FaSave />
+                  )}
 
                   {savingGrade ? "Menyimpan..." : "Simpan Nilai"}
                 </button>
