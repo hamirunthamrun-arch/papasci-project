@@ -244,15 +244,12 @@
   line-clamp: 3;
 }
 
-/* =========================================================
-   URL
-========================================================= */
-
 .dosen-lab-url {
   display: flex;
   align-items: flex-start;
   gap: 8px;
   min-width: 0;
+  width: 100%;
   margin-bottom: 18px;
   padding: 9px 10px;
   border-radius: 8px;
@@ -262,6 +259,7 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 1.45;
+  box-sizing: border-box;
 }
 
 .dosen-lab-url svg {
@@ -271,11 +269,13 @@
   font-size: 12px;
 }
 
-.dosen-lab-url span {
+.dosen-lab-url span,
+.dosen-lab-url a {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
 }
 
 /* =========================================================

@@ -4,17 +4,19 @@
 
 .auth-page {
   min-height: 100vh;
-
   display: grid;
   grid-template-columns: 48% 52%;
-
   background: #ffffff;
-
   color: #172033;
-
   font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
 }
 
+.auth-page *,
+.auth-page *::before,
+.auth-page *::after {
+  box-sizing: border-box;
+}
 
 /* =====================================================
    LEFT BRAND
@@ -22,66 +24,41 @@
 
 .auth-brand {
   position: relative;
-
   min-height: 100vh;
-
   overflow: hidden;
-
-  background: linear-gradient(
-    145deg,
-    #eaf6ff 0%,
-    #f4fbff 45%,
-    #eefaf5 100%
-  );
+  background: linear-gradient(145deg, #eaf6ff 0%, #f4fbff 45%, #eefaf5 100%);
 }
 
 .auth-brand::before {
   content: "";
-
   position: absolute;
-
   width: 420px;
   height: 420px;
-
   top: -180px;
   right: -150px;
-
   border-radius: 50%;
-
   background: rgba(255, 255, 255, 0.55);
 }
 
 .auth-brand::after {
   content: "";
-
   position: absolute;
-
   width: 300px;
   height: 300px;
-
   bottom: -150px;
   left: -100px;
-
   border-radius: 50%;
-
   background: rgba(47, 128, 237, 0.06);
 }
 
 .auth-brand-content {
   position: relative;
-
   z-index: 2;
-
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
-
-  padding: 55px clamp(40px, 6vw, 90px);
-
-  box-sizing: border-box;
+  padding: 55px clamp(30px, 5vw, 75px);
 }
-
 
 /* =====================================================
    PAPASCI BRAND
@@ -90,20 +67,16 @@
 .papasci-brand {
   display: flex;
   align-items: center;
-
   margin-bottom: 55px;
 }
 
 .papasci-brand-logo {
   display: block;
-
   width: 185px;
   max-width: 100%;
   height: auto;
-
   object-fit: contain;
 }
-
 
 /* =====================================================
    HERO
@@ -111,41 +84,27 @@
 
 .auth-hero {
   max-width: 560px;
-
   margin-top: 25px;
 }
 
 .auth-badge {
   display: inline-block;
-
   padding: 7px 11px;
-
   border-radius: 8px;
-
   background: #ffffff;
-
   color: #2f80ed;
-
   font-size: 10px;
-
   font-weight: 800;
-
   letter-spacing: 0.7px;
-
   box-shadow: 0 5px 15px rgba(31, 41, 55, 0.04);
 }
 
 .auth-hero h2 {
   margin: 18px 0 14px;
-
   font-family: "Baloo 2", sans-serif;
-
   font-size: clamp(30px, 4vw, 40px);
-
   font-weight: 800;
-
   line-height: 1.08;
-
   color: #172033;
 }
 
@@ -155,16 +114,11 @@
 
 .auth-hero p {
   max-width: 500px;
-
   margin: 0;
-
   color: #667085;
-
   font-size: 13px;
-
   line-height: 1.8;
 }
-
 
 /* =====================================================
    SCIENCE ILLUSTRATION
@@ -172,11 +126,8 @@
 
 .science-illustration {
   position: relative;
-
   flex: 1;
-
   min-height: 190px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,39 +136,27 @@
 .science-main-icon {
   width: 115px;
   height: 115px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 35px;
-
   background: rgba(255, 255, 255, 0.85);
-
   font-size: 58px;
-
   box-shadow: 0 20px 45px rgba(47, 128, 237, 0.08);
 }
 
 .science-circle {
   position: absolute;
-
   width: 52px;
   height: 52px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
-
   background: #ffffff;
-
   font-size: 23px;
-
   box-shadow: 0 10px 25px rgba(31, 41, 55, 0.07);
-
-  animation: floating 4s ease-in-out infinite;
+  animation: auth-floating 4s ease-in-out infinite;
 }
 
 .circle-one {
@@ -228,18 +167,16 @@
 .circle-two {
   margin-top: 90px;
   margin-left: -150px;
-
   animation-delay: 0.7s;
 }
 
 .circle-three {
   margin-top: -90px;
   margin-left: 170px;
-
   animation-delay: 1.2s;
 }
 
-@keyframes floating {
+@keyframes auth-floating {
   0%,
   100% {
     transform: translateY(0);
@@ -249,7 +186,6 @@
     transform: translateY(-8px);
   }
 }
-
 
 /* =====================================================
    INSTITUTIONS
@@ -261,109 +197,64 @@
 
 .institution-section > p {
   margin: 0 0 12px;
-
   color: #98a2b3;
-
   font-size: 9px;
-
   font-weight: 800;
-
   letter-spacing: 1px;
 }
 
 .institution-logos {
   display: flex;
   align-items: center;
-
-  gap: 12px;
+  gap: 10px;
 }
 
 .institution-logo {
-  min-width: 125px;
-
+  min-width: 0;
   min-height: 63px;
-
   display: flex;
   align-items: center;
-
-  gap: 9px;
-
-  padding: 8px 11px;
-
+  gap: 8px;
+  padding: 8px 10px;
   border: 1px solid rgba(255, 255, 255, 0.9);
-
   border-radius: 12px;
-
   background: rgba(255, 255, 255, 0.72);
-
   backdrop-filter: blur(10px);
 }
 
-.institution-logo span {
-  width: 34px;
-  height: 34px;
-
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #98a2b3;
-
-  font-size: 7px;
-
-  font-weight: 800;
-}
-
 .institution-logo img {
-  width: 38px;
-  height: 38px;
-
-  object-fit: contain;
-
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
+  object-fit: contain;
 }
 
 .institution-logo small {
   color: #667085;
-
   font-size: 8px;
-
   font-weight: 700;
-
-  line-height: 1.3;
+  line-height: 1.4;
 }
-
 
 /* =====================================================
    RIGHT FORM
 ===================================================== */
 
 .auth-form-section {
+  min-width: 0;
   min-height: 100vh;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 40px;
-
   background: #ffffff;
-
-  box-sizing: border-box;
 }
 
 .auth-form-container {
   width: 100%;
-
   max-width: 450px;
+  min-width: 0;
 }
-
 
 /* =====================================================
    MOBILE BRAND
@@ -375,57 +266,112 @@
 
 .mobile-brand-logo {
   display: block;
-
   width: 150px;
   max-width: 100%;
   height: auto;
-
   object-fit: contain;
 }
-
 
 /* =====================================================
    FORM HEADER
 ===================================================== */
 
 .auth-form-header {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .auth-form-label {
   color: #2f80ed;
-
   font-size: 10px;
-
   font-weight: 900;
-
   letter-spacing: 1px;
 }
 
 .auth-form-header h2 {
-  margin: 7px 0 7px;
-
+  margin: 7px 0;
   font-family: "Baloo 2", sans-serif;
-
   font-size: 32px;
-
   font-weight: 800;
-
   line-height: 1.1;
-
   color: #172033;
 }
 
 .auth-form-header p {
   margin: 0;
-
   color: #98a2b3;
-
   font-size: 12px;
-
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
+/* =====================================================
+   ERROR / INFORMATION MESSAGE
+===================================================== */
+
+.auth-message {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin: 0 0 22px;
+  padding: 13px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  animation: auth-message-appear 0.2s ease-out;
+}
+
+.auth-message-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  font-size: 15px;
+}
+
+.auth-message p {
+  min-width: 0;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+/* Pesan error */
+
+.auth-message-error {
+  color: #b42318;
+  background: #fff1f0;
+  border-color: #ffd3cf;
+}
+
+.auth-message-error .auth-message-icon {
+  color: #d92d20;
+}
+
+/* Pesan informasi */
+
+.auth-message-info {
+  color: #175cd3;
+  background: #eff8ff;
+  border-color: #b2ddff;
+}
+
+.auth-message-info .auth-message-icon {
+  color: #1570ef;
+}
+
+@keyframes auth-message-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* =====================================================
    FORM
@@ -434,22 +380,19 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-
   gap: 20px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-
   gap: 8px;
+  min-width: 0;
 }
 
 .form-group label {
   color: #344054;
-
   font-size: 12px;
-
   font-weight: 800;
 }
 
@@ -457,23 +400,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .forgot-password {
+  flex-shrink: 0;
   padding: 0;
-
   border: none;
-
   background: none;
-
   color: #2f80ed;
-
   font-family: inherit;
-
   font-size: 10px;
-
   font-weight: 700;
-
   cursor: pointer;
 }
 
@@ -481,27 +419,25 @@
   text-decoration: underline;
 }
 
+.forgot-password:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 /* =====================================================
    INPUT
 ===================================================== */
 
 .input-wrapper {
+  width: 100%;
   height: 49px;
-
   display: flex;
   align-items: center;
-
   gap: 11px;
-
   padding: 0 14px;
-
   border: 1px solid #e0e7ee;
-
   border-radius: 11px;
-
   background: #ffffff;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -509,33 +445,25 @@
 
 .input-wrapper:focus-within {
   border-color: #2f80ed;
-
-  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.08);
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
 }
 
 .input-wrapper > svg {
   flex-shrink: 0;
-
   color: #98a2b3;
-
   font-size: 14px;
 }
 
 .input-wrapper input {
   width: 100%;
-
+  min-width: 0;
   height: 100%;
-
+  padding: 0;
   border: none;
-
   outline: none;
-
   background: transparent;
-
   color: #344054;
-
   font-family: inherit;
-
   font-size: 12px;
 }
 
@@ -543,21 +471,23 @@
   color: #b0b7c3;
 }
 
+.input-wrapper input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .password-toggle {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border: none;
-
+  min-width: 28px;
+  min-height: 32px;
   padding: 0;
-
+  border: none;
   background: none;
-
   color: #98a2b3;
-
   cursor: pointer;
-
   transition: color 0.2s ease;
 }
 
@@ -565,6 +495,10 @@
   color: #2f80ed;
 }
 
+.password-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
 
 /* =====================================================
    REMEMBER
@@ -577,29 +511,26 @@
 .remember-check {
   display: flex;
   align-items: center;
-
   gap: 8px;
-
   cursor: pointer;
 }
 
 .remember-check input {
   width: 15px;
   height: 15px;
-
   margin: 0;
-
   accent-color: #2f80ed;
-
   cursor: pointer;
 }
 
 .remember-check span {
   color: #667085;
-
   font-size: 11px;
 }
 
+.remember-check input:disabled {
+  cursor: not-allowed;
+}
 
 /* =====================================================
    SUBMIT
@@ -607,53 +538,43 @@
 
 .auth-submit {
   width: 100%;
-
-  height: 49px;
-
+  min-height: 49px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 9px;
-
   margin-top: 3px;
-
+  padding: 12px 18px;
   border: none;
-
   border-radius: 11px;
-
   background: #2f80ed;
-
   color: #ffffff;
-
   font-family: inherit;
-
   font-size: 12px;
-
   font-weight: 900;
-
   cursor: pointer;
-
   box-shadow: 0 9px 20px rgba(47, 128, 237, 0.18);
-
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
     background 0.2s ease;
 }
 
-.auth-submit:hover {
+.auth-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-
   background: #2474dc;
-
   box-shadow: 0 12px 25px rgba(47, 128, 237, 0.25);
 }
 
-.auth-submit:active {
+.auth-submit:active:not(:disabled) {
   transform: translateY(0);
 }
 
+.auth-submit:disabled {
+  background: #80b2f2;
+  box-shadow: none;
+  cursor: wait;
+}
 
 /* =====================================================
    REGISTER LINK
@@ -663,28 +584,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
+  flex-wrap: wrap;
   gap: 5px;
-
   margin-top: 25px;
-
   color: #98a2b3;
-
   font-size: 11px;
+  text-align: center;
 }
 
 .auth-switch a {
   color: #2f80ed;
-
   font-weight: 800;
-
   text-decoration: none;
 }
 
 .auth-switch a:hover {
   text-decoration: underline;
 }
-
 
 /* =====================================================
    FOOTER
@@ -694,14 +610,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
+  flex-wrap: wrap;
   gap: 8px;
-
-  margin-top: 45px;
-
+  margin-top: 40px;
   color: #b0b7c3;
-
   font-size: 9px;
+  text-align: center;
 }
 
 .auth-footer p {
@@ -710,23 +624,20 @@
 
 .auth-footer span {
   padding-left: 8px;
-
   border-left: 1px solid #e4e7ec;
 }
-
 
 /* =====================================================
    TABLET
 ===================================================== */
 
 @media (max-width: 991.98px) {
-
   .auth-page {
     grid-template-columns: 42% 58%;
   }
 
   .auth-brand-content {
-    padding: 40px 35px;
+    padding: 40px 28px;
   }
 
   .papasci-brand-logo {
@@ -734,7 +645,7 @@
   }
 
   .auth-hero {
-    margin-top: 45px;
+    margin-top: 35px;
   }
 
   .auth-hero h2 {
@@ -747,7 +658,6 @@
 
   .institution-logos {
     flex-direction: column;
-
     align-items: stretch;
   }
 
@@ -756,109 +666,76 @@
   }
 
   .auth-form-section {
-    padding: 35px;
+    padding: 32px;
   }
 }
-
 
 /* =====================================================
    MOBILE
 ===================================================== */
 
 @media (max-width: 767.98px) {
-
   .auth-page {
     display: block;
-
     min-height: 100vh;
   }
-
-
-  /* -----------------------------------------------------
-     HIDE DESKTOP BRAND
-  ----------------------------------------------------- */
 
   .auth-brand {
     display: none;
   }
 
-
-  /* -----------------------------------------------------
-     FORM
-  ----------------------------------------------------- */
-
   .auth-form-section {
     min-height: 100vh;
-
     display: flex;
     align-items: flex-start;
     justify-content: center;
-
     padding: 30px 20px 40px;
-
-    box-sizing: border-box;
   }
 
   .auth-form-container {
     width: 100%;
-
     max-width: 480px;
   }
-
-
-  /* -----------------------------------------------------
-     MOBILE BRAND
-  ----------------------------------------------------- */
 
   .mobile-brand {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    margin-bottom: 45px;
+    margin-bottom: 35px;
   }
 
   .mobile-brand-logo {
     width: 145px;
-
-    height: auto;
-
-    display: block;
-
-    object-fit: contain;
   }
 
-
-  /* -----------------------------------------------------
-     FORM HEADER
-  ----------------------------------------------------- */
-
   .auth-form-header {
-    margin-bottom: 28px;
+    margin-bottom: 23px;
   }
 
   .auth-form-label {
     font-size: 9px;
-
     letter-spacing: 0.9px;
   }
 
   .auth-form-header h2 {
     font-size: 30px;
-
     line-height: 1.12;
   }
 
   .auth-form-header p {
     font-size: 11px;
-
-    line-height: 1.7;
   }
 
+  .auth-message {
+    gap: 9px;
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 9px;
+  }
 
-  /* -----------------------------------------------------
-     FORM
-  ----------------------------------------------------- */
+  .auth-message p {
+    font-size: 11px;
+  }
 
   .auth-form {
     gap: 18px;
@@ -872,18 +749,10 @@
     font-size: 11px;
   }
 
-
-  /* -----------------------------------------------------
-     INPUT
-  ----------------------------------------------------- */
-
   .input-wrapper {
     height: 48px;
-
     padding: 0 13px;
-
     gap: 10px;
-
     border-radius: 10px;
   }
 
@@ -894,11 +763,6 @@
   .input-wrapper input {
     font-size: 12px;
   }
-
-
-  /* -----------------------------------------------------
-     REMEMBER
-  ----------------------------------------------------- */
 
   .remember-row {
     margin-top: -2px;
@@ -917,57 +781,34 @@
     font-size: 10px;
   }
 
-
-  /* -----------------------------------------------------
-     SUBMIT
-  ----------------------------------------------------- */
-
   .auth-submit {
-    height: 48px;
-
+    min-height: 48px;
     margin-top: 2px;
-
     border-radius: 10px;
-
-    font-size: 12px;
   }
-
-
-  /* -----------------------------------------------------
-     REGISTER
-  ----------------------------------------------------- */
 
   .auth-switch {
     margin-top: 23px;
-
     font-size: 10px;
   }
 
-
-  /* -----------------------------------------------------
-     FOOTER
-  ----------------------------------------------------- */
-
   .auth-footer {
-    margin-top: 35px;
-
+    margin-top: 32px;
     font-size: 8px;
   }
 }
-
 
 /* =====================================================
    SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 420px) {
-
   .auth-form-section {
     padding: 25px 16px 35px;
   }
 
   .mobile-brand {
-    margin-bottom: 38px;
+    margin-bottom: 30px;
   }
 
   .mobile-brand-logo {
@@ -975,11 +816,7 @@
   }
 
   .auth-form-header {
-    margin-bottom: 25px;
-  }
-
-  .auth-form {
-    gap: 17px;
+    margin-bottom: 22px;
   }
 
   .auth-form-header h2 {
@@ -990,12 +827,24 @@
     font-size: 10.5px;
   }
 
+  .auth-message {
+    padding: 11px;
+  }
+
+  .auth-message p {
+    font-size: 10.5px;
+  }
+
+  .auth-form {
+    gap: 17px;
+  }
+
   .input-wrapper {
     height: 47px;
   }
 
   .auth-submit {
-    height: 47px;
+    min-height: 47px;
   }
 
   .auth-switch {
@@ -1004,26 +853,21 @@
 
   .auth-footer {
     flex-direction: column;
-
     gap: 4px;
-
     margin-top: 30px;
   }
 
   .auth-footer span {
     padding-left: 0;
-
     border-left: none;
   }
 }
-
 
 /* =====================================================
    VERY SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 350px) {
-
   .auth-form-section {
     padding-left: 13px;
     padding-right: 13px;
@@ -1043,9 +887,35 @@
 
   .input-wrapper {
     height: 45px;
+    padding: 0 10px;
+    gap: 8px;
   }
 
   .auth-submit {
-    height: 45px;
+    min-height: 45px;
+  }
+
+  .auth-message {
+    gap: 8px;
+    padding: 10px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .science-circle {
+    animation: none;
+  }
+
+  .auth-message {
+    animation: none;
+  }
+
+  .input-wrapper,
+  .auth-submit {
+    transition: none;
   }
 }

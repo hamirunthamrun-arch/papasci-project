@@ -30,6 +30,8 @@ const formatDateTime = (dateString) => {
 
   const date = new Date(dateString);
 
+  if (Number.isNaN(date.getTime())) return "-";
+
   return date.toLocaleDateString("id-ID", {
     day: "2-digit",
     month: "long",
@@ -46,22 +48,26 @@ const formatTime = (dateString) => {
 
   const date = new Date(dateString);
 
+  if (Number.isNaN(date.getTime())) return "-";
+
   return `${date.toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   })} WIT`;
 };
 
 /* =========================================================
-   NORMALISASI STATUS
+   NORMALISASI STATUS PENILAIAN
 ========================================================= */
 
 const isGraded = (submission) => {
-  return (
-    submission.status === "dinilai" ||
-    submission.status === "Sudah Dinilai" ||
-    submission.score !== null
-  );
+  const hasScore =
+    submission.score !== null &&
+    submission.score !== undefined &&
+    submission.score !== "";
+
+  return submission.status === "dinilai" || hasScore;
 };
 
 /* =========================================================
@@ -99,7 +105,6 @@ function DosenPengumpulan() {
   ======================================================= */
 
   const [showGradeModal, setShowGradeModal] = useState(false);
-
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
   const [gradeData, setGradeData] = useState({
@@ -111,6 +116,8 @@ function DosenPengumpulan() {
   ======================================================= */
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadAssignments = async () => {
       try {
         setLoadingAssignments(true);
@@ -118,21 +125,37 @@ function DosenPengumpulan() {
 
         const data = await getAssignments();
 
-        setAssignments(data || []);
+        if (!isMounted) return;
 
-        if (data && data.length > 0) {
-          setSelectedAssignmentId(data[0].id);
+        const assignmentList = Array.isArray(data) ? data : [];
+
+        setAssignments(assignmentList);
+
+        if (assignmentList.length > 0) {
+          setSelectedAssignmentId(String(assignmentList[0].id));
+        } else {
+          setSelectedAssignmentId("");
         }
       } catch (err) {
         console.error("Get assignments error:", err);
 
-        setError(err.message || "Gagal mengambil daftar tugas.");
+        if (isMounted) {
+          setAssignments([]);
+          setSelectedAssignmentId("");
+          setError(err.message || "Gagal mengambil daftar tugas.");
+        }
       } finally {
-        setLoadingAssignments(false);
+        if (isMounted) {
+          setLoadingAssignments(false);
+        }
       }
     };
 
     loadAssignments();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   /* =======================================================
@@ -140,31 +163,44 @@ function DosenPengumpulan() {
   ======================================================= */
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadSubmissions = async () => {
       if (!selectedAssignmentId) {
         setSubmissions([]);
+        setLoadingSubmissions(false);
         return;
       }
 
       try {
         setLoadingSubmissions(true);
         setError("");
+        setSubmissions([]);
 
         const data = await getSubmissionsByAssignment(selectedAssignmentId);
 
-        setSubmissions(data || []);
+        if (!isMounted) return;
+
+        setSubmissions(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Get submissions error:", err);
 
-        setSubmissions([]);
-
-        setError(err.message || "Gagal mengambil pengumpulan tugas.");
+        if (isMounted) {
+          setSubmissions([]);
+          setError(err.message || "Gagal mengambil pengumpulan tugas.");
+        }
       } finally {
-        setLoadingSubmissions(false);
+        if (isMounted) {
+          setLoadingSubmissions(false);
+        }
       }
     };
 
     loadSubmissions();
+
+    return () => {
+      isMounted = false;
+    };
   }, [selectedAssignmentId]);
 
   /* =======================================================
@@ -173,7 +209,7 @@ function DosenPengumpulan() {
 
   const selectedAssignment = useMemo(() => {
     return assignments.find(
-      (assignment) => assignment.id === selectedAssignmentId,
+      (assignment) => String(assignment.id) === String(selectedAssignmentId),
     );
   }, [assignments, selectedAssignmentId]);
 
@@ -182,24 +218,27 @@ function DosenPengumpulan() {
   ======================================================= */
 
   const filteredSubmissions = useMemo(() => {
-    const keyword = searchTerm.toLowerCase().trim();
+    const keyword = searchTerm.trim().toLowerCase();
 
     if (!keyword) {
       return submissions;
     }
 
     return submissions.filter((submission) => {
-      const studentName =
-        submission.student_name || submission.studentName || "";
+      const studentName = String(
+        submission.student_name || submission.studentName || "",
+      ).toLowerCase();
 
-      const studentNim = submission.student_nim || submission.nim || "";
+      const studentNim = String(
+        submission.student_nim || submission.nim || "",
+      ).toLowerCase();
 
-      const studentId = submission.student_id || "";
+      const studentId = String(submission.student_id || "").toLowerCase();
 
       return (
-        studentName.toLowerCase().includes(keyword) ||
-        studentNim.toLowerCase().includes(keyword) ||
-        studentId.toLowerCase().includes(keyword)
+        studentName.includes(keyword) ||
+        studentNim.includes(keyword) ||
+        studentId.includes(keyword)
       );
     });
   }, [submissions, searchTerm]);
@@ -214,9 +253,22 @@ function DosenPengumpulan() {
     isGraded(submission),
   ).length;
 
-  const totalWaiting = submissions.filter(
-    (submission) => !isGraded(submission),
-  ).length;
+  const totalWaiting = totalSubmissions - totalGraded;
+
+  /* =======================================================
+     TUTUP MODAL
+  ======================================================= */
+
+  const closeGradeModal = () => {
+    if (savingGrade) return;
+
+    setShowGradeModal(false);
+    setSelectedSubmission(null);
+
+    setGradeData({
+      score: "",
+    });
+  };
 
   /* =======================================================
      GANTI TUGAS
@@ -224,12 +276,15 @@ function DosenPengumpulan() {
 
   const handleAssignmentChange = (event) => {
     setSelectedAssignmentId(event.target.value);
-
     setSearchTerm("");
-
     setError("");
 
-    closeGradeModal();
+    setShowGradeModal(false);
+    setSelectedSubmission(null);
+
+    setGradeData({
+      score: "",
+    });
   };
 
   /* =======================================================
@@ -242,7 +297,7 @@ function DosenPengumpulan() {
     setGradeData({
       score:
         submission.score !== null && submission.score !== undefined
-          ? submission.score
+          ? String(submission.score)
           : "",
     });
 
@@ -269,28 +324,31 @@ function DosenPengumpulan() {
   const handleSaveGrade = async (event) => {
     event.preventDefault();
 
-    if (!selectedSubmission) {
+    if (!selectedSubmission) return;
+
+    if (gradeData.score === "" || gradeData.score.trim() === "") {
+      alert("Nilai wajib diisi.");
       return;
     }
 
     const numericScore = Number(gradeData.score);
 
-    /* -------------------------------------------------------
-       VALIDASI
-    ------------------------------------------------------- */
-
-    if (gradeData.score === "" || Number.isNaN(numericScore)) {
-      alert("Nilai wajib diisi.");
-      return;
-    }
-
-    if (numericScore < 0 || numericScore > 100) {
+    if (
+      !Number.isFinite(numericScore) ||
+      numericScore < 0 ||
+      numericScore > 100
+    ) {
       alert("Nilai harus berada antara 0 sampai 100.");
       return;
     }
 
     try {
       setSavingGrade(true);
+      setError("");
+
+      /* ===============================================
+         UPDATE MELALUI SERVICE
+      =============================================== */
 
       const updatedSubmission = await updateAssignmentSubmission(
         selectedSubmission.id,
@@ -300,16 +358,16 @@ function DosenPengumpulan() {
         },
       );
 
-      /* -----------------------------------------------------
-         UPDATE DATA DI HALAMAN
-      ----------------------------------------------------- */
+      /* ===============================================
+         UPDATE DATA TABEL TANPA RELOAD
+      =============================================== */
 
       setSubmissions((previous) =>
         previous.map((submission) =>
-          submission.id === selectedSubmission.id
+          String(submission.id) === String(selectedSubmission.id)
             ? {
                 ...submission,
-                ...updatedSubmission,
+                ...(updatedSubmission || {}),
                 score: numericScore,
                 status: "dinilai",
               }
@@ -319,7 +377,12 @@ function DosenPengumpulan() {
 
       alert("Nilai berhasil disimpan.");
 
-      closeGradeModal();
+      setShowGradeModal(false);
+      setSelectedSubmission(null);
+
+      setGradeData({
+        score: "",
+      });
     } catch (err) {
       console.error("Save grade error:", err);
 
@@ -327,20 +390,6 @@ function DosenPengumpulan() {
     } finally {
       setSavingGrade(false);
     }
-  };
-
-  /* =======================================================
-     TUTUP MODAL
-  ======================================================= */
-
-  const closeGradeModal = () => {
-    setShowGradeModal(false);
-
-    setSelectedSubmission(null);
-
-    setGradeData({
-      score: "",
-    });
   };
 
   /* =======================================================
@@ -413,7 +462,7 @@ function DosenPengumpulan() {
               <option value="">Belum ada tugas</option>
             ) : (
               assignments.map((assignment) => (
-                <option key={assignment.id} value={assignment.id}>
+                <option key={assignment.id} value={String(assignment.id)}>
                   {assignment.title || assignment.judul || "Tugas Tanpa Judul"}
                 </option>
               ))
@@ -429,9 +478,8 @@ function DosenPengumpulan() {
       ================================================= */}
 
       {error && (
-        <div className="dosen-submission-error">
+        <div className="dosen-submission-error" role="alert">
           <strong>Terjadi kesalahan</strong>
-
           <span>{error}</span>
         </div>
       )}
@@ -441,8 +489,6 @@ function DosenPengumpulan() {
       ================================================= */}
 
       <div className="dosen-submission-stats">
-        {/* TOTAL */}
-
         <div className="dosen-submission-stat-card">
           <div className="dosen-submission-stat-icon blue">
             <FaClipboardList />
@@ -450,12 +496,9 @@ function DosenPengumpulan() {
 
           <div>
             <span>Total Pengumpulan</span>
-
             <strong>{totalSubmissions}</strong>
           </div>
         </div>
-
-        {/* DINILAI */}
 
         <div className="dosen-submission-stat-card">
           <div className="dosen-submission-stat-icon green">
@@ -464,12 +507,9 @@ function DosenPengumpulan() {
 
           <div>
             <span>Sudah Dinilai</span>
-
             <strong>{totalGraded}</strong>
           </div>
         </div>
-
-        {/* BELUM DINILAI */}
 
         <div className="dosen-submission-stat-card">
           <div className="dosen-submission-stat-icon orange">
@@ -478,7 +518,6 @@ function DosenPengumpulan() {
 
           <div>
             <span>Belum Dinilai</span>
-
             <strong>{totalWaiting}</strong>
           </div>
         </div>
@@ -502,7 +541,6 @@ function DosenPengumpulan() {
 
           <div className="dosen-submission-selected-count">
             <strong>{totalSubmissions}</strong>
-
             <span>mahasiswa mengumpulkan</span>
           </div>
         </div>
@@ -553,7 +591,11 @@ function DosenPengumpulan() {
             <p>
               Mahasiswa yang sudah mengumpulkan tugas
               {selectedAssignment
-                ? ` "${selectedAssignment.title || selectedAssignment.judul || ""}".`
+                ? ` "${
+                    selectedAssignment.title ||
+                    selectedAssignment.judul ||
+                    "Tugas Tanpa Judul"
+                  }".`
                 : "."}
             </p>
           </div>
@@ -561,7 +603,7 @@ function DosenPengumpulan() {
 
         {/* LOADING */}
 
-        {loadingSubmissions ? (
+        {loadingAssignments || loadingSubmissions ? (
           <div className="dosen-submission-loading">
             <div className="dosen-submission-spinner" />
 
@@ -575,15 +617,10 @@ function DosenPengumpulan() {
               <thead>
                 <tr>
                   <th>Mahasiswa</th>
-
                   <th>Dikumpulkan</th>
-
                   <th>Link Tugas</th>
-
                   <th>Status</th>
-
                   <th>Nilai</th>
-
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -608,7 +645,6 @@ function DosenPengumpulan() {
 
                           <div>
                             <strong>{studentName}</strong>
-
                             <span>NIM: {studentNim}</span>
                           </div>
                         </div>
@@ -624,19 +660,24 @@ function DosenPengumpulan() {
                         </div>
                       </td>
 
-                      {/* LINK */}
+                      {/* LINK TUGAS */}
 
                       <td>
-                        <a
-                          href={submission.submission_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="dosen-submission-link-btn"
-                        >
-                          <FaExternalLinkAlt />
-
-                          <span>Buka Tugas</span>
-                        </a>
+                        {submission.submission_url ? (
+                          <a
+                            href={submission.submission_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="dosen-submission-link-btn"
+                          >
+                            <FaExternalLinkAlt />
+                            <span>Buka Tugas</span>
+                          </a>
+                        ) : (
+                          <span className="dosen-submission-no-score">
+                            Link tidak tersedia
+                          </span>
+                        )}
                       </td>
 
                       {/* STATUS */}
@@ -657,7 +698,8 @@ function DosenPengumpulan() {
 
                       <td>
                         {submission.score !== null &&
-                        submission.score !== undefined ? (
+                        submission.score !== undefined &&
+                        submission.score !== "" ? (
                           <div className="dosen-submission-score">
                             <FaStar />
 
@@ -677,6 +719,7 @@ function DosenPengumpulan() {
                           type="button"
                           className="dosen-submission-grade-btn"
                           onClick={() => handleOpenGrade(submission)}
+                          disabled={savingGrade}
                         >
                           <FaEdit />
 
@@ -704,7 +747,9 @@ function DosenPengumpulan() {
             <p>
               {searchTerm
                 ? `Tidak ada mahasiswa yang sesuai dengan pencarian "${searchTerm}".`
-                : "Belum ada mahasiswa yang mengumpulkan tugas ini."}
+                : error
+                  ? "Data pengumpulan gagal dimuat. Periksa pesan kesalahan di atas."
+                  : "Belum ada mahasiswa yang mengumpulkan tugas ini."}
             </p>
 
             {searchTerm && (
@@ -729,20 +774,28 @@ function DosenPengumpulan() {
             }
           }}
         >
-          <div className="dosen-submission-grade-modal">
+          <div
+            className="dosen-submission-grade-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dosen-grade-modal-title"
+          >
             {/* HEADER */}
 
             <div className="dosen-submission-modal-header">
               <div>
                 <span>PENILAIAN TUGAS</span>
 
-                <h2>{getStudentName(selectedSubmission)}</h2>
+                <h2 id="dosen-grade-modal-title">
+                  {getStudentName(selectedSubmission)}
+                </h2>
               </div>
 
               <button
                 type="button"
                 className="dosen-submission-close-btn"
                 onClick={closeGradeModal}
+                disabled={savingGrade}
                 aria-label="Tutup"
               >
                 <FaTimes />
@@ -774,18 +827,21 @@ function DosenPengumpulan() {
               <div className="dosen-submission-modal-task">
                 <div>
                   <span>HASIL TUGAS</span>
-
                   <strong>Tugas yang dikumpulkan</strong>
                 </div>
 
-                <a
-                  href={selectedSubmission.submission_url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <FaExternalLinkAlt />
-                  Buka Hasil Tugas
-                </a>
+                {selectedSubmission.submission_url ? (
+                  <a
+                    href={selectedSubmission.submission_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaExternalLinkAlt />
+                    Buka Hasil Tugas
+                  </a>
+                ) : (
+                  <span>Link tugas tidak tersedia</span>
+                )}
               </div>
 
               {/* NILAI */}
@@ -809,7 +865,9 @@ function DosenPengumpulan() {
                     value={gradeData.score}
                     onChange={handleGradeChange}
                     placeholder="0 - 100"
+                    required
                     autoFocus
+                    disabled={savingGrade}
                   />
 
                   <span>/ 100</span>

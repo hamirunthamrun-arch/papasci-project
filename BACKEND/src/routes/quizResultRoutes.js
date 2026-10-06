@@ -5,9 +5,16 @@ const router = express.Router();
 const {
   evaluateAttempt,
   submitQuizResult,
+  getAllQuizResults,
 } = require("../controllers/quizResultController");
 
+// Mengambil seluruh hasil quiz untuk dosen
+router.get("/all", getAllQuizResults);
+
+// Menilai percobaan kuis sementara
 router.post("/attempt", evaluateAttempt);
+
+// Menyimpan hasil kuis resmi
 router.post("/submit", submitQuizResult);
 
 module.exports = router;

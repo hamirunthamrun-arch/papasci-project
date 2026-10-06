@@ -274,16 +274,17 @@ function Pretest() {
     return (
       <div className="pretest-page">
         <Container>
-          <div className="pretest-loading text-center py-5">
+          <div className="pretest-loading text-center">
             <Spinner animation="border" variant="primary" />
+
             <h4 className="mt-3">Memuat Pretest...</h4>
+
             <p>Mohon tunggu, soal sedang disiapkan.</p>
           </div>
         </Container>
       </div>
     );
   }
-
   // ERROR
   if (error) {
     return (

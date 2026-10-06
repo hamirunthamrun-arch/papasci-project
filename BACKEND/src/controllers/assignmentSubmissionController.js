@@ -15,7 +15,90 @@ const getAccessToken = (req) => {
 };
 
 // =========================================================
+// MENGAMBIL PROFIL MAHASISWA DARI TABEL PROFILES
+// =========================================================
+
+const attachStudentProfiles = async (supabase, submissions) => {
+  if (!submissions) {
+    return submissions;
+  }
+
+  const isArray = Array.isArray(submissions);
+  const items = isArray ? submissions : [submissions];
+
+  if (items.length === 0) {
+    return isArray ? [] : null;
+  }
+
+  const studentIds = [
+    ...new Set(
+      items
+        .map((item) => item.student_id)
+        .filter(Boolean)
+        .map(String),
+    ),
+  ];
+
+  let profiles = [];
+
+  if (studentIds.length > 0) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, nama_lengkap, nim")
+      .in("id", studentIds);
+
+    if (error) {
+      throw error;
+    }
+
+    profiles = data || [];
+  }
+
+  const profileMap = new Map(
+    profiles.map((profile) => [String(profile.id), profile]),
+  );
+
+  const result = items.map((submission) => {
+    const profile = submission.student_id
+      ? profileMap.get(String(submission.student_id)) || null
+      : null;
+
+    return {
+      ...submission,
+
+      // Identitas mahasiswa dari tabel profiles.
+      student_name: profile?.nama_lengkap || null,
+      student_nim: profile?.nim || null,
+
+      // Format yang digunakan halaman DosenNilai.
+      nama_lengkap: profile?.nama_lengkap || null,
+      nim: profile?.nim || null,
+
+      // Profil mahasiswa lengkap.
+      profiles: profile,
+    };
+  });
+
+  return isArray ? result : result[0];
+};
+
+// =========================================================
+// MENGAMBIL IDENTITAS PENGGUNA YANG SEDANG LOGIN
+// =========================================================
+
+const getAuthenticatedUser = async (supabase, accessToken) => {
+  const { data, error } = await supabase.auth.getUser(accessToken);
+
+  if (error || !data?.user) {
+    throw new Error("Sesi login tidak valid. Silakan login kembali.");
+  }
+
+  return data.user;
+};
+
+// =========================================================
 // GET SEMUA SUBMISSION MILIK SATU ASSIGNMENT
+// BESERTA NAMA DAN NIM MAHASISWA
 // =========================================================
 
 const getSubmissionsByAssignment = async (req, res) => {
@@ -64,16 +147,21 @@ const getSubmissionsByAssignment = async (req, res) => {
       throw error;
     }
 
+    const submissionsWithProfiles = await attachStudentProfiles(
+      supabase,
+      data || [],
+    );
+
     return res.status(200).json({
       success: true,
-      data,
+      data: submissionsWithProfiles,
     });
   } catch (err) {
     console.error("Get assignment submissions error:", err);
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || "Gagal mengambil pengumpulan tugas.",
     });
   }
 };
@@ -133,22 +221,24 @@ const getAssignmentSubmissionById = async (req, res) => {
       throw error;
     }
 
+    const submission = await attachStudentProfiles(supabase, data);
+
     return res.status(200).json({
       success: true,
-      data,
+      data: submission,
     });
   } catch (err) {
     console.error("Get assignment submission error:", err);
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || "Gagal mengambil pengumpulan tugas.",
     });
   }
 };
 
 // =========================================================
-// GET SUBMISSION MILIK SATU MAHASISWA
+// GET SUBMISSION BERDASARKAN ASSIGNMENT DAN MAHASISWA
 // =========================================================
 
 const getSubmissionByStudent = async (req, res) => {
@@ -164,17 +254,10 @@ const getSubmissionByStudent = async (req, res) => {
 
     const { assignmentId, studentId } = req.params;
 
-    if (!assignmentId) {
+    if (!assignmentId || !studentId) {
       return res.status(400).json({
         success: false,
-        message: "Assignment ID wajib diberikan.",
-      });
-    }
-
-    if (!studentId) {
-      return res.status(400).json({
-        success: false,
-        message: "Student ID wajib diberikan.",
+        message: "Assignment ID dan Student ID wajib diberikan.",
       });
     }
 
@@ -203,22 +286,25 @@ const getSubmissionByStudent = async (req, res) => {
       throw error;
     }
 
+    const submission = await attachStudentProfiles(supabase, data);
+
     return res.status(200).json({
       success: true,
-      data,
+      data: submission,
     });
   } catch (err) {
     console.error("Get student submission error:", err);
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || "Gagal mengambil pengumpulan mahasiswa.",
     });
   }
 };
 
 // =========================================================
 // CREATE SUBMISSION
+// ID MAHASISWA DIAMBIL DARI AKUN YANG LOGIN
 // =========================================================
 
 const createAssignmentSubmission = async (req, res) => {
@@ -232,15 +318,7 @@ const createAssignmentSubmission = async (req, res) => {
       });
     }
 
-    const {
-      assignment_id,
-      student_id,
-      submission_url,
-    } = req.body;
-
-    // =====================================================
-    // VALIDASI
-    // =====================================================
+    const { assignment_id, submission_url } = req.body;
 
     if (!assignment_id) {
       return res.status(400).json({
@@ -249,14 +327,7 @@ const createAssignmentSubmission = async (req, res) => {
       });
     }
 
-    if (!student_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Student ID wajib diisi.",
-      });
-    }
-
-    if (!submission_url || !submission_url.trim()) {
+    if (typeof submission_url !== "string" || !submission_url.trim()) {
       return res.status(400).json({
         success: false,
         message: "Link tugas wajib diisi.",
@@ -265,16 +336,16 @@ const createAssignmentSubmission = async (req, res) => {
 
     const supabase = createSupabaseUserClient(accessToken);
 
-    // =====================================================
-    // PASTIKAN ASSIGNMENT ADA
-    // =====================================================
+    // Jangan mempercayai student_id dari frontend.
+    const user = await getAuthenticatedUser(supabase, accessToken);
+    const authenticatedStudentId = user.id;
 
-    const { data: assignment, error: assignmentError } =
-      await supabase
-        .from("assignments")
-        .select("id")
-        .eq("id", assignment_id)
-        .single();
+    // Pastikan tugas tersedia.
+    const { data: assignment, error: assignmentError } = await supabase
+      .from("assignments")
+      .select("id")
+      .eq("id", assignment_id)
+      .single();
 
     if (assignmentError) {
       if (assignmentError.code === "PGRST116") {
@@ -294,16 +365,12 @@ const createAssignmentSubmission = async (req, res) => {
       });
     }
 
-    // =====================================================
-    // SIMPAN SUBMISSION
-    // =====================================================
-
     const { data, error } = await supabase
       .from("assignment_submissions")
       .insert([
         {
           assignment_id,
-          student_id,
+          student_id: authenticatedStudentId,
           submission_url: submission_url.trim(),
           status: "dikumpulkan",
         },
@@ -324,10 +391,6 @@ const createAssignmentSubmission = async (req, res) => {
       .single();
 
     if (error) {
-      // ================================================
-      // MAHASISWA SUDAH PERNAH MENGUMPULKAN
-      // ================================================
-
       if (error.code === "23505") {
         return res.status(409).json({
           success: false,
@@ -338,17 +401,19 @@ const createAssignmentSubmission = async (req, res) => {
       throw error;
     }
 
+    const submission = await attachStudentProfiles(supabase, data);
+
     return res.status(201).json({
       success: true,
       message: "Tugas berhasil dikumpulkan.",
-      data,
+      data: submission,
     });
   } catch (err) {
     console.error("Create assignment submission error:", err);
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || "Gagal mengumpulkan tugas.",
     });
   }
 };
@@ -377,20 +442,13 @@ const updateAssignmentSubmission = async (req, res) => {
       });
     }
 
-    const {
-      submission_url,
-      status,
-      score,
-    } = req.body;
+    const { submission_url, status, score } = req.body;
 
     const updateData = {};
 
-    // =====================================================
-    // SUBMISSION URL
-    // =====================================================
-
+    // Validasi link tugas.
     if (submission_url !== undefined) {
-      if (!submission_url.trim()) {
+      if (typeof submission_url !== "string" || !submission_url.trim()) {
         return res.status(400).json({
           success: false,
           message: "Link tugas tidak boleh kosong.",
@@ -400,10 +458,7 @@ const updateAssignmentSubmission = async (req, res) => {
       updateData.submission_url = submission_url.trim();
     }
 
-    // =====================================================
-    // STATUS
-    // =====================================================
-
+    // Validasi status.
     if (status !== undefined) {
       if (!["dikumpulkan", "dinilai"].includes(status)) {
         return res.status(400).json({
@@ -415,16 +470,16 @@ const updateAssignmentSubmission = async (req, res) => {
       updateData.status = status;
     }
 
-    // =====================================================
-    // SCORE
-    // =====================================================
-
+    // Validasi nilai.
     if (score !== undefined) {
-      if (score !== null) {
+      if (score === null) {
+        updateData.score = null;
+      } else {
         const numericScore = Number(score);
 
         if (
-          Number.isNaN(numericScore) ||
+          score === "" ||
+          !Number.isFinite(numericScore) ||
           numericScore < 0 ||
           numericScore > 100
         ) {
@@ -435,14 +490,8 @@ const updateAssignmentSubmission = async (req, res) => {
         }
 
         updateData.score = numericScore;
-      } else {
-        updateData.score = null;
       }
     }
-
-    // =====================================================
-    // CEK DATA UPDATE
-    // =====================================================
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
@@ -485,17 +534,19 @@ const updateAssignmentSubmission = async (req, res) => {
       throw error;
     }
 
+    const submission = await attachStudentProfiles(supabase, data);
+
     return res.status(200).json({
       success: true,
       message: "Pengumpulan tugas berhasil diperbarui.",
-      data,
+      data: submission,
     });
   } catch (err) {
     console.error("Update assignment submission error:", err);
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || "Gagal memperbarui pengumpulan tugas.",
     });
   }
 };
@@ -554,7 +605,7 @@ const deleteAssignmentSubmission = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err.message || "Gagal menghapus pengumpulan tugas.",
     });
   }
 };

@@ -6,6 +6,8 @@ import {
   FaEye,
   FaEyeSlash,
   FaArrowRight,
+  FaExclamationCircle,
+  FaInfoCircle,
 } from "react-icons/fa";
 
 import "../css/Login.css";
@@ -19,23 +21,15 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
-  /* =========================================
-     FORM DATA
-  ========================================== */
+  const [message, setMessage] = useState(null);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  /* =========================================
-     STATUS
-  ========================================== */
-
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
 
   /* =========================================
      HANDLE INPUT
@@ -49,7 +43,60 @@ const Login = () => {
       [name]: value,
     }));
 
-    setErrorMessage("");
+    // Hapus pesan lama ketika pengguna mulai memperbaiki input.
+    if (message) {
+      setMessage(null);
+    }
+  };
+
+  /* =========================================
+     TAMPILKAN PESAN
+  ========================================== */
+
+  const showError = (text) => {
+    setMessage({
+      type: "error",
+      text,
+    });
+  };
+
+  /* =========================================
+     NORMALISASI PESAN LOGIN
+  ========================================== */
+
+  const getLoginErrorMessage = (status, backendMessage = "") => {
+    const errorText = String(backendMessage).toLowerCase();
+
+    // Informasi akun belum diverifikasi.
+    if (
+      errorText.includes("email not confirmed") ||
+      errorText.includes("email belum diverifikasi") ||
+      errorText.includes("email belum terverifikasi")
+    ) {
+      return "Email kamu belum diverifikasi. Silakan periksa email terlebih dahulu.";
+    }
+
+    // Pesan autentikasi yang tidak boleh membingungkan pengguna.
+    if (
+      status === 401 ||
+      status === 400 ||
+      errorText.includes("invalid login credentials") ||
+      errorText.includes("invalid credentials") ||
+      errorText.includes("invalid password") ||
+      errorText.includes("wrong password") ||
+      errorText.includes("incorrect password") ||
+      errorText.includes("email atau password") ||
+      errorText.includes("password salah") ||
+      errorText.includes("unauthorized")
+    ) {
+      return "Email atau password salah. Periksa kembali data yang kamu masukkan.";
+    }
+
+    if (status >= 500) {
+      return "Server sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
+    }
+
+    return "Login belum berhasil. Periksa kembali data kamu dan coba lagi.";
   };
 
   /* =========================================
@@ -59,47 +106,132 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setErrorMessage("");
+    if (loading) return;
 
-    const { email, password } = formData;
+    setMessage(null);
+
+    const email = formData.email.trim();
+    const password = formData.password;
 
     /* =========================================
-       VALIDASI
+       VALIDASI INPUT
     ========================================== */
 
-    if (!email || !password) {
-      setErrorMessage("Email dan password wajib diisi.");
+    if (!email && !password) {
+      showError("Email dan password wajib diisi.");
       return;
     }
 
-    try {
-      setLoading(true);
+    if (!email) {
+      showError("Email wajib diisi.");
+      return;
+    }
 
+    if (!password) {
+      showError("Password wajib diisi.");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+      showError("Format email belum benar. Contoh: nama@email.com.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
       /* =========================================
          REQUEST KE BACKEND
       ========================================== */
 
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
+      let response;
 
-        headers: {
-          "Content-Type": "application/json",
-        },
+      try {
+        response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
+      } catch (fetchError) {
+        // Fetch gagal sebelum mendapatkan respons HTTP.
+        console.error("Fetch login gagal:", fetchError);
 
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+        showError(
+          "Tidak dapat terhubung ke server. Pastikan backend berjalan dan koneksi tersedia, lalu coba lagi.",
+        );
 
-      const result = await response.json();
+        return;
+      }
 
       /* =========================================
-         CEK RESPONSE
+         BACA RESPONSE
       ========================================== */
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Login gagal.");
+      let result;
+
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        console.error("Respons login tidak valid:", parseError);
+
+        showError(
+          "Server memberikan respons yang tidak dapat dibaca. Silakan coba lagi.",
+        );
+
+        return;
+      }
+
+      /* =========================================
+         CEK STATUS LOGIN
+      ========================================== */
+
+      if (!response.ok || !result?.success) {
+        showError(getLoginErrorMessage(response.status, result?.message));
+
+        return;
+      }
+
+      /* =========================================
+         CEK DATA SESSION
+      ========================================== */
+
+      if (
+        !result.session?.access_token ||
+        !result.session?.refresh_token ||
+        !result.user
+      ) {
+        showError(
+          "Login berhasil diproses, tetapi data sesi tidak lengkap. Silakan coba lagi.",
+        );
+
+        return;
+      }
+
+      /* =========================================
+         CEK ROLE PENGGUNA
+      ========================================== */
+
+      const role = result.user.role;
+
+      let destination;
+
+      if (role === "admin") {
+        destination = "/admin";
+      } else if (role === "dosen") {
+        destination = "/dosen";
+      } else if (role === "mahasiswa") {
+        destination = "/";
+      } else {
+        showError("Role akun tidak dikenali. Silakan hubungi administrator.");
+
+        return;
       }
 
       /* =========================================
@@ -108,36 +240,31 @@ const Login = () => {
 
       const storage = rememberMe ? localStorage : sessionStorage;
 
-      /* Simpan access token */
       storage.setItem("access_token", result.session.access_token);
-
-      /* Simpan refresh token */
       storage.setItem("refresh_token", result.session.refresh_token);
-
-      /* Simpan data user + role */
       storage.setItem("user", JSON.stringify(result.user));
 
       /* =========================================
-         REDIRECT BERDASARKAN ROLE
+         REDIRECT
       ========================================== */
 
-      if (result.user.role === "admin") {
-        navigate("/admin");
-      } else if (result.user.role === "dosen") {
-        navigate("/dosen");
-      } else if (result.user.role === "mahasiswa") {
-        navigate("/");
-      } else {
-        throw new Error("Role pengguna tidak dikenali.");
-      }
+      navigate(destination, {
+        replace: true,
+      });
     } catch (error) {
       console.error("Login error:", error);
 
-      setErrorMessage(error.message || "Email atau password tidak valid.");
+      showError(
+        "Terjadi kesalahan saat memproses login. Silakan coba kembali.",
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  /* =========================================
+     RENDER
+  ========================================== */
 
   return (
     <div className="auth-page">
@@ -147,8 +274,6 @@ const Login = () => {
 
       <section className="auth-brand">
         <div className="auth-brand-content">
-          {/* BRAND */}
-
           <div className="papasci-brand">
             <img
               src={logoPapascI}
@@ -156,8 +281,6 @@ const Login = () => {
               className="papasci-brand-logo"
             />
           </div>
-
-          {/* HERO TEXT */}
 
           <div className="auth-hero">
             <span className="auth-badge">MEDIA PEMBELAJARAN IPA</span>
@@ -174,19 +297,12 @@ const Login = () => {
             </p>
           </div>
 
-          {/* SCIENCE DECORATION */}
-
           <div className="science-illustration">
             <div className="science-circle circle-one">⚛</div>
-
             <div className="science-circle circle-two">🌱</div>
-
             <div className="science-circle circle-three">🔬</div>
-
             <div className="science-main-icon">🧪</div>
           </div>
-
-          {/* LOGOS */}
 
           <div className="institution-section">
             <p>DIDUKUNG OLEH</p>
@@ -197,7 +313,6 @@ const Login = () => {
                   src={logoKemendikdasmen}
                   alt="Logo Kementerian Pendidikan"
                 />
-
                 <small>
                   Kementerian
                   <br />
@@ -207,7 +322,6 @@ const Login = () => {
 
               <div className="institution-logo">
                 <img src={logoUnipa} alt="Logo Universitas Papua" />
-
                 <small>
                   Universitas
                   <br />
@@ -220,7 +334,6 @@ const Login = () => {
                   src={logoKemdiktisaintek}
                   alt="Logo Kementerian Diktisaintek"
                 />
-
                 <small>
                   Kementerian
                   <br />
@@ -259,25 +372,43 @@ const Login = () => {
           </div>
 
           {/* =========================================
-              ERROR MESSAGE
+              MESSAGE
           ========================================== */}
 
-          {errorMessage && (
-            <div className="auth-message auth-error">{errorMessage}</div>
+          {message && (
+            <div
+              className={`auth-message auth-message-${message.type}`}
+              role={message.type === "error" ? "alert" : "status"}
+              aria-live="polite"
+            >
+              <span className="auth-message-icon" aria-hidden="true">
+                {message.type === "error" ? (
+                  <FaExclamationCircle />
+                ) : (
+                  <FaInfoCircle />
+                )}
+              </span>
+
+              <p>{message.text}</p>
+            </div>
           )}
 
           {/* =========================================
               LOGIN FORM
           ========================================== */}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
             {/* EMAIL */}
 
             <div className="form-group">
               <label htmlFor="email">Email</label>
 
-              <div className="input-wrapper">
-                <FaEnvelope />
+              <div
+                className={`input-wrapper ${
+                  message?.type === "error" ? "input-has-message" : ""
+                }`}
+              >
+                <FaEnvelope aria-hidden="true" />
 
                 <input
                   id="email"
@@ -287,6 +418,10 @@ const Login = () => {
                   value={formData.email}
                   onChange={handleChange}
                   autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck="false"
+                  disabled={loading}
+                  aria-label="Email"
                 />
               </div>
             </div>
@@ -296,22 +431,10 @@ const Login = () => {
             <div className="form-group">
               <div className="form-label-row">
                 <label htmlFor="password">Password</label>
-
-                <button
-                  type="button"
-                  className="forgot-password"
-                  onClick={() =>
-                    setErrorMessage(
-                      "Fitur lupa password akan kita buat pada tahap berikutnya.",
-                    )
-                  }
-                >
-                  Lupa password?
-                </button>
               </div>
 
               <div className="input-wrapper">
-                <FaLock />
+                <FaLock aria-hidden="true" />
 
                 <input
                   id="password"
@@ -321,6 +444,8 @@ const Login = () => {
                   value={formData.password}
                   onChange={handleChange}
                   autoComplete="current-password"
+                  disabled={loading}
+                  aria-label="Password"
                 />
 
                 <button
@@ -329,7 +454,8 @@ const Login = () => {
                   aria-label={
                     showPassword ? "Sembunyikan password" : "Tampilkan password"
                   }
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  disabled={loading}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -344,6 +470,7 @@ const Login = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
+                  disabled={loading}
                 />
 
                 <span>Ingat saya</span>
@@ -353,9 +480,9 @@ const Login = () => {
             {/* BUTTON */}
 
             <button type="submit" className="auth-submit" disabled={loading}>
-              {loading ? "Memproses..." : "Masuk"}
+              <span>{loading ? "Memproses..." : "Masuk"}</span>
 
-              {!loading && <FaArrowRight />}
+              {!loading && <FaArrowRight aria-hidden="true" />}
             </button>
           </form>
 
@@ -363,7 +490,6 @@ const Login = () => {
 
           <div className="auth-switch">
             <span>Belum punya akun?</span>
-
             <Link to="/register">Daftar sekarang</Link>
           </div>
 
@@ -371,7 +497,6 @@ const Login = () => {
 
           <div className="auth-footer">
             <p>© 2026 PAPASCI</p>
-
             <span>Papua Adaptive Science Learning</span>
           </div>
         </div>

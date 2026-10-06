@@ -8,12 +8,14 @@ import {
   FaUser,
   FaIdCard,
   FaArrowRight,
+  FaExclamationCircle,
+  FaCheckCircle,
+  FaInfoCircle,
 } from "react-icons/fa";
 
 import "../css/Register.css";
 
 import logoPapascI from "../assets/logo-papasci.png";
-
 import logoKemendikdasmen from "../assets/logo-kemendikdasmen.jpg";
 import logoUnipa from "../assets/logo-unipa.png";
 import logoKemdiktisaintek from "../assets/logo-kemdiktisaintek.png";
@@ -23,10 +25,9 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  /* =========================================
-     FORM DATA
-  ========================================== */
+  const [loading, setLoading] = useState(false);
+  const [agreement, setAgreement] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const [formData, setFormData] = useState({
     nama_lengkap: "",
@@ -35,15 +36,6 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
-
-  /* =========================================
-     STATUS
-  ========================================== */
-
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [agreement, setAgreement] = useState(false);
 
   /* =========================================
      HANDLE INPUT
@@ -57,8 +49,84 @@ const Register = () => {
       [name]: value,
     }));
 
-    // Hilangkan pesan error ketika user mulai memperbaiki form
-    setErrorMessage("");
+    if (message) {
+      setMessage(null);
+    }
+  };
+
+  /* =========================================
+     TAMPILKAN PESAN
+  ========================================== */
+
+  const showError = (text) => {
+    setMessage({
+      type: "error",
+      text,
+    });
+  };
+
+  const showSuccess = (text) => {
+    setMessage({
+      type: "success",
+      text,
+    });
+  };
+
+  /* =========================================
+     NORMALISASI ERROR BACKEND
+  ========================================== */
+
+  const getRegisterErrorMessage = (status, backendMessage = "") => {
+    const text = String(backendMessage).toLowerCase();
+
+    // Email sudah digunakan.
+    if (
+      text.includes("email already") ||
+      text.includes("email sudah terdaftar") ||
+      text.includes("email telah terdaftar") ||
+      text.includes("user already registered") ||
+      text.includes("already registered") ||
+      text.includes("duplicate email")
+    ) {
+      return "Email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun kamu.";
+    }
+
+    // NIM sudah digunakan.
+    if (
+      text.includes("nim sudah") ||
+      text.includes("nim telah") ||
+      text.includes("nim already") ||
+      (text.includes("duplicate key") && text.includes("nim"))
+    ) {
+      return "NIM ini sudah terdaftar. Periksa kembali NIM kamu atau hubungi administrator.";
+    }
+
+    // Data ditolak karena tidak valid.
+    if (
+      text.includes("invalid email") ||
+      text.includes("email tidak valid") ||
+      text.includes("format email")
+    ) {
+      return "Format email tidak valid. Periksa kembali alamat email kamu.";
+    }
+
+    if (
+      text.includes("password should") ||
+      text.includes("password minimal") ||
+      text.includes("weak password")
+    ) {
+      return "Password belum memenuhi persyaratan. Gunakan password yang sesuai ketentuan.";
+    }
+
+    if (status === 409) {
+      return "Email atau NIM sudah digunakan. Periksa kembali data yang kamu masukkan.";
+    }
+
+    if (status >= 500) {
+      return "Server sedang mengalami gangguan. Data belum dapat diproses. Silakan coba lagi nanti.";
+    }
+
+    return "Registrasi belum berhasil. Periksa kembali data yang kamu masukkan.";
   };
 
   /* =========================================
@@ -68,93 +136,117 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setErrorMessage("");
-    setSuccessMessage("");
+    if (loading) return;
 
-    const {
-      nama_lengkap,
-      nim,
-      email,
-      password,
-      confirmPassword,
-    } = formData;
+    setMessage(null);
+
+    const nama_lengkap = formData.nama_lengkap.trim();
+    const nim = formData.nim.trim();
+    const email = formData.email.trim();
+    const password = formData.password;
+    const confirmPassword = formData.confirmPassword;
 
     /* =========================================
-       VALIDASI
+       VALIDASI INPUT
     ========================================== */
 
-    if (
-      !nama_lengkap ||
-      !nim ||
-      !email ||
-      !password ||
-      !confirmPassword
-    ) {
-      setErrorMessage("Semua data wajib diisi.");
+    if (!nama_lengkap || !nim || !email || !password || !confirmPassword) {
+      showError("Semua kolom wajib diisi.");
+      return;
+    }
+
+    if (/\s/.test(nim)) {
+      showError("NIM tidak boleh mengandung spasi.");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+      showError("Format email belum benar. Contoh: nama@email.com.");
       return;
     }
 
     if (!agreement) {
-      setErrorMessage(
-        "Silakan menyetujui ketentuan penggunaan dan kebijakan privasi."
+      showError(
+        "Silakan menyetujui ketentuan penggunaan dan kebijakan privasi PAPASCI.",
       );
       return;
     }
 
-    if (password !== confirmPassword) {
-      setErrorMessage("Konfirmasi password tidak sama.");
+    if (password.length < 6) {
+      showError("Password minimal 6 karakter.");
       return;
     }
 
-    if (password.length < 6) {
-      setErrorMessage("Password minimal 6 karakter.");
+    if (password !== confirmPassword) {
+      showError("Konfirmasi password tidak sama dengan password.");
       return;
     }
 
     /* =========================================
-       KIRIM KE BACKEND
+       KIRIM REQUEST KE BACKEND
     ========================================== */
 
+    setLoading(true);
+
     try {
-      setLoading(true);
+      let response;
 
-      const response = await fetch(
-        "http://localhost:5000/api/auth/register",
-        {
+      try {
+        response = await fetch("http://localhost:5000/api/auth/register", {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
             nama_lengkap,
             nim,
             email,
             password,
           }),
-        }
-      );
+        });
+      } catch (fetchError) {
+        console.error("Fetch register gagal:", fetchError);
 
-      const result = await response.json();
+        showError(
+          "Tidak dapat terhubung ke server. Pastikan backend berjalan dan koneksi tersedia, lalu coba lagi.",
+        );
+
+        return;
+      }
+
+      /* =========================================
+         BACA RESPONSE
+      ========================================== */
+
+      let result;
+
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        console.error("Respons register tidak valid:", parseError);
+
+        showError(
+          "Server memberikan respons yang tidak dapat dibaca. Registrasi belum dapat dipastikan berhasil. Silakan periksa kembali sebelum mencoba lagi.",
+        );
+
+        return;
+      }
 
       /* =========================================
          CEK RESPONSE BACKEND
       ========================================== */
 
-      if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || "Registrasi gagal."
-        );
+      if (!response.ok || !result?.success) {
+        showError(getRegisterErrorMessage(response.status, result?.message));
+
+        return;
       }
 
       /* =========================================
          REGISTER BERHASIL
       ========================================== */
-
-      setSuccessMessage(
-        "Registrasi berhasil! Silakan login menggunakan akun yang telah dibuat."
-      );
 
       setFormData({
         nama_lengkap: "",
@@ -165,20 +257,27 @@ const Register = () => {
       });
 
       setAgreement(false);
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+
+      showSuccess(
+        "Registrasi berhasil! Akun kamu sudah dibuat. Kamu akan diarahkan ke halaman login.",
+      );
 
       /* =========================================
          PINDAH KE LOGIN
       ========================================== */
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      window.setTimeout(() => {
+        navigate("/login", {
+          replace: true,
+        });
+      }, 2500);
     } catch (error) {
       console.error("Register error:", error);
 
-      setErrorMessage(
-        error.message ||
-          "Terjadi kesalahan saat melakukan registrasi."
+      showError(
+        "Terjadi kesalahan saat memproses registrasi. Silakan coba kembali.",
       );
     } finally {
       setLoading(false);
@@ -193,8 +292,6 @@ const Register = () => {
 
       <section className="register-brand">
         <div className="register-brand-content">
-          {/* PAPASCI LOGO */}
-
           <div className="register-logo">
             <img
               src={logoPapascI}
@@ -202,8 +299,6 @@ const Register = () => {
               className="register-logo-image"
             />
           </div>
-
-          {/* HERO */}
 
           <div className="register-hero">
             <span>BERGABUNG BERSAMA PAPASCI</span>
@@ -214,24 +309,17 @@ const Register = () => {
             </h2>
 
             <p>
-              Buat akun dan nikmati pengalaman belajar IPA yang
-              interaktif, menyenangkan, dan mudah dipahami.
+              Buat akun dan nikmati pengalaman belajar IPA yang interaktif,
+              menyenangkan, dan mudah dipahami.
             </p>
           </div>
 
-          {/* SCIENCE DECORATION */}
-
           <div className="register-science">
             <div className="register-science-main">🔬</div>
-
             <div className="register-floating one">🌱</div>
-
             <div className="register-floating two">🧪</div>
-
             <div className="register-floating three">⚡</div>
           </div>
-
-          {/* LOGOS */}
 
           <div className="institution-section">
             <p>DIDUKUNG OLEH</p>
@@ -242,7 +330,6 @@ const Register = () => {
                   src={logoKemendikdasmen}
                   alt="Logo Kementerian Pendidikan"
                 />
-
                 <small>
                   Kementerian
                   <br />
@@ -251,11 +338,7 @@ const Register = () => {
               </div>
 
               <div className="institution-logo">
-                <img
-                  src={logoUnipa}
-                  alt="Logo Universitas Papua"
-                />
-
+                <img src={logoUnipa} alt="Logo Universitas Papua" />
                 <small>
                   Universitas
                   <br />
@@ -268,7 +351,6 @@ const Register = () => {
                   src={logoKemdiktisaintek}
                   alt="Logo Kementerian Diktisaintek"
                 />
-
                 <small>
                   Kementerian
                   <br />
@@ -303,48 +385,43 @@ const Register = () => {
 
             <h2>Daftar di PAPASCI</h2>
 
-            <p>
-              Isi data berikut untuk membuat akun pembelajaranmu.
-            </p>
+            <p>Isi data berikut untuk membuat akun pembelajaranmu.</p>
           </div>
 
           {/* =========================================
-              PESAN ERROR
+              PESAN STATUS
           ========================================== */}
 
-          {errorMessage && (
-            <div className="register-message register-error">
-              {errorMessage}
-            </div>
-          )}
+          {message && (
+            <div
+              className={`register-message register-message-${message.type}`}
+              role={message.type === "error" ? "alert" : "status"}
+              aria-live="polite"
+            >
+              <span className="register-message-icon" aria-hidden="true">
+                {message.type === "error" ? (
+                  <FaExclamationCircle />
+                ) : message.type === "success" ? (
+                  <FaCheckCircle />
+                ) : (
+                  <FaInfoCircle />
+                )}
+              </span>
 
-          {/* =========================================
-              PESAN SUCCESS
-          ========================================== */}
-
-          {successMessage && (
-            <div className="register-message register-success">
-              {successMessage}
+              <p>{message.text}</p>
             </div>
           )}
 
           {/* FORM */}
 
-          <form
-            className="register-form"
-            onSubmit={handleSubmit}
-          >
-            {/* =========================================
-                NAMA
-            ========================================== */}
+          <form className="register-form" onSubmit={handleSubmit} noValidate>
+            {/* NAMA */}
 
             <div className="register-group">
-              <label htmlFor="nama_lengkap">
-                Nama Lengkap
-              </label>
+              <label htmlFor="nama_lengkap">Nama Lengkap</label>
 
               <div className="register-input">
-                <FaUser />
+                <FaUser aria-hidden="true" />
 
                 <input
                   id="nama_lengkap"
@@ -354,21 +431,18 @@ const Register = () => {
                   value={formData.nama_lengkap}
                   onChange={handleChange}
                   autoComplete="name"
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            {/* =========================================
-                NIM
-            ========================================== */}
+            {/* NIM */}
 
             <div className="register-group">
-              <label htmlFor="nim">
-                Nomor Induk Mahasiswa
-              </label>
+              <label htmlFor="nim">Nomor Induk Mahasiswa</label>
 
               <div className="register-input">
-                <FaIdCard />
+                <FaIdCard aria-hidden="true" />
 
                 <input
                   id="nim"
@@ -378,21 +452,18 @@ const Register = () => {
                   value={formData.nim}
                   onChange={handleChange}
                   autoComplete="off"
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            {/* =========================================
-                EMAIL
-            ========================================== */}
+            {/* EMAIL */}
 
             <div className="register-group">
-              <label htmlFor="email">
-                Email
-              </label>
+              <label htmlFor="email">Email</label>
 
               <div className="register-input">
-                <FaEnvelope />
+                <FaEnvelope aria-hidden="true" />
 
                 <input
                   id="email"
@@ -402,133 +473,113 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck="false"
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            {/* =========================================
-                PASSWORD
-            ========================================== */}
+            {/* PASSWORD */}
 
             <div className="register-group">
-              <label htmlFor="password">
-                Password
-              </label>
+              <label htmlFor="password">Password</label>
 
               <div className="register-input">
-                <FaLock />
+                <FaLock aria-hidden="true" />
 
                 <input
                   id="password"
                   name="password"
-                  type={
-                    showPassword ? "text" : "password"
-                  }
+                  type={showPassword ? "text" : "password"}
                   placeholder="Buat password"
                   value={formData.password}
                   onChange={handleChange}
                   autoComplete="new-password"
+                  disabled={loading}
                 />
 
                 <button
                   type="button"
+                  className="register-password-toggle"
                   aria-label={
-                    showPassword
-                      ? "Sembunyikan password"
-                      : "Tampilkan password"
+                    showPassword ? "Sembunyikan password" : "Tampilkan password"
                   }
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  disabled={loading}
                 >
-                  {showPassword ? (
-                    <FaEyeSlash />
-                  ) : (
-                    <FaEye />
-                  )}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
 
-            {/* =========================================
-                CONFIRM PASSWORD
-            ========================================== */}
+            {/* KONFIRMASI PASSWORD */}
 
             <div className="register-group">
-              <label htmlFor="confirmPassword">
-                Konfirmasi Password
-              </label>
+              <label htmlFor="confirmPassword">Konfirmasi Password</label>
 
               <div className="register-input">
-                <FaLock />
+                <FaLock aria-hidden="true" />
 
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={
-                    showConfirmPassword
-                      ? "text"
-                      : "password"
-                  }
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="Ulangi password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   autoComplete="new-password"
+                  disabled={loading}
                 />
 
                 <button
                   type="button"
+                  className="register-password-toggle"
                   aria-label={
                     showConfirmPassword
-                      ? "Sembunyikan password"
-                      : "Tampilkan password"
+                      ? "Sembunyikan konfirmasi password"
+                      : "Tampilkan konfirmasi password"
                   }
-                  onClick={() =>
-                    setShowConfirmPassword(
-                      !showConfirmPassword
-                    )
-                  }
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  disabled={loading}
                 >
-                  {showConfirmPassword ? (
-                    <FaEyeSlash />
-                  ) : (
-                    <FaEye />
-                  )}
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
 
-            {/* =========================================
-                AGREEMENT
-            ========================================== */}
+            {/* AGREEMENT */}
 
             <label className="register-agreement">
               <input
                 type="checkbox"
                 checked={agreement}
-                onChange={(e) =>
-                  setAgreement(e.target.checked)
-                }
+                onChange={(e) => {
+                  setAgreement(e.target.checked);
+
+                  if (message) {
+                    setMessage(null);
+                  }
+                }}
+                disabled={loading}
               />
 
               <span>
-                Saya menyetujui ketentuan penggunaan dan
-                kebijakan privasi PAPASCI.
+                Saya menyetujui ketentuan penggunaan dan kebijakan privasi
+                PAPASCI.
               </span>
             </label>
 
-            {/* =========================================
-                BUTTON
-            ========================================== */}
+            {/* BUTTON */}
 
             <button
               type="submit"
               className="register-submit"
               disabled={loading}
             >
-              {loading ? "Mendaftarkan..." : "Buat Akun"}
+              <span>{loading ? "Mendaftarkan..." : "Buat Akun"}</span>
 
-              {!loading && <FaArrowRight />}
+              {!loading && <FaArrowRight aria-hidden="true" />}
             </button>
           </form>
 
@@ -536,7 +587,6 @@ const Register = () => {
 
           <div className="register-login">
             <span>Sudah punya akun?</span>
-
             <Link to="/login">Masuk sekarang</Link>
           </div>
 

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -33,29 +32,24 @@ function Quiz() {
   const { moduleId } = useParams();
   const navigate = useNavigate();
 
-  // DATA KUIS
   const [quiz, setQuiz] = useState(null);
   const [questions, setQuestions] = useState([]);
 
-  // NAVIGASI SOAL
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
 
-  // STATUS HALAMAN
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
 
-  // STATUS PENILAIAN
   const [finished, setFinished] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // HASIL
   const [result, setResult] = useState(null);
   const [officialResult, setOfficialResult] = useState(null);
 
-  // MEMUAT KUIS DAN SOAL DARI BACKEND
+  // MEMUAT KUIS DAN SOAL
   useEffect(() => {
     let ignore = false;
 
@@ -89,9 +83,7 @@ function Quiz() {
         setQuiz(quizData);
 
         setQuestions(
-          [...questionData].sort(
-            (a, b) => a.order_number - b.order_number,
-          ),
+          [...questionData].sort((a, b) => a.order_number - b.order_number),
         );
       } catch (err) {
         if (!ignore) {
@@ -111,15 +103,13 @@ function Quiz() {
     };
   }, [moduleId]);
 
-  // DATA SOAL SAAT INI
+  // DATA SOAL
   const question = questions[currentQuestion];
   const totalQuestions = questions.length;
   const questionNumber = currentQuestion + 1;
 
   const progress =
-    totalQuestions > 0
-      ? (questionNumber / totalQuestions) * 100
-      : 0;
+    totalQuestions > 0 ? (questionNumber / totalQuestions) * 100 : 0;
 
   // PILIHAN JAWABAN
   const options = question
@@ -136,9 +126,7 @@ function Quiz() {
       )
     : [];
 
-  const selectedAnswer = question
-    ? answers[question.id] || ""
-    : "";
+  const selectedAnswer = question ? answers[question.id] || "" : "";
 
   // MEMILIH JAWABAN
   const handleAnswer = (answer) => {
@@ -166,11 +154,9 @@ function Quiz() {
     }
   };
 
-  // MENYELESAIKAN DAN MENILAI PERCOBAAN
+  // MENYELESAIKAN DAN MENILAI KUIS
   const finishQuiz = async () => {
-    const unansweredIndex = questions.findIndex(
-      (item) => !answers[item.id],
-    );
+    const unansweredIndex = questions.findIndex((item) => !answers[item.id]);
 
     if (unansweredIndex !== -1) {
       setCurrentQuestion(unansweredIndex);
@@ -188,9 +174,7 @@ function Quiz() {
       setResult(data);
       setFinished(true);
     } catch (err) {
-      setActionError(
-        err.message || "Gagal menilai percobaan kuis.",
-      );
+      setActionError(err.message || "Gagal menilai percobaan kuis.");
     } finally {
       setEvaluating(false);
     }
@@ -225,27 +209,26 @@ function Quiz() {
 
       setOfficialResult(data);
     } catch (err) {
-      setActionError(
-        err.message || "Gagal mengirim hasil resmi.",
-      );
+      setActionError(err.message || "Gagal mengirim hasil resmi.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // LOADING
+  // LOADING SEDERHANA DI TENGAH LAYAR
   if (loading) {
     return (
-      <div className="quiz-page">
-        <Container>
-          <div className="quiz-loading text-center py-5">
-            <Spinner animation="border" variant="primary" />
+      <div className="quiz-page quiz-loading-screen">
+        <div className="quiz-loading-content">
+          <Spinner
+            animation="border"
+            variant="primary"
+            role="status"
+            aria-label="Memuat kuis"
+          />
 
-            <h4 className="mt-3">Memuat Kuis...</h4>
-
-            <p>Mohon tunggu, soal sedang disiapkan.</p>
-          </div>
-        </Container>
+          <p>Memuat kuis...</p>
+        </div>
       </div>
     );
   }
@@ -255,7 +238,7 @@ function Quiz() {
     return (
       <div className="quiz-page">
         <Container>
-          <div className="quiz-error py-5">
+          <div className="quiz-error">
             <Alert variant="danger">
               <div className="d-flex align-items-center gap-2 mb-2">
                 <FaExclamationCircle />
@@ -290,14 +273,12 @@ function Quiz() {
     return (
       <div className="quiz-page">
         <Container>
-          <div className="quiz-empty text-center py-5">
+          <div className="quiz-empty text-center">
             <FaBookOpen size={42} />
 
             <h3 className="mt-3">Soal Belum Tersedia</h3>
 
-            <p>
-              Kuis ini belum memiliki soal yang dapat dikerjakan.
-            </p>
+            <p>Kuis ini belum memiliki soal yang dapat dikerjakan.</p>
 
             <Button
               onClick={() => navigate(`/module/${moduleId}`)}
@@ -317,14 +298,10 @@ function Quiz() {
     const isOfficial = Boolean(officialResult);
     const displayedResult = officialResult || result;
 
-    const attemptsUsed =
-      displayedResult?.attempts_used ?? 0;
+    const attemptsUsed = displayedResult?.attempts_used ?? 0;
+    const maxAttempts = displayedResult?.max_attempts ?? 3;
 
-    const maxAttempts =
-      displayedResult?.max_attempts ?? 3;
-
-    const canRetry =
-      !isOfficial && attemptsUsed < maxAttempts;
+    const canRetry = !isOfficial && attemptsUsed < maxAttempts;
 
     return (
       <div className="quiz-page">
@@ -354,13 +331,9 @@ function Quiz() {
                 : "Periksa nilai sementara dan tentukan apakah ingin mencoba lagi atau mengirim hasil."}
             </p>
 
-            {/* NILAI */}
             <div className="score-card">
               <div className="score-circle">
-                <strong>
-                  {displayedResult?.score ?? 0}
-                </strong>
-
+                <strong>{displayedResult?.score ?? 0}</strong>
                 <span>Nilai</span>
               </div>
 
@@ -369,38 +342,31 @@ function Quiz() {
 
                 <strong>
                   {displayedResult?.correct_count ?? 0} dari{" "}
-                  {displayedResult?.total_questions ??
-                    totalQuestions}{" "}
-                  soal benar
+                  {displayedResult?.total_questions ?? totalQuestions} soal
+                  benar
                 </strong>
 
                 <p>
                   Percobaan ke-
-                  {displayedResult?.attempt_number ?? 0} dari{" "}
-                  {maxAttempts}
+                  {displayedResult?.attempt_number ?? 0} dari {maxAttempts}
                 </p>
 
                 <p>
-                  Kesempatan terpakai: {attemptsUsed}/
-                  {maxAttempts}
+                  Kesempatan terpakai: {attemptsUsed}/{maxAttempts}
                 </p>
               </div>
             </div>
 
-            {/* PESAN ERROR */}
             {actionError && (
               <Alert variant="danger" className="mt-3">
                 {actionError}
               </Alert>
             )}
 
-            {/* TOMBOL */}
             <div className="result-actions">
               <Button
                 className="result-primary-button"
-                onClick={() =>
-                  navigate(`/module/${moduleId}`)
-                }
+                onClick={() => navigate(`/module/${moduleId}`)}
               >
                 <FaBookOpen />
                 Kembali Belajar
@@ -427,10 +393,7 @@ function Quiz() {
                   >
                     {submitting ? (
                       <>
-                        <Spinner
-                          size="sm"
-                          animation="border"
-                        />
+                        <Spinner size="sm" animation="border" />
                         Mengirim...
                       </>
                     ) : (
@@ -444,7 +407,6 @@ function Quiz() {
               )}
             </div>
 
-            {/* INFORMASI */}
             <p className="result-note">
               <FaLightbulb />
 
@@ -463,7 +425,6 @@ function Quiz() {
   // HALAMAN PENGERJAAN KUIS
   return (
     <div className="quiz-page">
-      {/* HEADER */}
       <section className="quiz-top">
         <Container>
           <div className="quiz-top-content">
@@ -477,7 +438,6 @@ function Quiz() {
 
             <div className="quiz-title">
               <span>QUIZ</span>
-
               <h1>{quiz.title}</h1>
 
               <p>
@@ -488,40 +448,32 @@ function Quiz() {
 
             <div className="question-counter">
               <strong>{questionNumber}</strong>
-
               <span>/ {totalQuestions}</span>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* PROGRESS */}
       <div className="quiz-progress-wrapper">
         <div className="quiz-progress">
           <ProgressBar now={progress} />
         </div>
       </div>
 
-      {/* QUESTION */}
       <section className="question-section">
         <Container>
           <div className="question-wrapper">
             <div className="question-card">
-              {/* HEADER SOAL */}
               <div className="question-card-header">
                 <span className="question-number">
                   Pertanyaan {questionNumber}
                 </span>
 
-                <span className="question-type">
-                  Pilihan Ganda
-                </span>
+                <span className="question-type">Pilihan Ganda</span>
               </div>
 
-              {/* PERTANYAAN */}
               <h2>{question.question_text}</h2>
 
-              {/* GAMBAR SOAL */}
               {question.image_url && (
                 <div className="question-image-wrapper">
                   <img
@@ -532,11 +484,9 @@ function Quiz() {
                 </div>
               )}
 
-              {/* PILIHAN JAWABAN */}
               <div className="options-list">
                 {options.map((option) => {
-                  const isSelected =
-                    selectedAnswer === option.key;
+                  const isSelected = selectedAnswer === option.key;
 
                   return (
                     <button
@@ -545,18 +495,12 @@ function Quiz() {
                       className={`answer-option ${
                         isSelected ? "selected" : ""
                       }`}
-                      onClick={() =>
-                        handleAnswer(option.key)
-                      }
+                      onClick={() => handleAnswer(option.key)}
                       disabled={evaluating}
                     >
-                      <span className="option-letter">
-                        {option.key}
-                      </span>
+                      <span className="option-letter">{option.key}</span>
 
-                      <span className="option-text">
-                        {option.value}
-                      </span>
+                      <span className="option-text">{option.value}</span>
 
                       {isSelected && (
                         <span className="option-check">
@@ -568,21 +512,17 @@ function Quiz() {
                 })}
               </div>
 
-              {/* ERROR AKSI */}
               {actionError && (
                 <Alert variant="danger" className="mt-3">
                   {actionError}
                 </Alert>
               )}
 
-              {/* FOOTER */}
               <div className="question-footer">
                 <Button
                   className="previous-button"
                   onClick={handlePrevious}
-                  disabled={
-                    currentQuestion === 0 || evaluating
-                  }
+                  disabled={currentQuestion === 0 || evaluating}
                 >
                   <FaArrowLeft />
                   Sebelumnya
@@ -611,10 +551,7 @@ function Quiz() {
                   >
                     {evaluating ? (
                       <>
-                        <Spinner
-                          size="sm"
-                          animation="border"
-                        />
+                        <Spinner size="sm" animation="border" />
                         Menilai...
                       </>
                     ) : (
@@ -628,14 +565,12 @@ function Quiz() {
               </div>
             </div>
 
-            {/* INFORMASI */}
             <div className="quiz-information">
               <FaLightbulb />
 
               <p>
-                <strong>Tips:</strong> Bacalah pertanyaan
-                dengan teliti sebelum memilih jawaban.
-                Tidak perlu terburu-buru, ya!
+                <strong>Tips:</strong> Bacalah pertanyaan dengan teliti sebelum
+                memilih jawaban. Tidak perlu terburu-buru, ya!
               </p>
             </div>
           </div>

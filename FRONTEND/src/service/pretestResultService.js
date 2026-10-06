@@ -1,4 +1,3 @@
-
 import { fetchWithAuth } from "./authService";
 
 const API_URL = "http://localhost:5000/api/pretest-results";
@@ -10,7 +9,7 @@ const request = async (url, options = {}) => {
 
   if (!response.ok || result?.success === false) {
     const error = new Error(
-      result?.message || "Gagal memproses hasil pretest."
+      result?.message || "Gagal memproses hasil pretest.",
     );
 
     // Menyimpan kode error dari backend jika tersedia
@@ -66,5 +65,10 @@ export const submitPretestResult = async (pretestId, answers) => {
 export const getMyPretestResults = async () => {
   const result = await request(`${API_URL}/my`);
 
+  return result.data || [];
+};
+// Mengambil seluruh hasil pretest untuk rekap nilai dosen
+export const getAllPretestResults = async () => {
+  const result = await request(`${API_URL}/all`);
   return result.data || [];
 };

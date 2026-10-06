@@ -60,10 +60,17 @@ const normalizeAssignment = (assignment) => ({
   image_url: assignment.image_path ? getPublicUrl(assignment.image_path) : "",
 
   deadline: assignment.deadline || "",
+
+  // Membaca status aktif dari database.
+  is_active:
+    assignment.is_active === true ||
+    assignment.is_active === "true" ||
+    assignment.is_active === 1 ||
+    assignment.is_active === "1",
 });
 
 /* =========================================================
-   STATUS
+   STATUS SUBMISSION
 ========================================================= */
 
 const statusConfig = {
@@ -220,7 +227,7 @@ function Microteaching() {
   const [videoError, setVideoError] = useState("");
 
   /* =======================================================
-     AMBIL DATA TUGAS + STATUS SUBMISSION
+     AMBIL TUGAS AKTIF + STATUS SUBMISSION
   ======================================================= */
 
   useEffect(() => {
@@ -238,17 +245,19 @@ function Microteaching() {
         }
 
         /* =================================================
-           AMBIL SEMUA ASSIGNMENT
+           AMBIL ASSIGNMENT DAN FILTER STATUS AKTIF
         ================================================= */
 
         const assignmentData = await getAssignments();
 
         const assignmentList = (
           Array.isArray(assignmentData) ? assignmentData : []
-        ).map(normalizeAssignment);
+        )
+          .map(normalizeAssignment)
+          .filter((assignment) => assignment.is_active === true);
 
         /* =================================================
-           AMBIL SUBMISSION SETIAP TUGAS
+           AMBIL SUBMISSION SETIAP TUGAS AKTIF
         ================================================= */
 
         const submissionResults = await Promise.all(
@@ -261,7 +270,6 @@ function Microteaching() {
 
               return {
                 assignmentId: assignment.id,
-
                 submission: submission || null,
               };
             } catch (error) {
@@ -272,7 +280,6 @@ function Microteaching() {
 
               return {
                 assignmentId: assignment.id,
-
                 submission: null,
               };
             }
@@ -355,7 +362,7 @@ function Microteaching() {
   }, []);
 
   /* =======================================================
-     FILTER TUGAS
+     FILTER TUGAS BERDASARKAN STATUS SUBMISSION
   ======================================================= */
 
   const filteredTugas = useMemo(() => {
@@ -402,13 +409,11 @@ function Microteaching() {
               <div className="micro-hero-info">
                 <div>
                   <FaBookOpen />
-
                   <span>Materi & Tugas</span>
                 </div>
 
                 <div>
                   <FaPlay />
-
                   <span>Video Pembelajaran</span>
                 </div>
               </div>
@@ -461,7 +466,6 @@ function Microteaching() {
           {loadingVideos && (
             <div className="micro-loading">
               <FaSpinner className="loading-spinner" />
-
               <span>Memuat video pembelajaran...</span>
             </div>
           )}
@@ -472,7 +476,6 @@ function Microteaching() {
 
               <div>
                 <strong>Video belum dapat dimuat</strong>
-
                 <p>{videoError}</p>
               </div>
             </div>
@@ -506,7 +509,6 @@ function Microteaching() {
                         (event.key === "Enter" || event.key === " ")
                       ) {
                         event.preventDefault();
-
                         openYoutube(youtubeUrl);
                       }
                     }}
@@ -521,7 +523,6 @@ function Microteaching() {
                       ) : (
                         <div className="video-unavailable">
                           <FaYoutube />
-
                           <span>Video tidak tersedia</span>
                         </div>
                       )}
@@ -551,9 +552,7 @@ function Microteaching() {
                       {youtubeUrl && (
                         <div className="watch-youtube">
                           <FaYoutube />
-
                           <span>Tonton di YouTube</span>
-
                           <FaArrowRight />
                         </div>
                       )}
@@ -593,25 +592,21 @@ function Microteaching() {
               <div className="instruction-steps">
                 <div className="instruction-step">
                   <span>1</span>
-
                   <p>Pilih tugas yang ingin kamu kerjakan.</p>
                 </div>
 
                 <div className="instruction-step">
                   <span>2</span>
-
                   <p>Buka dan baca file PDF tugas.</p>
                 </div>
 
                 <div className="instruction-step">
                   <span>3</span>
-
                   <p>Kerjakan tugas sesuai petunjuk.</p>
                 </div>
 
                 <div className="instruction-step">
                   <span>4</span>
-
                   <p>Masukkan link hasil pekerjaanmu.</p>
                 </div>
               </div>
@@ -677,7 +672,6 @@ function Microteaching() {
           {loadingAssignments && (
             <div className="micro-loading">
               <FaSpinner className="loading-spinner" />
-
               <span>Memuat daftar tugas...</span>
             </div>
           )}
@@ -690,7 +684,6 @@ function Microteaching() {
 
               <div>
                 <strong>Tugas belum dapat dimuat</strong>
-
                 <p>{assignmentError}</p>
               </div>
             </div>
@@ -713,18 +706,11 @@ function Microteaching() {
 
                   const deadline = tugas.deadline;
 
-                  /*
-                   * GAMBAR DIAMBIL DARI
-                   * assignments.image_path
-                   */
-
                   const image = tugas.image_url || "";
 
                   return (
                     <article className="micro-task-card" key={tugas.id}>
-                      {/* =================================
-                            VISUAL
-                        ================================= */}
+                      {/* VISUAL */}
 
                       <div className="task-visual">
                         {image ? (
@@ -742,9 +728,7 @@ function Microteaching() {
                         </div>
                       </div>
 
-                      {/* =================================
-                            BODY
-                        ================================= */}
+                      {/* BODY */}
 
                       <div className="task-body">
                         <div className="task-status">
@@ -799,7 +783,9 @@ function Microteaching() {
 
                 <h3>Tugas tidak ditemukan</h3>
 
-                <p>Tidak ada tugas yang sesuai dengan filter yang dipilih.</p>
+                <p>
+                  Tidak ada tugas aktif yang sesuai dengan filter yang dipilih.
+                </p>
               </div>
             )}
         </Container>

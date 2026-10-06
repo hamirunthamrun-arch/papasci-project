@@ -2,19 +2,24 @@
    DOSEN NILAI MAHASISWA
 ========================================================= */
 
+.dosen-nilai-page,
+.dosen-nilai-page * {
+  box-sizing: border-box;
+}
+
 .dosen-nilai-page {
   width: 100%;
+  min-width: 0;
   min-height: 100vh;
-
-  padding: 30px;
-
+  padding: clamp(16px, 2.5vw, 30px);
   background: #f5f9ff;
-
-  font-family: "Nunito", sans-serif;
-
   color: #24364b;
+  font-family: "Nunito", sans-serif;
+}
 
-  box-sizing: border-box;
+.dosen-nilai-page button,
+.dosen-nilai-page input {
+  font: inherit;
 }
 
 /* =========================================================
@@ -25,98 +30,71 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  margin-bottom: 28px;
+  gap: 16px;
+  margin-bottom: 26px;
 }
 
 .dosen-nilai-title {
   display: flex;
   align-items: center;
-
-  gap: 16px;
+  gap: 15px;
+  min-width: 0;
 }
 
 .dosen-nilai-title-icon {
-  width: 58px;
-  height: 58px;
-
-  flex-shrink: 0;
-
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 16px;
-
-  background: linear-gradient(
-    135deg,
-    #2f80ed,
-    #1769c2
-  );
-
-  color: #ffffff;
-
-  font-size: 24px;
-
-  box-shadow:
-    0 8px 20px rgba(47, 128, 237, 0.2);
+  background: linear-gradient(135deg, #2f80ed, #1769c2);
+  color: #fff;
+  font-size: 23px;
+  box-shadow: 0 8px 20px rgba(47, 128, 237, 0.2);
 }
 
 .dosen-nilai-title h1 {
   margin: 0;
-
-  font-family: "Baloo 2", sans-serif;
-
-  font-size: 30px;
-  font-weight: 700;
-
-  line-height: 1.2;
-
   color: #183b63;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(23px, 2.5vw, 30px);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-title p {
   margin: 5px 0 0;
-
+  color: #7890a8;
   font-size: 14px;
   font-weight: 600;
-
-  color: #7890a8;
+  line-height: 1.5;
 }
 
 /* =========================================================
-   STATISTICS
+   STATISTIK
 ========================================================= */
 
 .dosen-nilai-stats {
   display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 18px;
-
-  margin-bottom: 25px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .dosen-nilai-stat-card {
-  min-height: 100px;
-
   display: flex;
   align-items: center;
-
-  gap: 15px;
-
+  gap: 14px;
+  min-width: 0;
+  min-height: 100px;
   padding: 20px;
-
-  background: #ffffff;
-
   border: 1px solid #e5edf7;
-
   border-radius: 16px;
-
-  box-shadow:
-    0 5px 18px rgba(35, 76, 120, 0.06);
-
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(35, 76, 120, 0.06);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -124,23 +102,17 @@
 
 .dosen-nilai-stat-card:hover {
   transform: translateY(-2px);
-
-  box-shadow:
-    0 8px 22px rgba(35, 76, 120, 0.1);
+  box-shadow: 0 8px 22px rgba(35, 76, 120, 0.1);
 }
 
 .dosen-nilai-stat-icon {
-  width: 48px;
-  height: 48px;
-
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
   border-radius: 13px;
-
   font-size: 19px;
 }
 
@@ -159,87 +131,69 @@
   color: #e89024;
 }
 
+.dosen-nilai-stat-card > div:last-child {
+  min-width: 0;
+}
+
 .dosen-nilai-stat-card span {
   display: block;
-
-  margin-bottom: 3px;
-
+  margin-bottom: 4px;
+  color: #8094a9;
   font-size: 13px;
   font-weight: 700;
-
-  color: #8094a9;
+  line-height: 1.4;
 }
 
 .dosen-nilai-stat-card strong {
   display: block;
-
+  color: #1d4169;
   font-family: "Baloo 2", sans-serif;
-
   font-size: 27px;
   font-weight: 700;
-
-  line-height: 1;
-
-  color: #1d4169;
+  line-height: 1.1;
 }
 
 /* =========================================================
-   TOOLBAR
+   PENCARIAN
 ========================================================= */
 
 .dosen-nilai-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 18px;
-
+  gap: 14px;
   margin-bottom: 22px;
 }
 
 .dosen-nilai-search {
   position: relative;
-
-  width: 100%;
-  max-width: 520px;
-
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
 }
 
 .dosen-nilai-search > svg {
   position: absolute;
-
-  left: 16px;
-
+  left: 15px;
   color: #8ba0b6;
-
   font-size: 15px;
-
   pointer-events: none;
 }
 
 .dosen-nilai-search input {
   width: 100%;
+  min-width: 0;
   height: 46px;
-
-  padding: 0 45px 0 43px;
-
+  padding: 0 44px;
   border: 1px solid #dce7f3;
-
   border-radius: 12px;
-
   outline: none;
-
-  background: #ffffff;
-
-  font-family: "Nunito", sans-serif;
-
+  background: #fff;
+  color: #30485f;
   font-size: 14px;
   font-weight: 600;
-
-  color: #30485f;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -251,100 +205,78 @@
 
 .dosen-nilai-search input:focus {
   border-color: #4b91e8;
-
-  box-shadow:
-    0 0 0 3px rgba(75, 145, 232, 0.1);
+  box-shadow: 0 0 0 3px rgba(75, 145, 232, 0.1);
 }
 
 .dosen-nilai-search-clear {
   position: absolute;
-
-  right: 10px;
-
-  width: 30px;
-  height: 30px;
-
+  right: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 30px;
+  height: 30px;
   border: none;
-
   border-radius: 8px;
-
   background: transparent;
-
   color: #8ba0b6;
-
   cursor: pointer;
 }
 
 .dosen-nilai-search-clear:hover {
   background: #eef4fa;
-
   color: #2f80ed;
 }
 
 .dosen-nilai-result-count {
-  flex-shrink: 0;
-
-  padding: 9px 14px;
-
+  flex: 0 0 auto;
+  padding: 9px 13px;
   border-radius: 10px;
-
   background: #eaf3ff;
-
   color: #2776d2;
-
   font-size: 13px;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 /* =========================================================
-   MAIN CONTENT
+   KONTEN UTAMA
 ========================================================= */
 
 .dosen-nilai-content {
-  background: #ffffff;
-
-  border: 1px solid #e5edf7;
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 5px 20px rgba(35, 76, 120, 0.06);
-
+  width: 100%;
+  min-width: 0;
   overflow: hidden;
+  border: 1px solid #e5edf7;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(35, 76, 120, 0.06);
 }
 
 .dosen-nilai-list-header {
-  padding: 23px 25px;
-
+  padding: 22px 24px;
   border-bottom: 1px solid #edf2f7;
 }
 
 .dosen-nilai-list-header h2 {
   margin: 0;
-
+  color: #1e4168;
   font-family: "Baloo 2", sans-serif;
-
   font-size: 21px;
   font-weight: 700;
-
-  color: #1e4168;
+  line-height: 1.35;
 }
 
 .dosen-nilai-list-header p {
-  margin: 3px 0 0;
-
+  margin: 4px 0 0;
+  color: #8a9bad;
   font-size: 13px;
   font-weight: 600;
-
-  color: #8a9bad;
+  line-height: 1.6;
 }
 
 /* =========================================================
-   STUDENT LIST
+   DAFTAR MAHASISWA
 ========================================================= */
 
 .dosen-nilai-student-list {
@@ -353,18 +285,13 @@
 }
 
 .dosen-nilai-student-card {
-  display: grid;
-
-  grid-template-columns: minmax(250px, 1.5fr) minmax(220px, 1fr) auto;
-
+  display: flex;
   align-items: center;
-
-  gap: 25px;
-
-  padding: 19px 25px;
-
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+  padding: 18px 24px;
   border-bottom: 1px solid #edf2f7;
-
   transition: background 0.2s ease;
 }
 
@@ -376,191 +303,123 @@
   background: #f9fbfe;
 }
 
-/* =========================================================
-   STUDENT INFO
-========================================================= */
-
 .dosen-nilai-student-info {
   display: flex;
   align-items: center;
-
   gap: 13px;
+  flex: 1;
+  min-width: 0;
 }
 
 .dosen-nilai-avatar {
-  width: 45px;
-  height: 45px;
-
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 45px;
+  height: 45px;
+  flex: 0 0 45px;
   border-radius: 50%;
-
-  background: linear-gradient(
-    135deg,
-    #dcecff,
-    #c9e1ff
-  );
-
+  background: linear-gradient(135deg, #dcecff, #c9e1ff);
   color: #2776d2;
-
   font-size: 16px;
   font-weight: 800;
 }
 
+.dosen-nilai-student-info > div:last-child {
+  min-width: 0;
+}
+
 .dosen-nilai-student-info h3 {
-  margin: 0 0 3px;
-
-  font-family: "Nunito", sans-serif;
-
+  margin: 0 0 4px;
+  color: #274761;
   font-size: 14px;
   font-weight: 800;
-
-  color: #274761;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-student-info span {
+  display: block;
+  color: #91a1b1;
   font-size: 12px;
   font-weight: 600;
-
-  color: #91a1b1;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
-   STUDENT SUMMARY
-========================================================= */
-
-.dosen-nilai-student-summary {
-  display: flex;
-  align-items: center;
-
-  gap: 35px;
-}
-
-.dosen-nilai-student-summary > div {
-  display: flex;
-  flex-direction: column;
-
-  gap: 2px;
-}
-
-.dosen-nilai-student-summary span {
-  font-size: 11px;
-  font-weight: 700;
-
-  color: #91a0af;
-}
-
-.dosen-nilai-student-summary strong {
-  font-size: 15px;
-  font-weight: 800;
-
-  color: #31506d;
-}
-
-/* =========================================================
-   VIEW BUTTON
+   TOMBOL LIHAT NILAI
 ========================================================= */
 
 .dosen-nilai-view-button {
-  min-width: 110px;
-  height: 36px;
-
-  padding: 0 15px;
-
+  min-width: 112px;
+  min-height: 38px;
+  flex: 0 0 auto;
+  padding: 9px 15px;
   border: none;
-
   border-radius: 9px;
-
   background: #2f80ed;
-
-  color: #ffffff;
-
-  font-family: "Nunito", sans-serif;
-
+  color: #fff;
   font-size: 12px;
   font-weight: 800;
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     transform 0.2s ease;
 }
 
 .dosen-nilai-view-button:hover {
-  background: #176bc9;
-
   transform: translateY(-1px);
+  background: #176bc9;
 }
 
 /* =========================================================
-   EMPTY
+   LOADING / EMPTY STATE
 ========================================================= */
 
 .dosen-nilai-empty {
-  min-height: 280px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  padding: 40px;
-
+  min-height: 260px;
+  padding: 32px 24px;
   text-align: center;
 }
 
 .dosen-nilai-empty > svg {
   margin-bottom: 14px;
-
   color: #9bb4ce;
-
   font-size: 38px;
 }
 
 .dosen-nilai-empty h3 {
-  margin: 0 0 5px;
-
-  font-family: "Baloo 2", sans-serif;
-
-  font-size: 21px;
-
+  margin: 0 0 7px;
   color: #49647d;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 21px;
+  line-height: 1.4;
 }
 
 .dosen-nilai-empty p {
+  width: 100%;
   max-width: 430px;
-
   margin: 0 0 18px;
-
+  color: #8b9cac;
   font-size: 13px;
   font-weight: 600;
-
-  line-height: 1.6;
-
-  color: #8b9cac;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-empty button {
-  padding: 9px 16px;
-
+  padding: 10px 16px;
   border: none;
-
   border-radius: 9px;
-
   background: #eaf3ff;
-
   color: #2876cf;
-
-  font-family: "Nunito", sans-serif;
-
   font-size: 12px;
   font-weight: 800;
-
   cursor: pointer;
 }
 
@@ -574,64 +433,46 @@
 
 .dosen-nilai-modal-overlay {
   position: fixed;
-
   inset: 0;
-
-  z-index: 1000;
-
+  z-index: 1050;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 25px;
-
-  background: rgba(18, 42, 68, 0.52);
-
-  backdrop-filter: blur(3px);
-
+  padding: 20px;
+  overflow-x: hidden;
   overflow-y: auto;
+  background: rgba(18, 42, 68, 0.56);
+  backdrop-filter: blur(3px);
 }
 
 /* =========================================================
-   DETAIL MODAL
+   MODAL DETAIL
 ========================================================= */
 
 .dosen-nilai-detail-modal {
-  width: 100%;
-  max-width: 850px;
-
-  max-height: calc(100vh - 50px);
-
   display: flex;
   flex-direction: column;
-
-  background: #ffffff;
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 20px 60px rgba(22, 52, 82, 0.22);
-
+  width: 100%;
+  max-width: 850px;
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  min-width: 0;
   overflow: hidden;
-
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(22, 52, 82, 0.22);
   animation: dosenNilaiModalIn 0.2s ease;
 }
 
 @keyframes dosenNilaiModalIn {
   from {
     opacity: 0;
-
-    transform:
-      translateY(10px)
-      scale(0.98);
+    transform: translateY(10px) scale(0.985);
   }
 
   to {
     opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -643,84 +484,70 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 20px;
-
-  padding: 21px 24px;
-
+  gap: 14px;
+  padding: 20px 24px;
   border-bottom: 1px solid #e9eff5;
-
-  background: #ffffff;
+  background: #fff;
 }
 
 .dosen-nilai-modal-student {
   display: flex;
   align-items: center;
-
   gap: 13px;
+  min-width: 0;
 }
 
 .dosen-nilai-avatar.large {
   width: 50px;
   height: 50px;
-
+  flex: 0 0 50px;
   font-size: 18px;
+}
+
+.dosen-nilai-modal-student > div:last-child {
+  min-width: 0;
 }
 
 .dosen-nilai-modal-student span {
   display: block;
-
-  margin-bottom: 2px;
-
+  margin-bottom: 3px;
+  color: #4389d5;
   font-size: 9px;
   font-weight: 900;
-
   letter-spacing: 0.8px;
-
-  color: #4389d5;
+  line-height: 1.5;
 }
 
 .dosen-nilai-modal-student h2 {
   margin: 0;
-
-  font-family: "Baloo 2", sans-serif;
-
-  font-size: 23px;
-
-  line-height: 1.1;
-
   color: #1f4165;
+  font-family: "Baloo 2", sans-serif;
+  font-size: clamp(18px, 2.5vw, 23px);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-modal-student p {
-  margin: 3px 0 0;
-
+  margin: 4px 0 0;
+  color: #899bab;
   font-size: 11px;
   font-weight: 600;
-
-  color: #899bab;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-close-button {
-  width: 35px;
-  height: 35px;
-
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
   border: none;
-
   border-radius: 9px;
-
   background: #f1f5f9;
-
   color: #7f91a3;
-
   cursor: pointer;
-
   transition:
     background 0.2s ease,
     color 0.2s ease;
@@ -728,7 +555,6 @@
 
 .dosen-nilai-close-button:hover {
   background: #e8f0f8;
-
   color: #2f80ed;
 }
 
@@ -737,20 +563,21 @@
 ========================================================= */
 
 .dosen-nilai-modal-body {
-  flex: 1;
-
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 24px;
-
+  overflow-x: hidden;
   overflow-y: auto;
-
+  overscroll-behavior: contain;
   background: #f8fbff;
 }
 
 /* =========================================================
-   SECTION
+   SECTION DETAIL
 ========================================================= */
 
 .dosen-nilai-section {
+  min-width: 0;
   margin-bottom: 25px;
 }
 
@@ -761,246 +588,214 @@
 .dosen-nilai-section-title {
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   margin-bottom: 14px;
 }
 
 .dosen-nilai-section-icon {
-  width: 42px;
-  height: 42px;
-
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
   border-radius: 11px;
-
   font-size: 16px;
 }
 
 .dosen-nilai-section-icon.blue {
   background: #e8f2ff;
-
   color: #2776d2;
 }
 
 .dosen-nilai-section-icon.orange {
   background: #fff4e5;
-
   color: #e89024;
+}
+
+.dosen-nilai-section-title > div:last-child {
+  min-width: 0;
 }
 
 .dosen-nilai-section-title h3 {
   margin: 0;
-
-  font-family: "Baloo 2", sans-serif;
-
-  font-size: 19px;
-
   color: #234565;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 19px;
+  line-height: 1.35;
 }
 
 .dosen-nilai-section-title p {
-  margin: 1px 0 0;
-
+  margin: 3px 0 0;
+  color: #8a9aaa;
   font-size: 11px;
   font-weight: 600;
-
-  color: #8a9aaa;
+  line-height: 1.6;
 }
 
 /* =========================================================
-   MODULE LIST
+   NILAI MODULE
 ========================================================= */
 
 .dosen-nilai-module-list {
   display: flex;
   flex-direction: column;
-
   gap: 10px;
 }
 
 .dosen-nilai-module-card {
   display: grid;
-
-  grid-template-columns: 1fr auto;
-
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-
-  gap: 20px;
-
+  gap: 18px;
+  min-width: 0;
   padding: 15px 17px;
-
-  background: #ffffff;
-
   border: 1px solid #e4edf6;
-
   border-radius: 12px;
+  background: #fff;
 }
 
 .dosen-nilai-module-name {
   display: flex;
   flex-direction: column;
-
   gap: 2px;
+  min-width: 0;
 }
 
 .dosen-nilai-module-name strong {
+  color: #2c4a65;
   font-size: 13px;
   font-weight: 800;
-
-  color: #2c4a65;
-}
-
-.dosen-nilai-module-name span {
-  font-size: 10px;
-  font-weight: 600;
-
-  color: #9aa8b6;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-module-scores {
   display: flex;
-  align-items: center;
-
-  gap: 10px;
+  align-items: stretch;
+  gap: 9px;
 }
 
 .dosen-nilai-module-scores > div {
-  min-width: 85px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 8px;
-
-  padding: 8px 10px;
-
+  gap: 10px;
+  min-width: 90px;
+  padding: 9px 11px;
   border-radius: 8px;
-
   background: #f5f9fd;
 }
 
 .dosen-nilai-module-scores span {
+  color: #8b9baa;
   font-size: 10px;
   font-weight: 700;
-
-  color: #8b9baa;
 }
 
 .dosen-nilai-module-scores strong {
+  color: #2f80ed;
   font-size: 14px;
   font-weight: 900;
-
-  color: #2f80ed;
 }
 
 /* =========================================================
-   TASK LIST
+   STATUS DAN NILAI TUGAS
 ========================================================= */
 
 .dosen-nilai-task-list {
   display: flex;
   flex-direction: column;
-
-  gap: 9px;
+  gap: 12px;
 }
 
 .dosen-nilai-task-card {
   display: grid;
-
-  grid-template-columns: 36px 1fr auto;
-
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-
-  gap: 12px;
-
-  padding: 12px 15px;
-
-  background: #ffffff;
-
-  border: 1px solid #e4edf6;
-
-  border-radius: 11px;
+  gap: 18px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid #e2eaf4;
+  border-radius: 14px;
+  background: #fff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.dosen-nilai-task-number {
-  width: 32px;
-  height: 32px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 9px;
-
-  background: #fff4e5;
-
-  color: #dc8b22;
-
-  font-size: 11px;
-  font-weight: 900;
+.dosen-nilai-task-card:hover {
+  border-color: #c8dcf5;
+  box-shadow: 0 4px 14px rgba(37, 99, 160, 0.06);
 }
 
 .dosen-nilai-task-name {
-  display: flex;
-  flex-direction: column;
-
-  gap: 2px;
-
   min-width: 0;
 }
 
 .dosen-nilai-task-name strong {
-  font-size: 13px;
+  display: block;
+  color: #294761;
+  font-size: 14px;
   font-weight: 800;
-
-  color: #2c4a65;
-}
-
-.dosen-nilai-task-name span {
-  font-size: 10px;
-  font-weight: 600;
-
-  color: #9aa8b6;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-task-score {
-  min-width: 90px;
-
   display: flex;
-  flex-direction: column;
-
-  align-items: flex-end;
-
-  gap: 1px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  min-width: 0;
 }
+
+/* Angka nilai */
 
 .dosen-nilai-task-score strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #d6e5ff;
+  border-radius: 11px;
+  background: #eaf2ff;
+  color: #2459c4;
   font-size: 20px;
   font-weight: 900;
-
   line-height: 1;
-
-  color: #2f80ed;
+  font-variant-numeric: tabular-nums;
 }
+
+/* Label nilai dan status */
 
 .dosen-nilai-task-score > span {
-  font-size: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  padding: 7px 11px;
+  border: 1px solid #e4ebf3;
+  border-radius: 9px;
+  background: #f5f8fc;
+  color: #526a80;
+  font-size: 12px;
   font-weight: 700;
-
-  color: #9aa8b6;
+  line-height: 1.5;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
-.dosen-nilai-task-score .not-graded {
-  color: #dc8b22;
+/* Status belum dikumpulkan */
 
-  font-size: 10px;
+.dosen-nilai-task-score .not-graded {
+  border-color: #fecdd3;
+  background: #fff1f2;
+  color: #be123c;
 }
 
 /* =========================================================
@@ -1011,57 +806,45 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 15px;
-
+  gap: 16px;
   padding: 15px 24px;
-
   border-top: 1px solid #e7eef5;
-
-  background: #ffffff;
+  background: #fff;
 }
 
 .dosen-nilai-modal-footer > div {
   display: flex;
-  align-items: center;
-
+  align-items: flex-start;
   gap: 8px;
-
+  min-width: 0;
   color: #8a9aaa;
 }
 
 .dosen-nilai-modal-footer svg {
-  flex-shrink: 0;
-
+  flex: 0 0 auto;
+  margin-top: 2px;
   color: #f2b632;
-
   font-size: 14px;
 }
 
 .dosen-nilai-modal-footer span {
   font-size: 10px;
   font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .dosen-nilai-modal-footer button {
-  min-width: 75px;
-  height: 34px;
-
-  padding: 0 13px;
-
+  min-width: 78px;
+  min-height: 36px;
+  flex: 0 0 auto;
+  padding: 8px 13px;
   border: 1px solid #dce5ee;
-
   border-radius: 8px;
-
   background: #f7f9fb;
-
   color: #71869a;
-
-  font-family: "Nunito", sans-serif;
-
   font-size: 11px;
   font-weight: 800;
-
   cursor: pointer;
 }
 
@@ -1070,62 +853,75 @@
 }
 
 /* =========================================================
-   TABLET
+   FOCUS KEYBOARD
+========================================================= */
+
+.dosen-nilai-view-button:focus-visible,
+.dosen-nilai-search-clear:focus-visible,
+.dosen-nilai-empty button:focus-visible,
+.dosen-nilai-close-button:focus-visible,
+.dosen-nilai-modal-footer button:focus-visible {
+  outline: 3px solid rgba(47, 128, 237, 0.35);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   TABLET DAN LAPTOP KECIL
 ========================================================= */
 
 @media (max-width: 1000px) {
   .dosen-nilai-page {
-    padding: 25px 22px;
+    padding: 24px 20px;
   }
 
   .dosen-nilai-stats {
-    gap: 14px;
+    gap: 12px;
   }
 
   .dosen-nilai-stat-card {
+    gap: 11px;
     padding: 16px;
   }
 
-  .dosen-nilai-title h1 {
-    font-size: 27px;
+  .dosen-nilai-stat-icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
   }
 
   .dosen-nilai-student-card {
-    grid-template-columns:
-      minmax(220px, 1fr)
-      minmax(180px, auto)
-      auto;
-
-    gap: 15px;
-
     padding: 17px 20px;
+  }
+
+  .dosen-nilai-modal-body {
+    padding: 20px;
   }
 }
 
 /* =========================================================
-   MOBILE
+   TABLET POTRET DAN HP
 ========================================================= */
 
 @media (max-width: 700px) {
   .dosen-nilai-page {
-    padding: 20px 15px;
+    padding: 19px 14px;
   }
 
-  /* HEADER */
+  .dosen-nilai-header {
+    margin-bottom: 20px;
+  }
 
   .dosen-nilai-title {
     align-items: flex-start;
-
-    gap: 12px;
+    gap: 11px;
   }
 
   .dosen-nilai-title-icon {
-    width: 48px;
-    height: 48px;
-
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
     border-radius: 13px;
-
-    font-size: 20px;
+    font-size: 19px;
   }
 
   .dosen-nilai-title h1 {
@@ -1133,65 +929,64 @@
   }
 
   .dosen-nilai-title p {
-    max-width: 300px;
-
     font-size: 12px;
-
-    line-height: 1.5;
   }
 
-  /* STATS */
-
   .dosen-nilai-stats {
-    grid-template-columns: 1fr;
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-
-    margin-bottom: 18px;
+    margin-bottom: 19px;
   }
 
   .dosen-nilai-stat-card {
-    min-height: auto;
-
-    padding: 14px 16px;
+    min-height: 88px;
+    gap: 10px;
+    padding: 13px;
+    border-radius: 13px;
   }
 
   .dosen-nilai-stat-icon {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .dosen-nilai-stat-card span {
+    font-size: 11px;
   }
 
   .dosen-nilai-stat-card strong {
-    font-size: 24px;
+    font-size: 23px;
   }
-
-  /* TOOLBAR */
 
   .dosen-nilai-toolbar {
     flex-direction: column;
     align-items: stretch;
-
     gap: 10px;
-
-    margin-bottom: 16px;
+    margin-bottom: 17px;
   }
 
   .dosen-nilai-search {
     max-width: none;
   }
 
+  .dosen-nilai-search input {
+    height: 44px;
+    font-size: 13px;
+  }
+
   .dosen-nilai-result-count {
     align-self: flex-start;
   }
-
-  /* CONTENT */
 
   .dosen-nilai-content {
     border-radius: 14px;
   }
 
   .dosen-nilai-list-header {
-    padding: 18px;
+    padding: 17px;
   }
 
   .dosen-nilai-list-header h2 {
@@ -1202,90 +997,125 @@
     font-size: 12px;
   }
 
-  /* STUDENT CARD */
-
   .dosen-nilai-student-card {
-    grid-template-columns: 1fr;
-
+    align-items: stretch;
+    flex-direction: column;
     gap: 13px;
-
-    padding: 17px 18px;
+    padding: 16px;
   }
 
-  .dosen-nilai-student-summary {
-    gap: 30px;
+  .dosen-nilai-student-info h3 {
+    font-size: 14px;
   }
 
   .dosen-nilai-view-button {
     width: 100%;
+    min-height: 40px;
   }
 
-  /* MODAL */
+  /* Modal */
 
   .dosen-nilai-modal-overlay {
     align-items: flex-start;
-
-    padding: 15px;
+    justify-content: center;
+    padding: 12px;
   }
 
   .dosen-nilai-detail-modal {
-    max-height: calc(100vh - 30px);
-
-    margin-top: 10px;
-
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    margin: 0;
     border-radius: 15px;
   }
 
   .dosen-nilai-modal-header {
-    padding: 17px;
+    padding: 15px;
   }
 
-  .dosen-nilai-modal-student h2 {
-    font-size: 20px;
+  .dosen-nilai-avatar.large {
+    width: 43px;
+    height: 43px;
+    flex-basis: 43px;
+    font-size: 16px;
   }
 
   .dosen-nilai-modal-body {
-    padding: 17px;
+    padding: 16px;
   }
 
-  /* MODULE */
+  .dosen-nilai-section {
+    margin-bottom: 22px;
+  }
+
+  .dosen-nilai-section-title {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dosen-nilai-section-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 15px;
+  }
+
+  .dosen-nilai-section-title h3 {
+    font-size: 17px;
+  }
+
+  .dosen-nilai-section-title p {
+    font-size: 11px;
+  }
+
+  /* Nilai module */
 
   .dosen-nilai-module-card {
-    grid-template-columns: 1fr;
-
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+    padding: 13px;
   }
 
   .dosen-nilai-module-scores {
     width: 100%;
+    gap: 8px;
   }
 
   .dosen-nilai-module-scores > div {
     flex: 1;
+    min-width: 0;
+    padding: 9px;
   }
 
-  /* TASK */
+  /* Status dan nilai tugas */
 
   .dosen-nilai-task-card {
-    grid-template-columns: 34px 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+  }
 
-    gap: 9px;
-
-    padding: 11px;
+  .dosen-nilai-task-name {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #edf1f7;
   }
 
   .dosen-nilai-task-score {
-    min-width: 70px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
   }
 
-  /* FOOTER */
+  .dosen-nilai-task-score > span {
+    font-size: 11px;
+  }
+
+  /* Footer modal */
 
   .dosen-nilai-modal-footer {
     align-items: stretch;
-
     flex-direction: column;
-
-    padding: 14px 17px;
+    gap: 12px;
+    padding: 14px 16px;
   }
 
   .dosen-nilai-modal-footer button {
@@ -1294,19 +1124,19 @@
 }
 
 /* =========================================================
-   SMALL PHONE
+   HP KECIL
 ========================================================= */
 
 @media (max-width: 420px) {
   .dosen-nilai-page {
-    padding: 16px 12px;
+    padding: 15px 10px;
   }
 
   .dosen-nilai-title-icon {
-    width: 44px;
-    height: 44px;
-
-    font-size: 18px;
+    width: 41px;
+    height: 41px;
+    flex-basis: 41px;
+    font-size: 17px;
   }
 
   .dosen-nilai-title h1 {
@@ -1317,44 +1147,102 @@
     font-size: 11px;
   }
 
-  .dosen-nilai-search input {
-    height: 43px;
+  .dosen-nilai-stats {
+    gap: 8px;
+  }
 
+  .dosen-nilai-stat-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 11px;
+  }
+
+  .dosen-nilai-stat-icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 14px;
+  }
+
+  .dosen-nilai-stat-card span {
+    font-size: 10px;
+  }
+
+  .dosen-nilai-stat-card strong {
+    font-size: 21px;
+  }
+
+  .dosen-nilai-search input {
+    height: 42px;
+    padding-left: 38px;
     font-size: 12px;
   }
 
+  .dosen-nilai-search > svg {
+    left: 13px;
+  }
+
   .dosen-nilai-list-header {
-    padding: 16px;
+    padding: 15px;
   }
 
   .dosen-nilai-student-card {
-    padding: 15px;
-  }
-
-  .dosen-nilai-modal-header {
-    padding: 15px;
-  }
-
-  .dosen-nilai-modal-student h2 {
-    font-size: 18px;
-  }
-
-  .dosen-nilai-modal-body {
     padding: 14px;
   }
 
-  .dosen-nilai-section-title h3 {
+  .dosen-nilai-modal-overlay {
+    padding: 8px;
+  }
+
+  .dosen-nilai-detail-modal {
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+    border-radius: 12px;
+  }
+
+  .dosen-nilai-modal-header {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .dosen-nilai-modal-student {
+    gap: 9px;
+  }
+
+  .dosen-nilai-modal-student span {
+    font-size: 8px;
+  }
+
+  .dosen-nilai-modal-student h2 {
     font-size: 17px;
   }
 
+  .dosen-nilai-modal-student p {
+    font-size: 10px;
+  }
+
+  .dosen-nilai-close-button {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .dosen-nilai-modal-body {
+    padding: 12px;
+  }
+
+  .dosen-nilai-section-title h3 {
+    font-size: 16px;
+  }
+
   .dosen-nilai-module-scores {
-    gap: 7px;
+    gap: 6px;
   }
 
   .dosen-nilai-module-scores > div {
-    min-width: 0;
-
-    padding: 7px 8px;
+    gap: 6px;
+    padding: 8px;
   }
 
   .dosen-nilai-module-scores span {
@@ -1365,26 +1253,55 @@
     font-size: 13px;
   }
 
-  .dosen-nilai-task-card {
-    grid-template-columns: 32px 1fr;
-
-    position: relative;
-
-    padding-right: 70px;
+  .dosen-nilai-task-name strong {
+    font-size: 12px;
   }
 
   .dosen-nilai-task-score {
-    position: absolute;
-
-    right: 11px;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    min-width: auto;
+    align-items: flex-start;
+    gap: 7px;
   }
 
   .dosen-nilai-task-score strong {
+    min-width: 46px;
+    min-height: 36px;
     font-size: 17px;
+  }
+
+  .dosen-nilai-task-score > span {
+    font-size: 11px;
+    text-align: left;
+  }
+
+  .dosen-nilai-modal-footer {
+    padding: 12px;
+  }
+}
+
+/* =========================================================
+   AKSESIBILITAS: FOKUS KEYBOARD
+========================================================= */
+
+.dosen-nilai-view-button:focus-visible,
+.dosen-nilai-search-clear:focus-visible,
+.dosen-nilai-empty button:focus-visible,
+.dosen-nilai-close-button:focus-visible,
+.dosen-nilai-modal-footer button:focus-visible {
+  outline: 3px solid rgba(47, 128, 237, 0.35);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   PENGURANGAN ANIMASI
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .dosen-nilai-page *,
+  .dosen-nilai-page *::before,
+  .dosen-nilai-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

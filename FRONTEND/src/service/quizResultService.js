@@ -44,3 +44,14 @@ export const submitQuizResult = async (quizId, answers) => {
 
   return result.data;
 };
+export const getAllQuizResults = async () => {
+  const response = await fetchWithAuth(`${API_URL}/all`);
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "Gagal mengambil hasil quiz mahasiswa.");
+  }
+
+  return result.data || [];
+};
