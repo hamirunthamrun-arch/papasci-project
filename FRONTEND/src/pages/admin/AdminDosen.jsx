@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   FaChalkboardTeacher,
   FaEdit,
@@ -11,7 +11,7 @@ import {
 
 import "../../css/admin/AdminDosen.css";
 
-const API_URL = "http://localhost:5000/api"; // Alamat base URL backend Express Anda
+const API_URL = "http://localhost:5000/api";
 
 const AdminDosen = () => {
   const [dosen, setDosen] = useState([]);
@@ -23,39 +23,54 @@ const AdminDosen = () => {
     nama: "",
     nidn: "",
     email: "",
-    password: "", // Untuk pembuatan akun auth baru
-    status: "Aktif",
+    password: "",
   });
 
-  // 1. AMBIL DATA DOSEN DARI BACKEND MENGGUNAKAN FETCH
-  const fetchDosen = async () => {
+  /* =====================================================
+     AMBIL DATA DOSEN
+  ===================================================== */
+
+  const fetchDosen = useCallback(async () => {
     try {
       const response = await fetch(`${API_URL}/users`);
       const result = await response.json();
 
+      if (!response.ok) {
+        throw new Error(result.message || "Gagal mengambil data dosen.");
+      }
+
       if (result.success) {
-        // Filter hanya yang rolenya dosen
-        const dataDosen = result.data.filter(
-          (user) => user.role === "dosen"
-        );
+        const dataDosen = result.data.filter((user) => user.role === "dosen");
+
         setDosen(dataDosen);
+      } else {
+        console.error("Gagal mengambil data dosen:", result.message);
       }
     } catch (error) {
       console.error("Gagal memuat data dosen:", error);
     }
-  };
-
-  useEffect(() => {
-    fetchDosen();
   }, []);
 
   /* =====================================================
-     SEARCH
+     LOAD DATA SAAT HALAMAN DIBUKA
   ===================================================== */
+
+  useEffect(() => {
+    fetchDosen();
+  }, [fetchDosen]);
+
+  /* =====================================================
+     SEARCH DOSEN
+  ===================================================== */
+
   const filteredDosen = dosen.filter((item) => {
     const keyword = search.toLowerCase();
+
     const nama = item.nama_lengkap || item.nama || "";
-    const nidn = item.nidn || "";
+
+    // NIDN disimpan pada kolom profiles.nim
+    const nidn = item.nim || "";
+
     const email = item.email || "";
 
     return (
@@ -66,95 +81,193 @@ const AdminDosen = () => {
   });
 
   /* =====================================================
-     BUKA TAMBAH
+     TAMBAH DOSEN
   ===================================================== */
+
   const handleAdd = () => {
     setEditingId(null);
+
     setFormData({
       nama: "",
       nidn: "",
       email: "",
       password: "",
-      status: "Aktif",
     });
+
     setShowModal(true);
   };
 
   /* =====================================================
-     BUKA EDIT
+     EDIT DOSEN
   ===================================================== */
+
   const handleEdit = (item) => {
     setEditingId(item.id);
+
     setFormData({
       nama: item.nama_lengkap || item.nama || "",
-      nidn: item.nidn || "",
+      nidn: item.nim || "",
       email: item.email || "",
-      status: item.status || "Aktif",
+      password: "",
     });
+
     setShowModal(true);
   };
 
   /* =====================================================
-     SIMPAN (TAMBAH / EDIT) MENGGUNAKAN FETCH
+     HANDLE PERUBAHAN FORM
   ===================================================== */
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  /* =====================================================
+     TUTUP MODAL
+  ===================================================== */
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+
+    setFormData({
+      nama: "",
+      nidn: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  /* =====================================================
+     SIMPAN TAMBAH / EDIT
+  ===================================================== */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.nama || !formData.email) {
-      alert("Nama dan Email dosen wajib diisi.");
+    /* ===================================================
+       VALIDASI FORM
+    =================================================== */
+
+    if (
+      !formData.nama.trim() ||
+      !formData.nidn.trim() ||
+      !formData.email.trim()
+    ) {
+      alert("Nama Dosen, NIDN, dan Email wajib diisi.");
+      return;
+    }
+
+    /* ===================================================
+       VALIDASI PASSWORD SAAT TAMBAH
+    =================================================== */
+
+    if (!editingId && (!formData.password || formData.password.length < 6)) {
+      alert("Password wajib diisi minimal 6 karakter.");
       return;
     }
 
     try {
       let response;
+
+      /* =================================================
+         EDIT DOSEN
+      ================================================= */
+
       if (editingId) {
-        // Method PUT untuk Edit Data Dosen
         response = await fetch(`${API_URL}/users/${editingId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            nama: formData.nama,
-            nidn: formData.nidn,
-            email: formData.email,
-            status: formData.status,
+            nama: formData.nama.trim(),
+
+            // NIDN frontend → profiles.nim
+            nim: formData.nidn.trim(),
+
+            email: formData.email.trim(),
+
             role: "dosen",
           }),
         });
       } else {
-        // Method POST untuk Tambah Dosen Baru (Otomatis Buat Akun Auth)
+        /* ===============================================
+           TAMBAH DOSEN
+        =============================================== */
+
         response = await fetch(`${API_URL}/users`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            nama: formData.nama,
-            nidn: formData.nidn,
-            email: formData.email,
-            password: formData.password || "dosen123",
+            nama: formData.nama.trim(),
+
+            // NIDN frontend → profiles.nim
+            nim: formData.nidn.trim(),
+
+            email: formData.email.trim(),
+
+            password: formData.password,
+
             role: "dosen",
-            status: formData.status,
           }),
         });
       }
 
+      /* =================================================
+         RESPONSE
+      ================================================= */
+
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Terjadi kesalahan pada server");
+        throw new Error(result.message || "Terjadi kesalahan pada server.");
       }
 
-      alert(editingId ? "Data dosen berhasil diperbarui!" : "Dosen baru berhasil ditambahkan!");
-      setShowModal(false);
-      fetchDosen(); // Refresh tabel
+      /* =================================================
+         BERHASIL
+      ================================================= */
+
+      if (editingId) {
+        alert("Data dosen berhasil diperbarui!");
+      } else {
+        alert("Dosen baru berhasil ditambahkan!");
+      }
+
+      /* =================================================
+         TUTUP MODAL
+      ================================================= */
+
+      handleCloseModal();
+
+      /* =================================================
+         REFRESH DATA TABEL
+      ================================================= */
+
+      fetchDosen();
     } catch (error) {
+      console.error("Error menyimpan data dosen:", error);
+
       alert("Terjadi kesalahan: " + error.message);
     }
   };
 
   /* =====================================================
-     HAPUS MENGGUNAKAN FETCH
+     HAPUS DOSEN
   ===================================================== */
+
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Apakah kamu yakin ingin menghapus data dosen ini?");
+    const confirmed = window.confirm(
+      "Apakah kamu yakin ingin menghapus data dosen ini?",
+    );
+
     if (!confirmed) return;
 
     try {
@@ -165,24 +278,41 @@ const AdminDosen = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Gagal menghapus data");
+        throw new Error(result.message || "Gagal menghapus data.");
       }
 
-      fetchDosen(); // Refresh tabel
+      alert("Data dosen berhasil dihapus!");
+
+      /* =================================================
+         REFRESH TABEL
+      ================================================= */
+
+      fetchDosen();
     } catch (error) {
+      console.error("Error menghapus dosen:", error);
+
       alert("Gagal menghapus: " + error.message);
     }
   };
 
+  /* =====================================================
+     RENDER
+  ===================================================== */
+
   return (
     <div className="admin-dosen-page">
-      {/* HEADER */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <div className="admin-dosen-header">
         <div>
           <div className="admin-dosen-title">
             <FaChalkboardTeacher />
+
             <div>
               <h1>Data Dosen</h1>
+
               <p>Kelola akun dosen yang terdaftar di PAPASCI.</p>
             </div>
           </div>
@@ -198,10 +328,14 @@ const AdminDosen = () => {
         </button>
       </div>
 
-      {/* TOOLBAR */}
+      {/* =================================================
+          TOOLBAR
+      ================================================= */}
+
       <div className="admin-dosen-toolbar">
         <div className="admin-dosen-search">
           <FaSearch />
+
           <input
             type="text"
             placeholder="Cari nama, NIDN, atau email..."
@@ -215,7 +349,10 @@ const AdminDosen = () => {
         </div>
       </div>
 
-      {/* TABLE */}
+      {/* =================================================
+          TABLE
+      ================================================= */}
+
       <div className="admin-dosen-table-card">
         <div className="admin-dosen-table-wrapper">
           <table className="admin-dosen-table">
@@ -225,7 +362,6 @@ const AdminDosen = () => {
                 <th>Nama Dosen</th>
                 <th>NIDN</th>
                 <th>Email</th>
-                <th>Status</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -233,7 +369,9 @@ const AdminDosen = () => {
             <tbody>
               {filteredDosen.length > 0 ? (
                 filteredDosen.map((item, index) => {
-                  const displayName = item.nama_lengkap || item.nama || "Tanpa Nama";
+                  const displayName =
+                    item.nama_lengkap || item.nama || "Tanpa Nama";
+
                   return (
                     <tr key={item.id}>
                       <td>{index + 1}</td>
@@ -243,26 +381,24 @@ const AdminDosen = () => {
                           <div className="admin-dosen-avatar">
                             <FaChalkboardTeacher />
                           </div>
+
                           <span>{displayName}</span>
                         </div>
                       </td>
 
-                      <td>{item.nidn || "-"}</td>
+                      {/* 
+                          profiles.nim digunakan
+                          sebagai penyimpanan NIDN
+                        */}
 
-                      <td>{item.email}</td>
+                      <td>{item.nim || "-"}</td>
 
-                      <td>
-                        <span
-                          className={`admin-dosen-status ${
-                            item.status === "Aktif" ? "active" : "inactive"
-                          }`}
-                        >
-                          {item.status || "Aktif"}
-                        </span>
-                      </td>
+                      <td>{item.email || "-"}</td>
 
                       <td>
                         <div className="admin-dosen-actions">
+                          {/* EDIT */}
+
                           <button
                             type="button"
                             className="admin-dosen-edit-btn"
@@ -271,6 +407,8 @@ const AdminDosen = () => {
                           >
                             <FaEdit />
                           </button>
+
+                          {/* DELETE */}
 
                           <button
                             type="button"
@@ -287,7 +425,7 @@ const AdminDosen = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="6" className="admin-dosen-empty">
+                  <td colSpan="5" className="admin-dosen-empty">
                     Data dosen tidak ditemukan.
                   </td>
                 </tr>
@@ -297,13 +435,21 @@ const AdminDosen = () => {
         </div>
       </div>
 
-      {/* MODAL TAMBAH / EDIT */}
+      {/* =================================================
+          MODAL TAMBAH / EDIT
+      ================================================= */}
+
       {showModal && (
         <div className="admin-dosen-modal-overlay">
           <div className="admin-dosen-modal">
+            {/* =================================================
+                HEADER MODAL
+            ================================================= */}
+
             <div className="admin-dosen-modal-header">
               <div>
                 <h2>{editingId ? "Edit Data Dosen" : "Tambah Dosen"}</h2>
+
                 <p>
                   {editingId
                     ? "Perbarui informasi akun dosen."
@@ -314,90 +460,104 @@ const AdminDosen = () => {
               <button
                 type="button"
                 className="admin-dosen-modal-close"
-                onClick={() => setShowModal(false)}
+                onClick={handleCloseModal}
               >
                 <FaTimes />
               </button>
             </div>
 
+            {/* =================================================
+                FORM
+            ================================================= */}
+
             <form className="admin-dosen-form" onSubmit={handleSubmit}>
+              {/* =================================================
+                  NAMA DOSEN
+              ================================================= */}
+
               <div className="admin-dosen-form-group">
                 <label>Nama Dosen</label>
+
                 <input
                   type="text"
+                  name="nama"
                   placeholder="Masukkan nama dosen"
                   value={formData.nama}
-                  onChange={(e) =>
-                    setFormData({ ...formData, nama: e.target.value })
-                  }
+                  onChange={handleChange}
                   required
                 />
               </div>
+
+              {/* =================================================
+                  NIDN
+              ================================================= */}
 
               <div className="admin-dosen-form-group">
                 <label>NIDN</label>
+
                 <input
                   type="text"
+                  name="nidn"
                   placeholder="Masukkan NIDN"
                   value={formData.nidn}
-                  onChange={(e) =>
-                    setFormData({ ...formData, nidn: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="admin-dosen-form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  placeholder="Masukkan email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  onChange={handleChange}
                   required
                 />
               </div>
+
+              {/* =================================================
+                  EMAIL
+              ================================================= */}
+
+              <div className="admin-dosen-form-group">
+                <label>Email</label>
+
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Masukkan email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              {/* =================================================
+                  PASSWORD
+              ================================================= */}
 
               {!editingId && (
                 <div className="admin-dosen-form-group">
                   <label>Password Akun</label>
+
                   <input
                     type="password"
+                    name="password"
                     placeholder="Minimal 6 karakter"
                     value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
+                    onChange={handleChange}
+                    minLength={6}
                     required
                   />
                 </div>
               )}
 
-              <div className="admin-dosen-form-group">
-                <label>Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) =>
-                    setFormData({ ...formData, status: e.target.value })
-                  }
-                >
-                  <option value="Aktif">Aktif</option>
-                  <option value="Nonaktif">Nonaktif</option>
-                </select>
-              </div>
+              {/* =================================================
+                  FOOTER MODAL
+              ================================================= */}
 
               <div className="admin-dosen-modal-footer">
                 <button
                   type="button"
                   className="admin-dosen-cancel-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCloseModal}
                 >
                   Batal
                 </button>
 
                 <button type="submit" className="admin-dosen-save-btn">
                   <FaSave />
+
                   {editingId ? "Simpan Perubahan" : "Simpan Dosen"}
                 </button>
               </div>

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaPlus, FaSearch, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+
 import "../../css/admin/AdminMahasiswa.css";
 
-const API_URL = "http://localhost:5000/api"; // Alamat base URL backend Express Anda
+const API_URL = "http://localhost:5000/api";
 
 const AdminMahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState([]);
@@ -14,64 +15,131 @@ const AdminMahasiswa = () => {
     nama: "",
     nim: "",
     email: "",
-    password: "", // Untuk pembuatan akun auth baru
-    status: "Aktif",
+    password: "",
   });
 
-  // 1. AMBIL DATA DARI BACKEND MENGGUNAKAN FETCH
-  const fetchMahasiswa = async () => {
+  /* =====================================================
+     AMBIL DATA MAHASISWA
+  ===================================================== */
+
+  const fetchMahasiswa = useCallback(async () => {
     try {
       const response = await fetch(`${API_URL}/users`);
       const result = await response.json();
-      
+
+      if (!response.ok) {
+        throw new Error(result.message || "Gagal mengambil data mahasiswa.");
+      }
+
       if (result.success) {
-        // Filter hanya yang rolenya mahasiswa (jika tercampur dengan dosen/admin)
+        // Ambil hanya user dengan role mahasiswa
+        // User tanpa role tetap dianggap mahasiswa
         const dataMahasiswa = result.data.filter(
-          (user) => user.role === "mahasiswa" || !user.role
+          (user) => user.role === "mahasiswa" || !user.role,
         );
+
         setMahasiswa(dataMahasiswa);
+      } else {
+        console.error("Gagal mengambil data mahasiswa:", result.message);
       }
     } catch (error) {
       console.error("Gagal memuat data mahasiswa:", error);
     }
-  };
+  }, []);
+
+  /* =====================================================
+     LOAD DATA SAAT HALAMAN DIBUKA
+  ===================================================== */
 
   useEffect(() => {
     fetchMahasiswa();
-  }, []);
+  }, [fetchMahasiswa]);
+
+  /* =====================================================
+     FILTER / SEARCH
+  ===================================================== */
 
   const filteredMahasiswa = mahasiswa.filter((item) => {
     const keyword = search.toLowerCase();
+
+    const nama = item.nama_lengkap || item.nama || "";
+    const nim = item.nim || "";
+    const email = item.email || "";
+
     return (
-      item.nama_lengkap?.toLowerCase().includes(keyword) ||
-      item.nim?.toLowerCase().includes(keyword) ||
-      item.email?.toLowerCase().includes(keyword)
+      nama.toLowerCase().includes(keyword) ||
+      nim.toLowerCase().includes(keyword) ||
+      email.toLowerCase().includes(keyword)
     );
   });
 
+  /* =====================================================
+     HANDLE PERUBAHAN FORM
+  ===================================================== */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
+
+  /* =====================================================
+     TAMBAH MAHASISWA
+  ===================================================== */
 
   const handleAdd = () => {
     setEditingId(null);
-    setFormData({ nama: "", nim: "", email: "", password: "", status: "Aktif" });
+
+    setFormData({
+      nama: "",
+      nim: "",
+      email: "",
+      password: "",
+    });
+
     setShowModal(true);
   };
 
+  /* =====================================================
+     EDIT MAHASISWA
+  ===================================================== */
+
   const handleEdit = (item) => {
     setEditingId(item.id);
+
     setFormData({
       nama: item.nama_lengkap || item.nama || "",
       nim: item.nim || "",
       email: item.email || "",
-      status: item.status || "Aktif",
+      password: "",
     });
+
     setShowModal(true);
   };
 
-  // 2. SIMPAN DATA (TAMBAH / EDIT) MENGGUNAKAN FETCH
+  /* =====================================================
+     TUTUP MODAL
+  ===================================================== */
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+
+    setFormData({
+      nama: "",
+      nim: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  /* =====================================================
+     SIMPAN TAMBAH / EDIT
+  ===================================================== */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,31 +150,40 @@ const AdminMahasiswa = () => {
 
     try {
       let response;
+
+      /* =================================================
+         EDIT MAHASISWA
+      ================================================= */
+
       if (editingId) {
-        // Method PUT untuk Edit Data
         response = await fetch(`${API_URL}/users/${editingId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             nama: formData.nama,
             nim: formData.nim,
             email: formData.email,
-            status: formData.status,
             role: "mahasiswa",
           }),
         });
       } else {
-        // Method POST untuk Tambah Data Baru
+        /* ===============================================
+           TAMBAH MAHASISWA
+        =============================================== */
+
         response = await fetch(`${API_URL}/users`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             nama: formData.nama,
             nim: formData.nim,
             email: formData.email,
             password: formData.password || "mahasiswa123",
             role: "mahasiswa",
-            status: formData.status,
           }),
         });
       }
@@ -114,20 +191,36 @@ const AdminMahasiswa = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Terjadi kesalahan pada server");
+        throw new Error(result.message || "Terjadi kesalahan pada server.");
       }
 
-      alert(editingId ? "Data mahasiswa berhasil diperbarui!" : "Mahasiswa baru berhasil ditambahkan!");
-      setShowModal(false);
-      fetchMahasiswa(); // Refresh data tabel
+      if (editingId) {
+        alert("Data mahasiswa berhasil diperbarui!");
+      } else {
+        alert("Mahasiswa baru berhasil ditambahkan!");
+      }
+
+      handleCloseModal();
+
+      // Refresh data tabel
+      fetchMahasiswa();
     } catch (error) {
+      console.error("Error menyimpan data mahasiswa:", error);
+
       alert("Terjadi kesalahan: " + error.message);
     }
   };
 
-  // 3. HAPUS DATA MENGGUNAKAN FETCH
+  /* =====================================================
+     HAPUS MAHASISWA
+  ===================================================== */
+
   const handleDelete = async (id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus mahasiswa ini?")) return;
+    const confirmed = window.confirm(
+      "Apakah Anda yakin ingin menghapus mahasiswa ini?",
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${API_URL}/users/${id}`, {
@@ -137,30 +230,51 @@ const AdminMahasiswa = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Gagal menghapus data");
+        throw new Error(result.message || "Gagal menghapus data.");
       }
 
-      fetchMahasiswa(); // Refresh data tabel
+      alert("Data mahasiswa berhasil dihapus!");
+
+      // Refresh data tabel
+      fetchMahasiswa();
     } catch (error) {
+      console.error("Error menghapus mahasiswa:", error);
+
       alert("Gagal menghapus: " + error.message);
     }
   };
 
+  /* =====================================================
+     RENDER
+  ===================================================== */
+
   return (
     <div className="admin-mahasiswa">
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <div className="admin-page-header">
         <div>
           <h1>Data Mahasiswa</h1>
+
           <p>Kelola data mahasiswa yang terdaftar di PAPASCI.</p>
         </div>
-        <button className="admin-primary-btn" onClick={handleAdd}>
-          <FaPlus /> Tambah Mahasiswa
+
+        <button type="button" className="admin-primary-btn" onClick={handleAdd}>
+          <FaPlus />
+          Tambah Mahasiswa
         </button>
       </div>
+
+      {/* =================================================
+          TOOLBAR
+      ================================================= */}
 
       <div className="admin-mahasiswa-toolbar">
         <div className="admin-search-box">
           <FaSearch />
+
           <input
             type="text"
             placeholder="Cari nama, NIM, atau email..."
@@ -168,10 +282,15 @@ const AdminMahasiswa = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
         <div className="admin-total-data">
           Total: <strong>{filteredMahasiswa.length}</strong>
         </div>
       </div>
+
+      {/* =================================================
+          TABLE
+      ================================================= */}
 
       <div className="admin-table-card">
         <div className="admin-table-wrapper">
@@ -182,42 +301,51 @@ const AdminMahasiswa = () => {
                 <th>Nama</th>
                 <th>NIM</th>
                 <th>Email</th>
-                <th>Status</th>
                 <th>Aksi</th>
               </tr>
             </thead>
+
             <tbody>
               {filteredMahasiswa.length > 0 ? (
                 filteredMahasiswa.map((item, index) => {
-                  const displayName = item.nama_lengkap || item.nama || "Tanpa Nama";
+                  const displayName =
+                    item.nama_lengkap || item.nama || "Tanpa Nama";
+
                   return (
                     <tr key={item.id}>
                       <td>{index + 1}</td>
+
                       <td>
                         <div className="student-name">
                           <div className="student-avatar">
                             {displayName.charAt(0).toUpperCase()}
                           </div>
+
                           <span>{displayName}</span>
                         </div>
                       </td>
+
                       <td>{item.nim || "-"}</td>
-                      <td>{item.email}</td>
-                      <td>
-                        <span
-                          className={`student-status ${
-                            item.status === "Aktif" ? "active" : "inactive"
-                          }`}
-                        >
-                          {item.status || "Aktif"}
-                        </span>
-                      </td>
+
+                      <td>{item.email || "-"}</td>
+
                       <td>
                         <div className="student-actions">
-                          <button className="action-edit" onClick={() => handleEdit(item)}>
+                          <button
+                            type="button"
+                            className="action-edit"
+                            onClick={() => handleEdit(item)}
+                            title="Edit"
+                          >
                             <FaEdit />
                           </button>
-                          <button className="action-delete" onClick={() => handleDelete(item.id)}>
+
+                          <button
+                            type="button"
+                            className="action-delete"
+                            onClick={() => handleDelete(item.id)}
+                            title="Hapus"
+                          >
                             <FaTrash />
                           </button>
                         </div>
@@ -227,7 +355,7 @@ const AdminMahasiswa = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="6" className="empty-table">
+                  <td colSpan="5" className="empty-table">
                     Data mahasiswa tidak ditemukan.
                   </td>
                 </tr>
@@ -237,23 +365,43 @@ const AdminMahasiswa = () => {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* =================================================
+          MODAL
+      ================================================= */}
+
       {showModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
+            {/* HEADER MODAL */}
+
             <div className="admin-modal-header">
               <div>
                 <h2>{editingId ? "Edit Mahasiswa" : "Tambah Mahasiswa"}</h2>
-                <p>Masukkan informasi mahasiswa.</p>
+
+                <p>
+                  {editingId
+                    ? "Perbarui informasi mahasiswa."
+                    : "Masukkan informasi mahasiswa."}
+                </p>
               </div>
-              <button className="admin-modal-close" onClick={() => setShowModal(false)}>
+
+              <button
+                type="button"
+                className="admin-modal-close"
+                onClick={handleCloseModal}
+              >
                 <FaTimes />
               </button>
             </div>
 
+            {/* FORM */}
+
             <form onSubmit={handleSubmit}>
+              {/* NAMA */}
+
               <div className="admin-form-group">
                 <label>Nama Lengkap</label>
+
                 <input
                   type="text"
                   name="nama"
@@ -264,8 +412,11 @@ const AdminMahasiswa = () => {
                 />
               </div>
 
+              {/* NIM */}
+
               <div className="admin-form-group">
                 <label>NIM</label>
+
                 <input
                   type="text"
                   name="nim"
@@ -275,8 +426,11 @@ const AdminMahasiswa = () => {
                 />
               </div>
 
+              {/* EMAIL */}
+
               <div className="admin-form-group">
                 <label>Email</label>
+
                 <input
                   type="email"
                   name="email"
@@ -287,36 +441,35 @@ const AdminMahasiswa = () => {
                 />
               </div>
 
+              {/* PASSWORD */}
+
               {!editingId && (
                 <div className="admin-form-group">
                   <label>Password Akun</label>
+
                   <input
                     type="password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Minimal 6 karakter"
+                    minLength={6}
                     required
                   />
                 </div>
               )}
 
-              <div className="admin-form-group">
-                <label>Status</label>
-                <select name="status" value={formData.status} onChange={handleChange}>
-                  <option value="Aktif">Aktif</option>
-                  <option value="Nonaktif">Nonaktif</option>
-                </select>
-              </div>
+              {/* FOOTER */}
 
               <div className="admin-modal-footer">
                 <button
                   type="button"
                   className="admin-secondary-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCloseModal}
                 >
                   Batal
                 </button>
+
                 <button type="submit" className="admin-primary-btn">
                   {editingId ? "Simpan Perubahan" : "Tambah Mahasiswa"}
                 </button>
