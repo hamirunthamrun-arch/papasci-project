@@ -23,28 +23,6 @@ import { getSubmissionByStudent } from "../service/assignmentSubmissionService";
 import "../css/Microteaching.css";
 
 /* =========================================================
-   KONFIGURASI STORAGE
-========================================================= */
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-
-const STORAGE_BUCKET = "media-storage";
-
-/* =========================================================
-   HELPER URL GAMBAR
-========================================================= */
-
-const getPublicUrl = (path) => {
-  if (!path || !SUPABASE_URL) {
-    return "";
-  }
-
-  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
-
-  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
-};
-
-/* =========================================================
    NORMALISASI ASSIGNMENT
 ========================================================= */
 
@@ -55,9 +33,14 @@ const normalizeAssignment = (assignment) => ({
 
   description: assignment.description || "",
 
-  image_path: assignment.image_path || "",
-
-  image_url: assignment.image_path ? getPublicUrl(assignment.image_path) : "",
+  /*
+   * GAMBAR SEKARANG LANGSUNG MENGGUNAKAN
+   * image_url DARI DATABASE
+   *
+   * Database:
+   * assignments.image_url
+   */
+  image_url: assignment.image_url || "",
 
   deadline: assignment.deadline || "",
 
@@ -476,6 +459,7 @@ function Microteaching() {
 
               <div>
                 <strong>Video belum dapat dimuat</strong>
+
                 <p>{videoError}</p>
               </div>
             </div>
@@ -509,6 +493,7 @@ function Microteaching() {
                         (event.key === "Enter" || event.key === " ")
                       ) {
                         event.preventDefault();
+
                         openYoutube(youtubeUrl);
                       }
                     }}
@@ -523,6 +508,7 @@ function Microteaching() {
                       ) : (
                         <div className="video-unavailable">
                           <FaYoutube />
+
                           <span>Video tidak tersedia</span>
                         </div>
                       )}
@@ -552,7 +538,9 @@ function Microteaching() {
                       {youtubeUrl && (
                         <div className="watch-youtube">
                           <FaYoutube />
+
                           <span>Tonton di YouTube</span>
+
                           <FaArrowRight />
                         </div>
                       )}
@@ -592,21 +580,25 @@ function Microteaching() {
               <div className="instruction-steps">
                 <div className="instruction-step">
                   <span>1</span>
+
                   <p>Pilih tugas yang ingin kamu kerjakan.</p>
                 </div>
 
                 <div className="instruction-step">
                   <span>2</span>
+
                   <p>Buka dan baca file PDF tugas.</p>
                 </div>
 
                 <div className="instruction-step">
                   <span>3</span>
+
                   <p>Kerjakan tugas sesuai petunjuk.</p>
                 </div>
 
                 <div className="instruction-step">
                   <span>4</span>
+
                   <p>Masukkan link hasil pekerjaanmu.</p>
                 </div>
               </div>
@@ -672,6 +664,7 @@ function Microteaching() {
           {loadingAssignments && (
             <div className="micro-loading">
               <FaSpinner className="loading-spinner" />
+
               <span>Memuat daftar tugas...</span>
             </div>
           )}
@@ -684,6 +677,7 @@ function Microteaching() {
 
               <div>
                 <strong>Tugas belum dapat dimuat</strong>
+
                 <p>{assignmentError}</p>
               </div>
             </div>
@@ -706,6 +700,11 @@ function Microteaching() {
 
                   const deadline = tugas.deadline;
 
+                  /*
+                   * GAMBAR LANGSUNG DARI DATABASE
+                   *
+                   * assignments.image_url
+                   */
                   const image = tugas.image_url || "";
 
                   return (
