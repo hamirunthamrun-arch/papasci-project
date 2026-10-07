@@ -38,6 +38,7 @@ import AdminDosen from "./pages/admin/AdminDosen";
 import DosenMateri from "./pages/dosen/DosenMateri";
 import DosenKelolaFile from "./pages/dosen/DosenKelolaFile";
 import ScrollToTop from "./components/ScrollToTop";
+import DosenKompetensiPedagogik from "./pages/dosen/DosenKompetensiPadagogik";
 
 function App() {
   return (
@@ -209,6 +210,14 @@ function App() {
             }
           />
 
+          <Route
+            path="/dosen/Kompetensi-Pedagogik"
+            element={
+              <DosenLayout>
+                <DosenKompetensiPedagogik />
+              </DosenLayout>
+            }
+          />
           <Route
             path="/dosen/nilai"
             element={

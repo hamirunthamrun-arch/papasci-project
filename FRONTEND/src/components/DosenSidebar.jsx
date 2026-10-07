@@ -1,5 +1,4 @@
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../utils/auth";
 
 import {
@@ -13,6 +12,7 @@ import {
   FaUpload,
   FaStar,
   FaUserCircle,
+  FaUserTie,
   FaSignOutAlt,
   FaTimes,
 } from "react-icons/fa";
@@ -194,6 +194,23 @@ function DosenSidebar({ showMobileSidebar, closeMobileSidebar }) {
           >
             <FaUpload />
             <span>Pengumpulan</span>
+          </NavLink>
+
+          {/* =================================================
+              KOMPETENSI PEDAGOGIK
+          ================================================= */}
+
+          <div className="dosen-menu-title">KOMPETENSI PEDAGOGIK</div>
+
+          <NavLink
+            to="/dosen/kompetensi-pedagogik"
+            className={({ isActive }) =>
+              `dosen-nav-link ${isActive ? "active" : ""}`
+            }
+            onClick={closeMobileSidebar}
+          >
+            <FaUserTie />
+            <span>Kompetensi Pedagogik</span>
           </NavLink>
 
           {/* =================================================
