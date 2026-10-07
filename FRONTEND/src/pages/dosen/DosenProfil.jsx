@@ -1,12 +1,5 @@
-import { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-} from "react-bootstrap";
+import { useCallback, useEffect, useState } from "react";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 
 import {
   FaUserCircle,
@@ -18,27 +11,178 @@ import {
   FaChalkboardTeacher,
 } from "react-icons/fa";
 
+import { getAccessToken } from "../../service/authService";
+
 import "../../css/dosen/DosenProfil.css";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 function DosenProfil() {
   /* =========================================================
-     DATA PROFIL DUMMY
+     STATE PROFIL
   ========================================================= */
 
   const [profile, setProfile] = useState({
-    nama: "Dr. Maria Natalia, S.Pd., M.Pd.",
-    nidn: "0012345678",
-    email: "maria@papasci.ac.id",
-    role: "Dosen",
+    nama: "",
+    nidn: "",
+    email: "",
+    role: "",
   });
 
   /* =========================================================
-     STATE EDIT
+     STATE FORM
+  ========================================================= */
+
+  const [formData, setFormData] = useState({
+    nama: "",
+    nidn: "",
+    email: "",
+    role: "",
+  });
+
+  /* =========================================================
+     STATE
   ========================================================= */
 
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState(profile);
+  /* =========================================================
+     AUTH HEADERS
+  ========================================================= */
+
+  const getAuthHeaders = useCallback(async () => {
+    const token = await getAccessToken();
+
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      throw new Error("Konfigurasi Supabase tidak ditemukan.");
+    }
+
+    if (!token) {
+      throw new Error("Sesi login tidak ditemukan.");
+    }
+
+    return {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }, []);
+
+  /* =========================================================
+     GET CURRENT USER
+  ========================================================= */
+
+  const getCurrentUser = useCallback(async () => {
+    const headers = await getAuthHeaders();
+
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      method: "GET",
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data pengguna.");
+    }
+
+    return response.json();
+  }, [getAuthHeaders]);
+
+  /* =========================================================
+     GET PROFILE
+  ========================================================= */
+
+  const getProfile = useCallback(
+    async (userId) => {
+      const headers = await getAuthHeaders();
+
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/profiles?select=id,nama_lengkap,email,role,nim&id=eq.${userId}`,
+        {
+          method: "GET",
+          headers,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Gagal mengambil data profil.");
+      }
+
+      const data = await response.json();
+
+      return data[0] || null;
+    },
+    [getAuthHeaders],
+  );
+
+  /* =========================================================
+     LOAD PROFILE
+  ========================================================= */
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        /* =========================================
+           GET USER LOGIN
+        ========================================= */
+
+        const authUser = await getCurrentUser();
+
+        if (!authUser?.id) {
+          throw new Error("Data pengguna tidak ditemukan.");
+        }
+
+        /* =========================================
+           GET PROFILE SUPABASE
+        ========================================= */
+
+        const data = await getProfile(authUser.id);
+
+        if (!data) {
+          throw new Error("Profil dosen tidak ditemukan.");
+        }
+
+        /* =========================================
+           MAPPING DATA
+        ========================================= */
+
+        const profileData = {
+          nama:
+            data.nama_lengkap ||
+            authUser.user_metadata?.nama_lengkap ||
+            authUser.user_metadata?.nama ||
+            "",
+
+          /*
+           * NIDN menggunakan kolom nim
+           * di tabel profiles
+           */
+          nidn: data.nim || "",
+
+          email: data.email || authUser.email || "",
+
+          role: data.role || "dosen",
+        };
+
+        setProfile(profileData);
+        setFormData(profileData);
+      } catch (err) {
+        console.error("Gagal memuat profil dosen:", err);
+
+        setError(err.message || "Gagal memuat data profil.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [getCurrentUser, getProfile]);
 
   /* =========================================================
      HANDLE CHANGE
@@ -60,6 +204,7 @@ function DosenProfil() {
   const handleEdit = () => {
     setFormData(profile);
     setIsEditing(true);
+    setError("");
   };
 
   /* =========================================================
@@ -69,18 +214,112 @@ function DosenProfil() {
   const handleCancel = () => {
     setFormData(profile);
     setIsEditing(false);
+    setError("");
   };
 
   /* =========================================================
-     SAVE
+     SAVE PROFILE
   ========================================================= */
 
-  const handleSave = () => {
-    setProfile(formData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      setError("");
 
-    alert("Profil berhasil diperbarui.");
+      /* =========================================
+         GET AUTH USER
+      ========================================= */
+
+      const authUser = await getCurrentUser();
+
+      if (!authUser?.id) {
+        throw new Error("Data pengguna tidak ditemukan.");
+      }
+
+      /* =========================================
+         GET AUTH HEADERS
+      ========================================= */
+
+      const headers = await getAuthHeaders();
+
+      /* =========================================
+         UPDATE PROFILE
+      ========================================= */
+
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/profiles?id=eq.${authUser.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            ...headers,
+            Prefer: "return=representation",
+          },
+          body: JSON.stringify({
+            nama_lengkap: formData.nama,
+            nim: formData.nidn,
+            email: formData.email,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+
+        console.error("Supabase update error:", errorData);
+
+        throw new Error(errorData?.message || "Gagal memperbarui profil.");
+      }
+
+      /* =========================================
+         UPDATE STATE
+      ========================================= */
+
+      const updatedProfile = {
+        ...profile,
+        nama: formData.nama,
+        nidn: formData.nidn,
+        email: formData.email,
+      };
+
+      setProfile(updatedProfile);
+      setFormData(updatedProfile);
+      setIsEditing(false);
+
+      alert("Profil berhasil diperbarui.");
+    } catch (err) {
+      console.error("Gagal menyimpan profil:", err);
+
+      setError(err.message || "Gagal menyimpan perubahan.");
+    } finally {
+      setSaving(false);
+    }
   };
+
+  /* =========================================================
+     LOADING
+  ========================================================= */
+
+  if (loading) {
+    return (
+      <div className="dosen-profile-page">
+        <Container fluid>
+          <div className="dosen-profile-header">
+            <div>
+              <span className="dosen-profile-label">PROFIL DOSEN</span>
+
+              <h1>Profil Saya</h1>
+
+              <p>Memuat informasi profil dosen...</p>
+            </div>
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
+  /* =========================================================
+     MAIN
+  ========================================================= */
 
   return (
     <div className="dosen-profile-page">
@@ -91,17 +330,23 @@ function DosenProfil() {
 
         <div className="dosen-profile-header">
           <div>
-            <span className="dosen-profile-label">
-              PROFIL DOSEN
-            </span>
+            <span className="dosen-profile-label">PROFIL DOSEN</span>
 
             <h1>Profil Saya</h1>
 
-            <p>
-              Kelola informasi akun dan profil dosen PAPASCI.
-            </p>
+            <p>Kelola informasi akun dan profil dosen PAPASCI.</p>
           </div>
         </div>
+
+        {/* =================================================
+            ERROR
+        ================================================= */}
+
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
 
         {/* =================================================
             PROFILE HEADER CARD
@@ -139,9 +384,7 @@ function DosenProfil() {
                   <div>
                     <h3>Informasi Profil</h3>
 
-                    <p>
-                      Informasi dasar akun dosen.
-                    </p>
+                    <p>Informasi dasar akun dosen.</p>
                   </div>
 
                   {!isEditing && (
@@ -157,15 +400,13 @@ function DosenProfil() {
 
                 <Form>
                   <Row className="g-3">
-                    {/* =================================================
+                    {/* =====================================
                         NAMA
-                    ================================================= */}
+                    ===================================== */}
 
                     <Col md={12}>
                       <Form.Group>
-                        <Form.Label>
-                          Nama Lengkap
-                        </Form.Label>
+                        <Form.Label>Nama Lengkap</Form.Label>
 
                         <div className="dosen-profile-input-wrapper">
                           <FaUserCircle />
@@ -181,15 +422,13 @@ function DosenProfil() {
                       </Form.Group>
                     </Col>
 
-                    {/* =================================================
+                    {/* =====================================
                         NIDN
-                    ================================================= */}
+                    ===================================== */}
 
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>
-                          NIDN
-                        </Form.Label>
+                        <Form.Label>NIDN</Form.Label>
 
                         <div className="dosen-profile-input-wrapper">
                           <FaIdCard />
@@ -205,15 +444,13 @@ function DosenProfil() {
                       </Form.Group>
                     </Col>
 
-                    {/* =================================================
+                    {/* =====================================
                         EMAIL
-                    ================================================= */}
+                    ===================================== */}
 
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>
-                          Email
-                        </Form.Label>
+                        <Form.Label>Email</Form.Label>
 
                         <div className="dosen-profile-input-wrapper">
                           <FaEnvelope />
@@ -229,15 +466,13 @@ function DosenProfil() {
                       </Form.Group>
                     </Col>
 
-                    {/* =================================================
+                    {/* =====================================
                         ROLE
-                    ================================================= */}
+                    ===================================== */}
 
                     <Col md={12}>
                       <Form.Group>
-                        <Form.Label>
-                          Role
-                        </Form.Label>
+                        <Form.Label>Role</Form.Label>
 
                         <div className="dosen-profile-input-wrapper">
                           <FaChalkboardTeacher />
@@ -249,33 +484,36 @@ function DosenProfil() {
                           />
                         </div>
 
-                        <Form.Text>
-                          Role akun ditentukan oleh sistem.
-                        </Form.Text>
+                        <Form.Text>Role akun ditentukan oleh sistem.</Form.Text>
                       </Form.Group>
                     </Col>
                   </Row>
 
-                  {/* =================================================
+                  {/* =====================================
                       EDIT BUTTONS
-                  ================================================= */}
+                  ===================================== */}
 
                   {isEditing && (
                     <div className="dosen-profile-form-actions">
                       <Button
+                        type="button"
                         className="dosen-profile-cancel-btn"
                         onClick={handleCancel}
+                        disabled={saving}
                       >
                         <FaTimes />
                         Batal
                       </Button>
 
                       <Button
+                        type="button"
                         className="dosen-profile-save-btn"
                         onClick={handleSave}
+                        disabled={saving}
                       >
                         <FaSave />
-                        Simpan Perubahan
+
+                        {saving ? "Menyimpan..." : "Simpan Perubahan"}
                       </Button>
                     </div>
                   )}

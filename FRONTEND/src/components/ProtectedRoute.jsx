@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
 
 import { fetchWithAuth, clearSession } from "../service/authService";
 
@@ -94,7 +95,20 @@ const ProtectedRoute = ({ allowedRoles }) => {
           justifyContent: "center",
         }}
       >
-        Memeriksa sesi...
+        <style>{`
+    @keyframes cek-sesi-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+  `}</style>
+
+        <FaSpinner
+          className="cek-sesi-spinner"
+          style={{
+            display: "inline-block",
+            animation: "cek-sesi-spin 0.9s linear infinite",
+          }}
+        />
       </div>
     );
   }

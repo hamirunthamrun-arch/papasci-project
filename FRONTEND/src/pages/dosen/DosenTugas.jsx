@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -59,16 +58,12 @@ const isStorageAuthError = async (response) => {
   try {
     const result = await response.clone().json();
 
-    const message = [
-      result.message,
-      result.error,
-      result.error_description,
-    ]
+    const message = [result.message, result.error, result.error_description]
       .filter(Boolean)
       .join(" ");
 
     return /invalid jwt|jwt expired|expected \d+ parts in jwt|invalid token|unauthorized/i.test(
-      message
+      message,
     );
   } catch {
     return false;
@@ -83,9 +78,7 @@ const storageRequestWithAuth = async (url, options = {}) => {
   let token = getAccessToken();
 
   if (!token) {
-    throw new Error(
-      "Session tidak ditemukan. Silakan login kembali."
-    );
+    throw new Error("Session tidak ditemukan. Silakan login kembali.");
   }
 
   const makeRequest = (accessToken) => {
@@ -114,10 +107,9 @@ const storageRequestWithAuth = async (url, options = {}) => {
     clearSession();
     notifySessionExpired();
 
-    throw new Error(
-      "Session telah berakhir. Silakan login kembali.",
-      { cause: error }
-    );
+    throw new Error("Session telah berakhir. Silakan login kembali.", {
+      cause: error,
+    });
   }
 
   // ULANGI REQUEST SATU KALI
@@ -139,10 +131,7 @@ const storageRequestWithAuth = async (url, options = {}) => {
 const getPublicUrl = (path) => {
   if (!path || !SUPABASE_URL) return "";
 
-  const encodedPath = path
-    .split("/")
-    .map(encodeURIComponent)
-    .join("/");
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
 
   return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
 };
@@ -157,16 +146,10 @@ const uploadTaskImage = async (file) => {
   }
 
   if (!getAccessToken()) {
-    throw new Error(
-      "Session tidak ditemukan. Silakan login kembali."
-    );
+    throw new Error("Session tidak ditemukan. Silakan login kembali.");
   }
 
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-  ];
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
   if (!allowedTypes.includes(file.type)) {
     throw new Error("Gunakan gambar JPG, PNG, atau WEBP.");
@@ -180,10 +163,7 @@ const uploadTaskImage = async (file) => {
   const fileName = `${crypto.randomUUID()}.${extension}`;
   const path = `${STORAGE_FOLDER}/${fileName}`;
 
-  const encodedPath = path
-    .split("/")
-    .map(encodeURIComponent)
-    .join("/");
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
 
   const response = await storageRequestWithAuth(
     `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodedPath}`,
@@ -194,16 +174,14 @@ const uploadTaskImage = async (file) => {
         "x-upsert": "false",
       },
       body: file,
-    }
+    },
   );
 
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
     throw new Error(
-      result.message ||
-        result.error ||
-        "Gagal mengunggah gambar."
+      result.message || result.error || "Gagal mengunggah gambar.",
     );
   }
 
@@ -225,30 +203,23 @@ const deleteStorageImage = async (path) => {
   }
 
   if (!getAccessToken()) {
-    throw new Error(
-      "Session tidak ditemukan. Silakan login kembali."
-    );
+    throw new Error("Session tidak ditemukan. Silakan login kembali.");
   }
 
-  const encodedPath = path
-    .split("/")
-    .map(encodeURIComponent)
-    .join("/");
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
 
   const response = await storageRequestWithAuth(
     `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodedPath}`,
     {
       method: "DELETE",
-    }
+    },
   );
 
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
     throw new Error(
-      result.message ||
-        result.error ||
-        "Gagal menghapus gambar."
+      result.message || result.error || "Gagal menghapus gambar.",
     );
   }
 };
@@ -262,9 +233,7 @@ const normalizeAssignment = (assignment) => ({
   title: assignment.title || "",
   description: assignment.description || "",
   image_path: assignment.image_path || "",
-  image_url: assignment.image_path
-    ? getPublicUrl(assignment.image_path)
-    : "",
+  image_url: assignment.image_path ? getPublicUrl(assignment.image_path) : "",
   deadline: assignment.deadline || "",
   is_active: Boolean(assignment.is_active),
 });
@@ -335,17 +304,11 @@ function DosenTugas() {
 
       const data = await getAssignments();
 
-      setTasks(
-        (Array.isArray(data) ? data : []).map(
-          normalizeAssignment
-        )
-      );
+      setTasks((Array.isArray(data) ? data : []).map(normalizeAssignment));
     } catch (error) {
       console.error("Load assignments error:", error);
 
-      setPageError(
-        error.message || "Gagal mengambil daftar tugas."
-      );
+      setPageError(error.message || "Gagal mengambil daftar tugas.");
     } finally {
       if (showLoading) {
         setLoading(false);
@@ -362,18 +325,12 @@ function DosenTugas() {
 
         if (!isMounted) return;
 
-        setTasks(
-          (Array.isArray(data) ? data : []).map(
-            normalizeAssignment
-          )
-        );
+        setTasks((Array.isArray(data) ? data : []).map(normalizeAssignment));
       } catch (error) {
         console.error("Load assignments error:", error);
 
         if (isMounted) {
-          setPageError(
-            error.message || "Gagal mengambil daftar tugas."
-          );
+          setPageError(error.message || "Gagal mengambil daftar tugas.");
         }
       } finally {
         if (isMounted) {
@@ -401,9 +358,7 @@ function DosenTugas() {
     return tasks.filter(
       (task) =>
         (task.title || "").toLowerCase().includes(keyword) ||
-        (task.description || "")
-          .toLowerCase()
-          .includes(keyword)
+        (task.description || "").toLowerCase().includes(keyword),
     );
   }, [tasks, search]);
 
@@ -451,9 +406,7 @@ function DosenTugas() {
   const handleEdit = (task) => {
     setEditingTask(task);
 
-    const deadlineDate = task.deadline
-      ? new Date(task.deadline)
-      : null;
+    const deadlineDate = task.deadline ? new Date(task.deadline) : null;
 
     const formattedDeadline =
       deadlineDate && !Number.isNaN(deadlineDate.getTime())
@@ -501,11 +454,7 @@ function DosenTugas() {
 
     if (!file) return;
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
     if (!allowedTypes.includes(file.type)) {
       setFormError("Gunakan gambar JPG, PNG, atau WEBP.");
@@ -605,9 +554,7 @@ function DosenTugas() {
         title: formData.title.trim(),
         description: formData.description.trim(),
         image_path: imagePath,
-        deadline: new Date(
-          `${formData.deadline}T23:59:00`
-        ).toISOString(),
+        deadline: new Date(`${formData.deadline}T23:59:00`).toISOString(),
         is_active: formData.is_active,
       };
 
@@ -624,10 +571,7 @@ function DosenTugas() {
             try {
               await deleteStorageImage(oldPath);
             } catch (error) {
-              console.warn(
-                "Gambar lama gagal dihapus:",
-                error
-              );
+              console.warn("Gambar lama gagal dihapus:", error);
             }
           }
         }
@@ -652,16 +596,11 @@ function DosenTugas() {
         try {
           await deleteStorageImage(uploadedImage.path);
         } catch (cleanupError) {
-          console.warn(
-            "File hasil upload gagal dibersihkan:",
-            cleanupError
-          );
+          console.warn("File hasil upload gagal dibersihkan:", cleanupError);
         }
       }
 
-      setFormError(
-        error.message || "Gagal menyimpan tugas."
-      );
+      setFormError(error.message || "Gagal menyimpan tugas.");
     } finally {
       setSaving(false);
     }
@@ -673,7 +612,7 @@ function DosenTugas() {
 
   const handleDelete = async (task) => {
     const confirmed = window.confirm(
-      `Apakah kamu yakin ingin menghapus tugas "${task.title}"?`
+      `Apakah kamu yakin ingin menghapus tugas "${task.title}"?`,
     );
 
     if (!confirmed) return;
@@ -688,17 +627,11 @@ function DosenTugas() {
       // HAPUS GAMBAR COVER DARI STORAGE
       const imagePath = task.image_path;
 
-      if (
-        imagePath &&
-        imagePath.startsWith(`${STORAGE_FOLDER}/`)
-      ) {
+      if (imagePath && imagePath.startsWith(`${STORAGE_FOLDER}/`)) {
         try {
           await deleteStorageImage(imagePath);
         } catch (error) {
-          console.warn(
-            "Tugas terhapus, tetapi gambar gagal dihapus:",
-            error
-          );
+          console.warn("Tugas terhapus, tetapi gambar gagal dihapus:", error);
         }
       }
 
@@ -706,9 +639,7 @@ function DosenTugas() {
 
       await loadTasks();
     } catch (error) {
-      setPageError(
-        error.message || "Gagal menghapus tugas."
-      );
+      setPageError(error.message || "Gagal menghapus tugas.");
     } finally {
       setDeletingId(null);
     }
@@ -737,19 +668,7 @@ function DosenTugas() {
 
           <div>
             <h1>Tugas Microteaching</h1>
-            <p>
-              Kelola tugas praktik mengajar yang akan
-              dikerjakan mahasiswa.
-            </p>
-
-            <button
-              type="button"
-              className="btn btn-outline-primary"
-              onClick={() => loadTasks(true)}
-              disabled={loading}
-            >
-              {loading ? "Memuat..." : "Uji Muat Ulang Tugas"}
-            </button>
+            <p>Kelola tugas praktik mengajar yang akan dikerjakan mahasiswa.</p>
           </div>
         </div>
 
@@ -790,9 +709,7 @@ function DosenTugas() {
           />
         </div>
 
-        <span className="dosen-task-total">
-          {filteredTasks.length} Tugas
-        </span>
+        <span className="dosen-task-total">{filteredTasks.length} Tugas</span>
       </div>
 
       {/* DAFTAR KARTU TUGAS */}
@@ -803,10 +720,7 @@ function DosenTugas() {
           </div>
         ) : filteredTasks.length > 0 ? (
           filteredTasks.map((task) => (
-            <article
-              className="dosen-task-card"
-              key={task.id}
-            >
+            <article className="dosen-task-card" key={task.id}>
               {/* GAMBAR COVER */}
               <div className="dosen-task-card-image">
                 {task.image_url ? (
@@ -880,9 +794,7 @@ function DosenTugas() {
                       disabled={deletingId === task.id}
                     >
                       <FaTrash />
-                      {deletingId === task.id
-                        ? "Menghapus..."
-                        : "Hapus"}
+                      {deletingId === task.id ? "Menghapus..." : "Hapus"}
                     </button>
                   </div>
                 </div>
@@ -893,9 +805,7 @@ function DosenTugas() {
           <div className="dosen-task-empty">
             <FaClipboardList />
 
-            <h3>
-              {search ? "Tugas tidak ditemukan" : "Belum ada tugas"}
-            </h3>
+            <h3>{search ? "Tugas tidak ditemukan" : "Belum ada tugas"}</h3>
 
             <p>
               {search
@@ -924,16 +834,10 @@ function DosenTugas() {
             <div className="dosen-task-modal-header">
               <div>
                 <span>
-                  {editingTask
-                    ? "EDIT TUGAS"
-                    : "TUGAS MICROTEACHING"}
+                  {editingTask ? "EDIT TUGAS" : "TUGAS MICROTEACHING"}
                 </span>
 
-                <h2>
-                  {editingTask
-                    ? "Edit Tugas"
-                    : "Tambah Tugas Baru"}
-                </h2>
+                <h2>{editingTask ? "Edit Tugas" : "Tambah Tugas Baru"}</h2>
               </div>
 
               <button
@@ -948,10 +852,7 @@ function DosenTugas() {
             </div>
 
             {/* FORM */}
-            <form
-              className="dosen-task-form"
-              onSubmit={handleSubmit}
-            >
+            <form className="dosen-task-form" onSubmit={handleSubmit}>
               {formError && (
                 <div className="alert alert-danger" role="alert">
                   {formError}
@@ -1018,22 +919,15 @@ function DosenTugas() {
 
                     <div>
                       <strong>Pilih Gambar</strong>
-                      <span>
-                        Klik untuk memilih gambar dari perangkat
-                      </span>
-                      <small>
-                        JPG, PNG, WebP • Maksimal 2 MB
-                      </small>
+                      <span>Klik untuk memilih gambar dari perangkat</span>
+                      <small>JPG, PNG, WebP • Maksimal 2 MB</small>
                     </div>
                   </label>
                 </div>
 
                 {previewUrl && (
                   <div className="dosen-task-image-preview">
-                    <img
-                      src={previewUrl}
-                      alt="Preview cover tugas"
-                    />
+                    <img src={previewUrl} alt="Preview cover tugas" />
 
                     <button
                       type="button"
