@@ -24,7 +24,7 @@ const isAuthError = (error) => {
   return (
     error?.code === "PGRST301" ||
     /expected 3 parts in jwt|jwt expired|invalid jwt|invalid token/i.test(
-      message
+      message,
     )
   );
 };
@@ -68,16 +68,18 @@ const getAllAssignments = async (req, res) => {
 
     const { data, error } = await supabase
       .from("assignments")
-      .select(`
+      .select(
+        `
         id,
         title,
         description,
-        image_path,
+        image_url,
         deadline,
         is_active,
         created_at,
         updated_at
-      `)
+      `,
+      )
       .order("created_at", {
         ascending: false,
       });
@@ -95,7 +97,7 @@ const getAllAssignments = async (req, res) => {
       res,
       err,
       "Get all assignments error:",
-      "Gagal mengambil daftar tugas."
+      "Gagal mengambil daftar tugas.",
     );
   }
 };
@@ -121,16 +123,18 @@ const getAssignmentById = async (req, res) => {
 
     const { data, error } = await supabase
       .from("assignments")
-      .select(`
+      .select(
+        `
         id,
         title,
         description,
-        image_path,
+        image_url,
         deadline,
         is_active,
         created_at,
         updated_at
-      `)
+      `,
+      )
       .eq("id", id)
       .single();
 
@@ -154,7 +158,7 @@ const getAssignmentById = async (req, res) => {
       res,
       err,
       "Get assignment by id error:",
-      "Gagal mengambil detail tugas."
+      "Gagal mengambil detail tugas.",
     );
   }
 };
@@ -174,15 +178,12 @@ const createAssignment = async (req, res) => {
       });
     }
 
-    const {
-      title,
-      description,
-      image_path,
-      deadline,
-      is_active,
-    } = req.body;
+    const { title, description, image_url, deadline, is_active } = req.body;
 
-    // Validasi judul
+    // =====================================================
+    // VALIDASI JUDUL
+    // =====================================================
+
     if (!title || !title.trim()) {
       return res.status(400).json({
         success: false,
@@ -198,21 +199,23 @@ const createAssignment = async (req, res) => {
         {
           title: title.trim(),
           description: description?.trim() || null,
-          image_path: image_path || null,
+          image_url: image_url || null,
           deadline: deadline || null,
           is_active: is_active ?? true,
         },
       ])
-      .select(`
+      .select(
+        `
         id,
         title,
         description,
-        image_path,
+        image_url,
         deadline,
         is_active,
         created_at,
         updated_at
-      `)
+      `,
+      )
       .single();
 
     if (error) {
@@ -229,7 +232,7 @@ const createAssignment = async (req, res) => {
       res,
       err,
       "Create assignment error:",
-      "Gagal menambahkan tugas."
+      "Gagal menambahkan tugas.",
     );
   }
 };
@@ -251,17 +254,14 @@ const updateAssignment = async (req, res) => {
 
     const { id } = req.params;
 
-    const {
-      title,
-      description,
-      image_path,
-      deadline,
-      is_active,
-    } = req.body;
+    const { title, description, image_url, deadline, is_active } = req.body;
 
     const updateData = {};
 
+    // =====================================================
     // TITLE
+    // =====================================================
+
     if (title !== undefined) {
       if (!title || !title.trim()) {
         return res.status(400).json({
@@ -273,27 +273,42 @@ const updateAssignment = async (req, res) => {
       updateData.title = title.trim();
     }
 
+    // =====================================================
     // DESCRIPTION
+    // =====================================================
+
     if (description !== undefined) {
       updateData.description = description?.trim() || null;
     }
 
+    // =====================================================
     // IMAGE
-    if (image_path !== undefined) {
-      updateData.image_path = image_path || null;
+    // =====================================================
+
+    if (image_url !== undefined) {
+      updateData.image_url = image_url || null;
     }
 
+    // =====================================================
     // DEADLINE
+    // =====================================================
+
     if (deadline !== undefined) {
       updateData.deadline = deadline || null;
     }
 
+    // =====================================================
     // STATUS
+    // =====================================================
+
     if (is_active !== undefined) {
       updateData.is_active = is_active;
     }
 
-    // Tidak ada data yang diperbarui
+    // =====================================================
+    // TIDAK ADA DATA
+    // =====================================================
+
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
         success: false,
@@ -309,16 +324,18 @@ const updateAssignment = async (req, res) => {
       .from("assignments")
       .update(updateData)
       .eq("id", id)
-      .select(`
+      .select(
+        `
         id,
         title,
         description,
-        image_path,
+        image_url,
         deadline,
         is_active,
         created_at,
         updated_at
-      `)
+      `,
+      )
       .single();
 
     if (error) {
@@ -342,7 +359,7 @@ const updateAssignment = async (req, res) => {
       res,
       err,
       "Update assignment error:",
-      "Gagal memperbarui tugas."
+      "Gagal memperbarui tugas.",
     );
   }
 };
@@ -394,7 +411,7 @@ const deleteAssignment = async (req, res) => {
       res,
       err,
       "Delete assignment error:",
-      "Gagal menghapus tugas."
+      "Gagal menghapus tugas.",
     );
   }
 };

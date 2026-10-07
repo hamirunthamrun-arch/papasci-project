@@ -11,7 +11,7 @@ const getAccessToken = (req) => {
     return null;
   }
 
-  return authHeader.replace("Bearer ", "");
+  return authHeader.replace("Bearer ", "").trim() || null;
 };
 
 // =========================================================
@@ -47,7 +47,7 @@ const getFilesByAssignment = async (req, res) => {
         id,
         assignment_id,
         file_name,
-        file_path,
+        file_url,
         created_at,
         updated_at
       `,
@@ -101,7 +101,7 @@ const getAssignmentFileById = async (req, res) => {
         id,
         assignment_id,
         file_name,
-        file_path,
+        file_url,
         created_at,
         updated_at
       `,
@@ -149,7 +149,7 @@ const createAssignmentFile = async (req, res) => {
       });
     }
 
-    const { assignment_id, file_name, file_path } = req.body;
+    const { assignment_id, file_name, file_url } = req.body;
 
     // =====================================================
     // VALIDASI
@@ -169,10 +169,10 @@ const createAssignmentFile = async (req, res) => {
       });
     }
 
-    if (!file_path || !file_path.trim()) {
+    if (!file_url || !file_url.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Path file wajib diisi.",
+        message: "URL file wajib diisi.",
       });
     }
 
@@ -216,7 +216,7 @@ const createAssignmentFile = async (req, res) => {
         {
           assignment_id,
           file_name: file_name.trim(),
-          file_path: file_path.trim(),
+          file_url: file_url.trim(),
         },
       ])
       .select(
@@ -224,7 +224,7 @@ const createAssignmentFile = async (req, res) => {
         id,
         assignment_id,
         file_name,
-        file_path,
+        file_url,
         created_at,
         updated_at
       `,
@@ -267,7 +267,7 @@ const updateAssignmentFile = async (req, res) => {
 
     const { id } = req.params;
 
-    const { file_name, file_path } = req.body;
+    const { file_name, file_url } = req.body;
 
     const updateData = {};
 
@@ -287,18 +287,18 @@ const updateAssignmentFile = async (req, res) => {
     }
 
     // =====================================================
-    // FILE PATH
+    // FILE URL
     // =====================================================
 
-    if (file_path !== undefined) {
-      if (!file_path.trim()) {
+    if (file_url !== undefined) {
+      if (!file_url.trim()) {
         return res.status(400).json({
           success: false,
-          message: "Path file tidak boleh kosong.",
+          message: "URL file tidak boleh kosong.",
         });
       }
 
-      updateData.file_path = file_path.trim();
+      updateData.file_url = file_url.trim();
     }
 
     // =====================================================
@@ -325,7 +325,7 @@ const updateAssignmentFile = async (req, res) => {
         id,
         assignment_id,
         file_name,
-        file_path,
+        file_url,
         created_at,
         updated_at
       `,

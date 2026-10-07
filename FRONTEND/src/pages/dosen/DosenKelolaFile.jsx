@@ -51,6 +51,34 @@ const getPublicUrl = (path) => {
 };
 
 /* =========================================================
+   HELPER MENGAMBIL STORAGE PATH DARI FILE URL
+========================================================= */
+
+const getStoragePath = (fileUrl) => {
+  if (!fileUrl || !SUPABASE_URL) {
+    return null;
+  }
+
+  try {
+    const url = new URL(fileUrl);
+
+    const marker = `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+
+    const index = url.pathname.indexOf(marker);
+
+    if (index === -1) {
+      return null;
+    }
+
+    return decodeURIComponent(url.pathname.slice(index + marker.length));
+  } catch (error) {
+    console.warn("Gagal mengambil storage path dari file_url:", error);
+
+    return null;
+  }
+};
+
+/* =========================================================
    NORMALISASI DATA ASSIGNMENT
 ========================================================= */
 
@@ -75,9 +103,7 @@ const normalizeFile = (file) => ({
 
   file_name: file?.file_name || "File PDF",
 
-  file_path: file?.file_path || "",
-
-  file_url: file?.file_path ? getPublicUrl(file.file_path) : "",
+  file_url: file?.file_url || "",
 });
 
 /* =========================================================
@@ -135,7 +161,9 @@ const uploadPdf = async (file) => {
     throw new Error("Session tidak ditemukan. Silakan login kembali.");
   }
 
-  /* VALIDASI FILE */
+  /* =======================================================
+     VALIDASI FILE
+  ======================================================= */
 
   const isPdf =
     file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
@@ -144,13 +172,17 @@ const uploadPdf = async (file) => {
     throw new Error(`File "${file.name}" bukan file PDF.`);
   }
 
-  /* VALIDASI UKURAN */
+  /* =======================================================
+     VALIDASI UKURAN
+  ======================================================= */
 
   if (file.size > 10 * 1024 * 1024) {
     throw new Error(`File "${file.name}" melebihi ukuran maksimal 10 MB.`);
   }
 
-  /* BUAT NAMA FILE UNIK */
+  /* =======================================================
+     BUAT NAMA FILE UNIK
+  ======================================================= */
 
   const fileName = `${crypto.randomUUID()}.pdf`;
 
@@ -158,7 +190,9 @@ const uploadPdf = async (file) => {
 
   const encodedPath = filePath.split("/").map(encodeURIComponent).join("/");
 
-  /* UPLOAD */
+  /* =======================================================
+     UPLOAD KE STORAGE
+  ======================================================= */
 
   const response = await fetch(
     `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodedPath}`,
@@ -187,8 +221,14 @@ const uploadPdf = async (file) => {
     );
   }
 
+  /* =======================================================
+     RETURN PATH + PUBLIC URL
+  ======================================================= */
+
   return {
     path: filePath,
+
+    url: getPublicUrl(filePath),
 
     originalName: file.name,
   };
@@ -523,7 +563,7 @@ function DosenKelolaFile() {
           uploaded = await uploadPdf(file);
 
           /* =============================================
-             SIMPAN PATH KE DATABASE
+             SIMPAN URL KE DATABASE
           ============================================= */
 
           await createAssignmentFile({
@@ -531,7 +571,7 @@ function DosenKelolaFile() {
 
             file_name: uploaded.originalName,
 
-            file_path: uploaded.path,
+            file_url: uploaded.url,
           });
 
           successCount++;
@@ -602,6 +642,12 @@ function DosenKelolaFile() {
 
     try {
       /* ===============================================
+         SIMPAN STORAGE PATH DARI URL
+      =============================================== */
+
+      const storagePath = getStoragePath(file.file_url);
+
+      /* ===============================================
          HAPUS RECORD DATABASE
       =============================================== */
 
@@ -611,9 +657,9 @@ function DosenKelolaFile() {
          HAPUS FILE STORAGE
       =============================================== */
 
-      if (file.file_path && file.file_path.startsWith(`${STORAGE_FOLDER}/`)) {
+      if (storagePath && storagePath.startsWith(`${STORAGE_FOLDER}/`)) {
         try {
-          await removePdf(file.file_path);
+          await removePdf(storagePath);
         } catch (storageError) {
           console.warn(
             "Record database berhasil dihapus, tetapi file Storage gagal dihapus:",

@@ -125,7 +125,7 @@ const storageRequestWithAuth = async (url, options = {}) => {
 };
 
 /* =========================================================
-   HELPER URL GAMBAR
+   HELPER PUBLIC URL GAMBAR
 ========================================================= */
 
 const getPublicUrl = (path) => {
@@ -134,6 +134,32 @@ const getPublicUrl = (path) => {
   const encodedPath = path.split("/").map(encodeURIComponent).join("/");
 
   return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
+};
+
+/* =========================================================
+   HELPER MENGAMBIL STORAGE PATH DARI PUBLIC URL
+========================================================= */
+
+const getStoragePath = (imageUrl) => {
+  if (!imageUrl || !SUPABASE_URL) {
+    return null;
+  }
+
+  try {
+    const url = new URL(imageUrl);
+
+    const marker = `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+
+    const index = url.pathname.indexOf(marker);
+
+    if (index === -1) {
+      return null;
+    }
+
+    return decodeURIComponent(url.pathname.slice(index + marker.length));
+  } catch {
+    return null;
+  }
 };
 
 /* =========================================================
@@ -160,7 +186,9 @@ const uploadTaskImage = async (file) => {
   }
 
   const extension = file.name.split(".").pop().toLowerCase();
+
   const fileName = `${crypto.randomUUID()}.${extension}`;
+
   const path = `${STORAGE_FOLDER}/${fileName}`;
 
   const encodedPath = path.split("/").map(encodeURIComponent).join("/");
@@ -230,11 +258,16 @@ const deleteStorageImage = async (path) => {
 
 const normalizeAssignment = (assignment) => ({
   ...assignment,
+
   title: assignment.title || "",
+
   description: assignment.description || "",
-  image_path: assignment.image_path || "",
-  image_url: assignment.image_path ? getPublicUrl(assignment.image_path) : "",
+
+  // DATABASE SEKARANG LANGSUNG MENYIMPAN PUBLIC URL
+  image_url: assignment.image_url || "",
+
   deadline: assignment.deadline || "",
+
   is_active: Boolean(assignment.is_active),
 });
 
@@ -247,7 +280,9 @@ const formatDate = (dateString) => {
 
   const date = new Date(dateString);
 
-  if (Number.isNaN(date.getTime())) return "-";
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
 
   return date.toLocaleDateString("id-ID", {
     day: "2-digit",
@@ -264,28 +299,35 @@ function DosenTugas() {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState([]);
+
   const [search, setSearch] = useState("");
 
   const [loading, setLoading] = useState(true);
+
   const [saving, setSaving] = useState(false);
+
   const [deletingId, setDeletingId] = useState(null);
 
   const [pageError, setPageError] = useState("");
+
   const [formError, setFormError] = useState("");
+
   const [successMessage, setSuccessMessage] = useState("");
 
   const [showModal, setShowModal] = useState(false);
+
   const [editingTask, setEditingTask] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    image_path: "",
+    image_url: "",
     deadline: "",
     is_active: true,
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
+
   const [previewUrl, setPreviewUrl] = useState("");
 
   const fileInputRef = useRef(null);
@@ -353,7 +395,9 @@ function DosenTugas() {
   const filteredTasks = useMemo(() => {
     const keyword = search.toLowerCase().trim();
 
-    if (!keyword) return tasks;
+    if (!keyword) {
+      return tasks;
+    }
 
     return tasks.filter(
       (task) =>
@@ -374,13 +418,15 @@ function DosenTugas() {
     setFormData({
       title: "",
       description: "",
-      image_path: "",
+      image_url: "",
       deadline: "",
       is_active: true,
     });
 
     setSelectedImage(null);
+
     setPreviewUrl("");
+
     setFormError("");
 
     if (fileInputRef.current) {
@@ -394,8 +440,11 @@ function DosenTugas() {
 
   const handleAdd = () => {
     setEditingTask(null);
+
     resetForm();
+
     setSuccessMessage("");
+
     setShowModal(true);
   };
 
@@ -419,16 +468,25 @@ function DosenTugas() {
 
     setFormData({
       title: task.title || "",
+
       description: task.description || "",
-      image_path: task.image_path || "",
+
+      // SEKARANG LANGSUNG MENGGUNAKAN IMAGE_URL
+      image_url: task.image_url || "",
+
       deadline: formattedDeadline,
+
       is_active: task.is_active,
     });
 
     setSelectedImage(null);
+
     setPreviewUrl(task.image_url || "");
+
     setFormError("");
+
     setSuccessMessage("");
+
     setShowModal(true);
   };
 
@@ -441,6 +499,7 @@ function DosenTugas() {
 
     setFormData((previous) => ({
       ...previous,
+
       [name]: name === "is_active" ? value === "true" : value,
     }));
   };
@@ -458,13 +517,17 @@ function DosenTugas() {
 
     if (!allowedTypes.includes(file.type)) {
       setFormError("Gunakan gambar JPG, PNG, atau WEBP.");
+
       event.target.value = "";
+
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
       setFormError("Ukuran gambar maksimal 2 MB.");
+
       event.target.value = "";
+
       return;
     }
 
@@ -473,7 +536,9 @@ function DosenTugas() {
     }
 
     setFormError("");
+
     setSelectedImage(file);
+
     setPreviewUrl(URL.createObjectURL(file));
   };
 
@@ -487,6 +552,7 @@ function DosenTugas() {
     }
 
     setSelectedImage(null);
+
     setPreviewUrl("");
 
     if (fileInputRef.current) {
@@ -495,7 +561,8 @@ function DosenTugas() {
 
     setFormData((previous) => ({
       ...previous,
-      image_path: "",
+
+      image_url: "",
     }));
   };
 
@@ -507,7 +574,9 @@ function DosenTugas() {
     if (saving) return;
 
     setShowModal(false);
+
     setEditingTask(null);
+
     resetForm();
   };
 
@@ -534,40 +603,62 @@ function DosenTugas() {
     }
 
     setSaving(true);
+
     setFormError("");
+
     setPageError("");
+
     setSuccessMessage("");
 
     let uploadedImage = null;
+
     let databaseSaved = false;
 
     try {
-      let imagePath = formData.image_path || null;
+      // URL gambar lama
+      let imageUrl = formData.image_url || null;
 
-      // UPLOAD GAMBAR BARU
+      /* =====================================================
+         UPLOAD GAMBAR BARU
+      ===================================================== */
+
       if (selectedImage) {
         uploadedImage = await uploadTaskImage(selectedImage);
-        imagePath = uploadedImage.path;
+
+        // SIMPAN PUBLIC URL, BUKAN PATH
+        imageUrl = uploadedImage.url;
       }
 
       const payload = {
         title: formData.title.trim(),
+
         description: formData.description.trim(),
-        image_path: imagePath,
+
+        // DATABASE MENGGUNAKAN IMAGE_URL
+        image_url: imageUrl,
+
         deadline: new Date(`${formData.deadline}T23:59:00`).toISOString(),
+
         is_active: formData.is_active,
       };
 
-      // EDIT TUGAS
+      /* =====================================================
+         EDIT TUGAS
+      ===================================================== */
+
       if (editingTask) {
         await updateAssignment(editingTask.id, payload);
+
         databaseSaved = true;
 
-        // HAPUS GAMBAR LAMA JIKA DIGANTI
-        if (uploadedImage && editingTask.image_path) {
-          const oldPath = editingTask.image_path;
+        /* ===================================================
+           HAPUS GAMBAR LAMA JIKA DIGANTI
+        =================================================== */
 
-          if (oldPath.startsWith(`${STORAGE_FOLDER}/`)) {
+        if (uploadedImage && editingTask.image_url) {
+          const oldPath = getStoragePath(editingTask.image_url);
+
+          if (oldPath && oldPath.startsWith(`${STORAGE_FOLDER}/`)) {
             try {
               await deleteStorageImage(oldPath);
             } catch (error) {
@@ -578,20 +669,29 @@ function DosenTugas() {
 
         setSuccessMessage("Tugas berhasil diperbarui.");
       } else {
-        // TAMBAH TUGAS
+        /* ===================================================
+           TAMBAH TUGAS
+        =================================================== */
+
         await createAssignment(payload);
+
         databaseSaved = true;
 
         setSuccessMessage("Tugas berhasil ditambahkan.");
       }
 
       setShowModal(false);
+
       setEditingTask(null);
+
       resetForm();
 
       await loadTasks();
     } catch (error) {
-      // BERSIHKAN GAMBAR BARU JIKA DATABASE GAGAL DISIMPAN
+      /* =====================================================
+         BERSIHKAN GAMBAR BARU JIKA DATABASE GAGAL
+      ===================================================== */
+
       if (uploadedImage && !databaseSaved) {
         try {
           await deleteStorageImage(uploadedImage.path);
@@ -618,14 +718,23 @@ function DosenTugas() {
     if (!confirmed) return;
 
     setDeletingId(task.id);
+
     setPageError("");
+
     setSuccessMessage("");
 
     try {
       await deleteAssignment(task.id);
 
-      // HAPUS GAMBAR COVER DARI STORAGE
-      const imagePath = task.image_path;
+      /* =====================================================
+         AMBIL STORAGE PATH DARI IMAGE_URL
+      ===================================================== */
+
+      const imagePath = getStoragePath(task.image_url);
+
+      /* =====================================================
+         HAPUS GAMBAR COVER DARI STORAGE
+      ===================================================== */
 
       if (imagePath && imagePath.startsWith(`${STORAGE_FOLDER}/`)) {
         try {
@@ -660,6 +769,7 @@ function DosenTugas() {
   return (
     <div className="dosen-task-page">
       {/* HEADER */}
+
       <div className="dosen-task-header">
         <div className="dosen-task-title">
           <div className="dosen-task-title-icon">
@@ -668,6 +778,7 @@ function DosenTugas() {
 
           <div>
             <h1>Tugas Microteaching</h1>
+
             <p>Kelola tugas praktik mengajar yang akan dikerjakan mahasiswa.</p>
           </div>
         </div>
@@ -683,6 +794,7 @@ function DosenTugas() {
       </div>
 
       {/* PESAN SUKSES */}
+
       {successMessage && (
         <div className="alert alert-success" role="status">
           {successMessage}
@@ -690,6 +802,7 @@ function DosenTugas() {
       )}
 
       {/* PESAN ERROR */}
+
       {pageError && (
         <div className="alert alert-danger" role="alert">
           {pageError}
@@ -697,6 +810,7 @@ function DosenTugas() {
       )}
 
       {/* TOOLBAR */}
+
       <div className="dosen-task-toolbar">
         <div className="dosen-task-search">
           <FaSearch />
@@ -713,6 +827,7 @@ function DosenTugas() {
       </div>
 
       {/* DAFTAR KARTU TUGAS */}
+
       <div className="dosen-task-grid">
         {loading ? (
           <div className="dosen-task-empty">
@@ -722,18 +837,21 @@ function DosenTugas() {
           filteredTasks.map((task) => (
             <article className="dosen-task-card" key={task.id}>
               {/* GAMBAR COVER */}
+
               <div className="dosen-task-card-image">
                 {task.image_url ? (
                   <img src={task.image_url} alt={task.title} />
                 ) : (
                   <div className="dosen-task-card-image-empty">
                     <FaImage />
+
                     <span>Belum ada gambar</span>
                   </div>
                 )}
               </div>
 
               {/* HEADER CARD */}
+
               <div className="dosen-task-card-header">
                 <div className="dosen-task-card-icon">
                   <FaClipboardList />
@@ -751,6 +869,7 @@ function DosenTugas() {
               </div>
 
               {/* KONTEN CARD */}
+
               <div className="dosen-task-card-content">
                 <h3>{task.title}</h3>
 
@@ -761,11 +880,13 @@ function DosenTugas() {
 
                   <div>
                     <span>Deadline</span>
+
                     <strong>{formatDate(task.deadline)}</strong>
                   </div>
                 </div>
 
                 {/* AKSI CARD */}
+
                 <div className="dosen-task-card-actions">
                   <button
                     type="button"
@@ -794,6 +915,7 @@ function DosenTugas() {
                       disabled={deletingId === task.id}
                     >
                       <FaTrash />
+
                       {deletingId === task.id ? "Menghapus..." : "Hapus"}
                     </button>
                   </div>
@@ -817,6 +939,7 @@ function DosenTugas() {
       </div>
 
       {/* MODAL TAMBAH / EDIT */}
+
       {showModal && (
         <div
           className="dosen-task-modal-overlay"
@@ -831,6 +954,7 @@ function DosenTugas() {
             onMouseDown={(event) => event.stopPropagation()}
           >
             {/* HEADER MODAL */}
+
             <div className="dosen-task-modal-header">
               <div>
                 <span>
@@ -852,6 +976,7 @@ function DosenTugas() {
             </div>
 
             {/* FORM */}
+
             <form className="dosen-task-form" onSubmit={handleSubmit}>
               {formError && (
                 <div className="alert alert-danger" role="alert">
@@ -860,6 +985,7 @@ function DosenTugas() {
               )}
 
               {/* JUDUL */}
+
               <div className="dosen-task-form-group">
                 <label htmlFor="task-title">
                   Judul Tugas <span>*</span>
@@ -878,6 +1004,7 @@ function DosenTugas() {
               </div>
 
               {/* DESKRIPSI */}
+
               <div className="dosen-task-form-group">
                 <label htmlFor="task-description">
                   Deskripsi / Instruksi Tugas <span>*</span>
@@ -896,6 +1023,7 @@ function DosenTugas() {
               </div>
 
               {/* GAMBAR COVER */}
+
               <div className="dosen-task-form-group">
                 <label>Gambar Cover Tugas</label>
 
@@ -919,7 +1047,9 @@ function DosenTugas() {
 
                     <div>
                       <strong>Pilih Gambar</strong>
+
                       <span>Klik untuk memilih gambar dari perangkat</span>
+
                       <small>JPG, PNG, WebP • Maksimal 2 MB</small>
                     </div>
                   </label>
@@ -943,6 +1073,7 @@ function DosenTugas() {
               </div>
 
               {/* DEADLINE */}
+
               <div className="dosen-task-form-group">
                 <label htmlFor="task-deadline">
                   Deadline <span>*</span>
@@ -964,6 +1095,7 @@ function DosenTugas() {
               </div>
 
               {/* STATUS */}
+
               <div className="dosen-task-form-group">
                 <label htmlFor="task-status">Status Tugas</label>
 
@@ -975,11 +1107,13 @@ function DosenTugas() {
                   disabled={saving}
                 >
                   <option value="true">Aktif</option>
+
                   <option value="false">Nonaktif</option>
                 </select>
               </div>
 
               {/* TOMBOL MODAL */}
+
               <div className="dosen-task-modal-footer">
                 <button
                   type="button"
