@@ -15,6 +15,7 @@ import {
   FaUserTie,
   FaSignOutAlt,
   FaTimes,
+  FaClipboardList,
 } from "react-icons/fa";
 
 import "../css/dosen/DosenSidebar.css";
@@ -211,6 +212,20 @@ function DosenSidebar({ showMobileSidebar, closeMobileSidebar }) {
           >
             <FaUserTie />
             <span>Kompetensi Pedagogik</span>
+          </NavLink>
+
+          {/* =================================================
+              PENILAINAN KOMPETENSI PEDAGOGIK
+          ================================================= */}
+          <NavLink
+            to="/dosen/penilaian-kompetensi"
+            className={({ isActive }) =>
+              `dosen-nav-link ${isActive ? "active" : ""}`
+            }
+            onClick={closeMobileSidebar}
+          >
+            <FaClipboardList />
+            <span>PenilaianKompetensi</span>
           </NavLink>
 
           {/* =================================================

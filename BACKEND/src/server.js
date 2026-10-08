@@ -16,7 +16,7 @@ app.use("/api/test", require("./routes/testRoutes"));
 app.use("/api/modules", require("./routes/moduleRoutes"));
 app.use("/api/module-materials", require("./routes/moduleMaterialRoutes"));
 // app.use('/api/tasks', require('./routes/taskRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
+app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/pretests", require("./routes/pretestRoutes"));
 app.use("/api/pretest-questions", require("./routes/pretestQuestionRoutes"));
 app.use("/api/pretest-results", require("./routes/pretestResultRoutes"));
@@ -27,9 +27,15 @@ app.use("/api/simulasi", require("./routes/simulasiRoutes"));
 app.use("/api/video-pembelajaran", require("./routes/videoPembelajaranRoutes"));
 app.use("/api/assignments", require("./routes/assignmentRoutes"));
 app.use("/api/assignment-files", require("./routes/assignmentFileRoutes"));
-app.use("/api/assignment-submissions", require("./routes/assignmentSubmissionRoutes"));
-
-
+app.use(
+  "/api/assignment-submissions",
+  require("./routes/assignmentSubmissionRoutes"),
+);
+app.use(
+  "/api/pedagogic-competencies",
+  require("./routes/pedagogicCompetencyRoutes"),
+);
+app.use("/api/pedagogic-scores", require("./routes/pedagogicScoreRoutes"));
 
 // Root Endpoint untuk Cek Kesehatan Server
 app.get("/", (req, res) => {

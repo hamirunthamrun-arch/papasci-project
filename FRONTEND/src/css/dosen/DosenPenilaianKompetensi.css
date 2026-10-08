@@ -1,0 +1,1973 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.penilaian-kompetensi-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+
+  background: #f5f8fc;
+  color: #172b4d;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.penilaian-kompetensi-page .page-header {
+  margin-bottom: 28px;
+}
+
+.penilaian-kompetensi-page .page-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-bottom: 10px;
+
+  color: #1976d2;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+.penilaian-kompetensi-page .page-label svg {
+  font-size: 15px;
+}
+
+.penilaian-kompetensi-page .page-header h1 {
+  margin: 0;
+
+  color: #13294b;
+
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .page-header p {
+  max-width: 700px;
+
+  margin: 9px 0 0;
+
+  color: #718096;
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.penilaian-kompetensi-page .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+
+  margin-bottom: 24px;
+}
+
+.penilaian-kompetensi-page .summary-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-height: 112px;
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5ebf3;
+  border-radius: 16px;
+
+  box-shadow: 0 5px 18px rgba(25, 55, 90, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.penilaian-kompetensi-page .summary-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 25px rgba(25, 55, 90, 0.08);
+}
+
+.penilaian-kompetensi-page .summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 50px;
+  height: 50px;
+
+  border-radius: 14px;
+
+  font-size: 20px;
+}
+
+.penilaian-kompetensi-page .summary-icon-blue {
+  background: #e8f2ff;
+  color: #1976d2;
+}
+
+.penilaian-kompetensi-page .summary-icon-green {
+  background: #e9f8f0;
+  color: #159957;
+}
+
+.penilaian-kompetensi-page .summary-icon-yellow {
+  background: #fff5dc;
+  color: #d38a00;
+}
+
+/* =========================================================
+   SUMMARY - PERLU DINILAI ULANG
+========================================================= */
+
+.penilaian-kompetensi-page .resubmission-summary-card {
+  border-color: #f2dfbd;
+  background: #fffdf8;
+}
+
+.penilaian-kompetensi-page .resubmission-summary-card:hover {
+  border-color: #ebcf9d;
+
+  box-shadow: 0 10px 25px rgba(185, 125, 20, 0.08);
+}
+
+.penilaian-kompetensi-page .summary-icon-orange {
+  background: #fff0d8;
+  color: #d97706;
+}
+
+.penilaian-kompetensi-page .summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.penilaian-kompetensi-page .summary-content span {
+  color: #718096;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.penilaian-kompetensi-page .summary-content strong {
+  color: #172b4d;
+
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .summary-content small {
+  color: #98a4b5;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.penilaian-kompetensi-page .search-box {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 20px;
+
+  width: 290px;
+  flex-shrink: 0;
+
+  background: #f7f9fc;
+
+  border: 1px solid #dfe6ef;
+  border-radius: 10px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.penilaian-kompetensi-page .search-box:focus-within {
+  background: #ffffff;
+
+  border-color: #65a9e8;
+
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.08);
+}
+
+.penilaian-kompetensi-page .search-box > svg {
+  flex-shrink: 0;
+
+  margin-left: 13px;
+
+  color: #91a0b4;
+
+  font-size: 14px;
+}
+
+.penilaian-kompetensi-page .search-box input {
+  width: 100%;
+  height: 42px;
+
+  padding: 0 38px 0 10px;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #005eff;
+
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.penilaian-kompetensi-page .search-box input::placeholder {
+  color: #9aa6b6;
+}
+
+.penilaian-kompetensi-page .clear-search {
+  position: absolute;
+  right: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: transparent;
+  color: #8d9aaa;
+
+  cursor: pointer;
+}
+
+.penilaian-kompetensi-page .clear-search:hover {
+  background: #e8eef6;
+  color: #45566d;
+}
+
+/* =========================================================
+   MAHASISWA LIST
+========================================================= */
+
+.penilaian-kompetensi-page .mahasiswa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =========================================================
+   MAHASISWA CARD
+========================================================= */
+
+.penilaian-kompetensi-page .mahasiswa-card {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 1.4fr)
+    minmax(150px, 0.8fr)
+    minmax(130px, 0.7fr)
+    auto;
+
+  align-items: center;
+
+  min-height: 112px;
+  padding: 18px 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e3eaf2;
+  border-radius: 15px;
+
+  box-shadow: 0 4px 14px rgba(25, 55, 90, 0.035);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.penilaian-kompetensi-page .mahasiswa-card:hover {
+  transform: translateY(-1px);
+
+  border-color: #cbdbea;
+
+  box-shadow: 0 8px 22px rgba(25, 55, 90, 0.07);
+}
+
+/* =========================================================
+   MAHASISWA CARD - VIDEO DIPERBARUI
+========================================================= */
+
+.penilaian-kompetensi-page .mahasiswa-card-resubmission {
+  border-color: #f0d39f;
+
+  background: linear-gradient(90deg, #fffdf8 0%, #ffffff 48%);
+}
+
+.penilaian-kompetensi-page .mahasiswa-card-resubmission:hover {
+  border-color: #e7bd72;
+
+  box-shadow: 0 8px 24px rgba(191, 126, 20, 0.09);
+}
+
+/* =========================================================
+   STUDENT
+========================================================= */
+
+.penilaian-kompetensi-page .student-section {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  min-width: 0;
+}
+
+/* =========================================================
+   FOTO PROFIL MAHASISWA
+========================================================= */
+
+.student-avatar {
+  position: relative;
+
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Foto asli */
+
+.student-avatar-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+/* Fallback inisial */
+
+.student-avatar-fallback {
+  width: 100%;
+  height: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #ffffff;
+
+  background: linear-gradient(135deg, #2987d3, #063a8e);
+}
+
+/* =========================================================
+   FOTO PROFIL PADA MODAL
+========================================================= */
+
+.modal-avatar {
+  position: relative;
+
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Foto */
+
+.modal-avatar-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+/* Fallback */
+
+.modal-avatar-fallback {
+  width: 100%;
+  height: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  background: linear-gradient(135deg, #2987d3, #063a8e);
+
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.penilaian-kompetensi-page .student-info {
+  min-width: 0;
+}
+
+.penilaian-kompetensi-page .student-info h3 {
+  margin: 0 0 4px;
+
+  overflow: hidden;
+
+  color: #172b4d;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.penilaian-kompetensi-page .student-info > span {
+  display: block;
+
+  color: #7b8798;
+
+  font-size: 12px;
+}
+
+.penilaian-kompetensi-page .student-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 7px;
+
+  color: #16945a;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.penilaian-kompetensi-page .student-status svg {
+  font-size: 10px;
+}
+
+/* =========================================================
+   SUBMISSION STATUS
+========================================================= */
+
+.penilaian-kompetensi-page .submission-status-section {
+  min-width: 0;
+  padding-left: 16px;
+}
+
+/* =========================================================
+   STATUS - MENUNGGU PENILAIAN
+========================================================= */
+
+.penilaian-kompetensi-page .waiting-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  min-width: 0;
+}
+
+.penilaian-kompetensi-page .waiting-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 9px;
+
+  background: #eaf4ff;
+  color: #1976d2;
+
+  font-size: 14px;
+}
+
+.penilaian-kompetensi-page .waiting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.penilaian-kompetensi-page .waiting-text strong {
+  color: #315b82;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .waiting-text span {
+  color: #8a98a9;
+
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   STATUS - VIDEO DIPERBARUI
+========================================================= */
+
+.penilaian-kompetensi-page .resubmission-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  min-width: 0;
+
+  padding: 8px 10px;
+
+  background: #fff8e9;
+
+  border: 1px solid #f3ddb5;
+  border-radius: 10px;
+}
+
+.penilaian-kompetensi-page .resubmission-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 9px;
+
+  background: #ffe9bd;
+  color: #d97706;
+
+  font-size: 14px;
+}
+
+.penilaian-kompetensi-page .resubmission-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.penilaian-kompetensi-page .resubmission-text strong {
+  color: #a45c00;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .resubmission-text span {
+  color: #927453;
+
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   VIDEO
+========================================================= */
+
+.penilaian-kompetensi-page .video-section {
+  padding-left: 16px;
+}
+
+.penilaian-kompetensi-page .section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 8px;
+
+  color: #8491a3;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.penilaian-kompetensi-page .section-label svg {
+  font-size: 11px;
+}
+
+.penilaian-kompetensi-page .video-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.penilaian-kompetensi-page .video-status.available {
+  color: #159957;
+}
+
+.penilaian-kompetensi-page .video-status.available svg {
+  font-size: 13px;
+}
+
+.penilaian-kompetensi-page .video-status.unavailable {
+  color: #9aa5b4;
+}
+
+/* =========================================================
+   SCORE
+========================================================= */
+
+.penilaian-kompetensi-page .score-section {
+  padding-left: 16px;
+
+  border-left: 1px solid #edf0f5;
+}
+
+.penilaian-kompetensi-page .score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.penilaian-kompetensi-page .score-display strong {
+  color: #1976d2;
+
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .score-display span {
+  color: #98a3b2;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.penilaian-kompetensi-page .score-empty {
+  color: #9aa5b4;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   SCORE - PERLU DINILAI ULANG
+========================================================= */
+
+.penilaian-kompetensi-page .score-resubmission {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 9px;
+
+  background: #fff7e7;
+
+  border: 1px solid #f1ddb8;
+  border-radius: 7px;
+
+  color: #b86a00;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   ACTION
+========================================================= */
+
+.penilaian-kompetensi-page .action-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  padding-left: 18px;
+}
+
+.penilaian-kompetensi-page .btn-video,
+.penilaian-kompetensi-page .btn-nilai {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.penilaian-kompetensi-page .btn-video {
+  border: 1px solid #d7e3f0;
+
+  background: #f6f9fd;
+  color: #3c5b7c;
+}
+
+.penilaian-kompetensi-page .btn-video:hover {
+  border-color: #a9c7e5;
+
+  background: #edf5fd;
+  color: #1976d2;
+}
+
+.penilaian-kompetensi-page .btn-video.disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+.penilaian-kompetensi-page .btn-nilai {
+  border: 1px solid #1976d2;
+
+  background: #1976d2;
+  color: #ffffff;
+}
+
+.penilaian-kompetensi-page .btn-nilai:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  border-color: #1266bb;
+
+  background: #1266bb;
+}
+
+.penilaian-kompetensi-page .btn-nilai:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   BUTTON - NILAI ULANG
+========================================================= */
+
+.penilaian-kompetensi-page .btn-nilai-ulang {
+  border-color: #d97706;
+
+  background: #d97706;
+}
+
+.penilaian-kompetensi-page .btn-nilai-ulang:hover:not(:disabled) {
+  border-color: #b85f00;
+
+  background: #b85f00;
+
+  box-shadow: 0 5px 12px rgba(217, 119, 6, 0.18);
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.penilaian-kompetensi-page .empty-state {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  padding: 70px 25px;
+
+  background: #ffffff;
+
+  border: 1px dashed #d8e1ec;
+  border-radius: 16px;
+
+  text-align: center;
+}
+
+.penilaian-kompetensi-page .empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 62px;
+  height: 62px;
+
+  margin-bottom: 16px;
+
+  border-radius: 18px;
+
+  background: #eef5fc;
+  color: #8aa8c6;
+
+  font-size: 23px;
+}
+
+.penilaian-kompetensi-page .empty-state h3 {
+  margin: 0;
+
+  color: #34495e;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .empty-state p {
+  max-width: 480px;
+
+  margin: 8px 0 18px;
+
+  color: #8a96a6;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.penilaian-kompetensi-page .empty-reset-button {
+  min-height: 36px;
+  padding: 0 15px;
+
+  border: 1px solid #d7e2ee;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #1976d2;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.penilaian-kompetensi-page .empty-reset-button:hover {
+  background: #edf5fd;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+   Scoped agar tidak bentrok dengan Bootstrap
+========================================================= */
+
+.penilaian-kompetensi-page .modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  background: rgba(13, 29, 49, 0.62);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  animation: penilaianModalOverlayIn 0.2s ease;
+}
+
+@keyframes penilaianModalOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.penilaian-kompetensi-page .penilaian-modal {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100vh - 40px);
+
+  overflow: hidden;
+
+  margin: 0;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(222, 230, 240, 0.9);
+  border-radius: 18px;
+
+  box-shadow:
+    0 30px 80px rgba(13, 29, 49, 0.25),
+    0 8px 25px rgba(13, 29, 49, 0.08);
+
+  animation: penilaianModalIn 0.25s ease;
+}
+
+@keyframes penilaianModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.penilaian-kompetensi-page .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  flex-shrink: 0;
+
+  min-height: 76px;
+  padding: 17px 22px;
+
+  background: #ffffff;
+
+  border: 0;
+  border-bottom: 1px solid #edf1f5;
+
+  box-sizing: border-box;
+}
+
+.penilaian-kompetensi-page .modal-student {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  min-width: 0;
+}
+
+.penilaian-kompetensi-page .modal-label {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #1976d2;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+}
+
+.penilaian-kompetensi-page .modal-student h2 {
+  overflow: hidden;
+
+  margin: 0;
+
+  color: #172b4d;
+
+  font-size: 17px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.penilaian-kompetensi-page .modal-student p {
+  margin: 3px 0 0;
+
+  color: #8491a3;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   MODAL CLOSE
+========================================================= */
+
+.penilaian-kompetensi-page .btn-close-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #f3f6fa;
+  color: #77869a;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.penilaian-kompetensi-page .btn-close-modal:hover {
+  background: #e9eef5;
+  color: #334155;
+
+  transform: rotate(3deg);
+}
+
+.penilaian-kompetensi-page .btn-close-modal:focus-visible {
+  outline: 3px solid rgba(25, 118, 210, 0.15);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   MODAL BODY
+========================================================= */
+
+.penilaian-kompetensi-page .modal-body {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 22px;
+
+  background: #ffffff;
+
+  box-sizing: border-box;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd7e5 transparent;
+}
+
+.penilaian-kompetensi-page .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.penilaian-kompetensi-page .modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.penilaian-kompetensi-page .modal-body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+
+  background: #cbd7e5;
+}
+
+/* =========================================================
+   MODAL RESUBMISSION NOTICE
+========================================================= */
+
+.penilaian-kompetensi-page .modal-resubmission-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  margin-bottom: 16px;
+  padding: 14px 15px;
+
+  background: #fff8e9;
+
+  border: 1px solid #f0d7a8;
+  border-radius: 12px;
+}
+
+.penilaian-kompetensi-page .modal-resubmission-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 10px;
+
+  background: #ffe8b8;
+  color: #c96d00;
+
+  font-size: 16px;
+}
+
+.penilaian-kompetensi-page .modal-resubmission-notice > div:last-child {
+  min-width: 0;
+}
+
+.penilaian-kompetensi-page .modal-resubmission-notice strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #9b5a00;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.penilaian-kompetensi-page .modal-resubmission-notice p {
+  margin: 0;
+
+  color: #876d4a;
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   MODAL VIDEO CARD
+========================================================= */
+
+.penilaian-kompetensi-page .modal-video-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  width: 100%;
+
+  padding: 15px;
+
+  box-sizing: border-box;
+
+  background: #f7faff;
+
+  border: 1px solid #dce8f4;
+  border-radius: 12px;
+}
+
+.penilaian-kompetensi-page .modal-video-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 11px;
+
+  background: #e5f1ff;
+  color: #1976d2;
+
+  font-size: 16px;
+}
+
+.penilaian-kompetensi-page .modal-video-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+  flex: 1;
+}
+
+.penilaian-kompetensi-page .modal-video-info strong {
+  overflow: hidden;
+
+  color: #243b5a;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.penilaian-kompetensi-page .modal-video-info span {
+  color: #8390a1;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.penilaian-kompetensi-page .modal-open-video {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  flex-shrink: 0;
+
+  min-height: 34px;
+
+  padding: 0 11px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #1976d2;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.penilaian-kompetensi-page .modal-open-video:hover {
+  transform: translateY(-1px);
+
+  background: #1266bb;
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   SCORE INPUT CARD
+========================================================= */
+
+.penilaian-kompetensi-page .score-input-card {
+  margin-top: 18px;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e3e9f1;
+  border-radius: 13px;
+
+  box-shadow: 0 3px 12px rgba(25, 55, 90, 0.025);
+
+  box-sizing: border-box;
+}
+
+.penilaian-kompetensi-page .score-input-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.penilaian-kompetensi-page .score-input-header svg {
+  flex-shrink: 0;
+
+  color: #e6a300;
+
+  font-size: 20px;
+}
+
+.penilaian-kompetensi-page .score-input-label {
+  display: block;
+
+  color: #52657c;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.penilaian-kompetensi-page .score-input-header p {
+  margin: 5px 0 0;
+
+  color: #8b97a7;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   SCORE INPUT MAIN
+========================================================= */
+
+.penilaian-kompetensi-page .score-input-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.penilaian-kompetensi-page .score-input-main input {
+  width: 150px;
+  height: 70px;
+
+  padding: 0 10px;
+
+  box-sizing: border-box;
+
+  border: 2px solid #dce5ef;
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #f9fbfd;
+  color: #172b4d;
+
+  font-family: inherit;
+  font-size: 34px;
+  font-weight: 800;
+
+  text-align: center;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.penilaian-kompetensi-page .score-input-main input:hover {
+  border-color: #c7d5e5;
+}
+
+.penilaian-kompetensi-page .score-input-main input:focus {
+  background: #ffffff;
+
+  border-color: #1976d2;
+
+  box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.09);
+}
+
+.penilaian-kompetensi-page .score-input-main input::-webkit-inner-spin-button,
+.penilaian-kompetensi-page .score-input-main input::-webkit-outer-spin-button {
+  margin: 0;
+
+  appearance: none;
+}
+
+.penilaian-kompetensi-page .score-max {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.penilaian-kompetensi-page .score-max strong {
+  color: #52657c;
+
+  font-size: 17px;
+}
+
+.penilaian-kompetensi-page .score-max span {
+  color: #97a2b1;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   SCORE RANGE
+========================================================= */
+
+.penilaian-kompetensi-page .score-range {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 10px;
+
+  color: #9aa5b4;
+
+  font-size: 10px;
+}
+
+.penilaian-kompetensi-page .score-range span:nth-child(2) {
+  color: #7e8c9f;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+.penilaian-kompetensi-page .modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+
+  flex-shrink: 0;
+
+  min-height: 70px;
+  padding: 14px 22px;
+
+  background: #fafbfd;
+
+  border: 0;
+  border-top: 1px solid #edf1f5;
+
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MODAL BUTTONS
+========================================================= */
+
+.penilaian-kompetensi-page .btn-cancel,
+.penilaian-kompetensi-page .btn-save-nilai {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 39px;
+
+  padding: 0 15px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.penilaian-kompetensi-page .btn-cancel {
+  border: 1px solid #dce3ec;
+
+  background: #ffffff;
+  color: #65758a;
+}
+
+.penilaian-kompetensi-page .btn-cancel:hover {
+  background: #f2f5f8;
+  color: #4c5d71;
+}
+
+.penilaian-kompetensi-page .btn-save-nilai {
+  border: 1px solid #1976d2;
+
+  background: #1976d2;
+  color: #ffffff;
+}
+
+.penilaian-kompetensi-page .btn-save-nilai:hover {
+  transform: translateY(-1px);
+
+  border-color: #1266bb;
+
+  background: #1266bb;
+
+  box-shadow: 0 5px 12px rgba(25, 118, 210, 0.18);
+}
+
+.penilaian-kompetensi-page .btn-cancel:focus-visible,
+.penilaian-kompetensi-page .btn-save-nilai:focus-visible {
+  outline: 3px solid rgba(25, 118, 210, 0.14);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+  .penilaian-kompetensi-page {
+    padding: 25px;
+  }
+
+  .penilaian-kompetensi-page .mahasiswa-card {
+    grid-template-columns:
+      minmax(210px, 1.3fr)
+      minmax(130px, 0.8fr)
+      minmax(100px, 0.6fr)
+      auto;
+  }
+
+  .penilaian-kompetensi-page .action-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .penilaian-kompetensi-page .btn-video,
+  .penilaian-kompetensi-page .btn-nilai {
+    min-width: 105px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE TABLET KECIL
+========================================================= */
+
+@media (max-width: 900px) {
+  .penilaian-kompetensi-page .mahasiswa-card {
+    grid-template-columns:
+      minmax(200px, 1.3fr)
+      minmax(120px, 0.7fr)
+      auto;
+  }
+
+  .penilaian-kompetensi-page .submission-status-section {
+    padding-left: 12px;
+  }
+
+  .penilaian-kompetensi-page .score-section {
+    padding-left: 12px;
+  }
+
+  .penilaian-kompetensi-page .action-section {
+    grid-column: 1 / -1;
+
+    flex-direction: row;
+    justify-content: flex-end;
+
+    padding-top: 12px;
+    padding-left: 0;
+
+    margin-top: 8px;
+
+    border-top: 1px solid #edf1f5;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+  .penilaian-kompetensi-page {
+    padding: 20px 16px;
+  }
+
+  /* HEADER */
+
+  .penilaian-kompetensi-page .page-header {
+    margin-bottom: 22px;
+  }
+
+  .penilaian-kompetensi-page .page-header h1 {
+    font-size: 25px;
+  }
+
+  .penilaian-kompetensi-page .page-header p {
+    font-size: 13px;
+  }
+
+  /* SUMMARY */
+
+  .penilaian-kompetensi-page .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .penilaian-kompetensi-page .summary-card {
+    min-height: 88px;
+
+    padding: 15px;
+  }
+
+  .penilaian-kompetensi-page .summary-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .penilaian-kompetensi-page .summary-content strong {
+    font-size: 23px;
+  }
+
+  /* TOOLBAR */
+
+  .penilaian-kompetensi-page .toolbar-card {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 15px;
+
+    padding: 17px;
+  }
+
+  .penilaian-kompetensi-page .toolbar-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .penilaian-kompetensi-page .search-box {
+    width: 100%;
+  }
+
+  /* MAHASISWA */
+
+  .penilaian-kompetensi-page .mahasiswa-list {
+    gap: 12px;
+  }
+
+  .penilaian-kompetensi-page .mahasiswa-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    padding: 17px;
+  }
+
+  .penilaian-kompetensi-page .student-section {
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #edf1f5;
+  }
+
+  /* STATUS */
+
+  .penilaian-kompetensi-page .submission-status-section {
+    padding: 14px 0 0;
+  }
+
+  .penilaian-kompetensi-page .waiting-notice,
+  .penilaian-kompetensi-page .resubmission-notice {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .penilaian-kompetensi-page .resubmission-notice {
+    padding: 10px;
+  }
+
+  .penilaian-kompetensi-page .resubmission-text span {
+    font-size: 10px;
+  }
+
+  /* VIDEO */
+
+  .penilaian-kompetensi-page .video-section,
+  .penilaian-kompetensi-page .score-section {
+    padding: 14px 0 0;
+
+    border-left: 0;
+  }
+
+  /* SCORE */
+
+  .penilaian-kompetensi-page .score-section {
+    margin-top: 13px;
+    padding-top: 13px;
+
+    border-top: 1px solid #edf1f5;
+  }
+
+  /* ACTION */
+
+  .penilaian-kompetensi-page .action-section {
+    flex-direction: row;
+
+    padding: 15px 0 0;
+
+    margin-top: 15px;
+
+    border-top: 1px solid #edf1f5;
+  }
+
+  .penilaian-kompetensi-page .btn-video,
+  .penilaian-kompetensi-page .btn-nilai {
+    flex: 1;
+  }
+
+  /* =====================================================
+     MODAL MOBILE
+  ===================================================== */
+
+  .penilaian-kompetensi-page .modal-overlay {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .penilaian-kompetensi-page .penilaian-modal {
+    width: 100%;
+    max-width: none;
+
+    max-height: 92vh;
+
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+
+    border-radius: 18px 18px 0 0;
+
+    animation: penilaianModalMobileIn 0.25s ease;
+  }
+
+  @keyframes penilaianModalMobileIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .penilaian-kompetensi-page .modal-header {
+    min-height: 70px;
+
+    padding: 15px 17px;
+  }
+
+  .penilaian-kompetensi-page .modal-body {
+    padding: 17px;
+  }
+
+  /* MODAL RESUBMISSION */
+
+  .penilaian-kompetensi-page .modal-resubmission-notice {
+    padding: 12px;
+  }
+
+  .penilaian-kompetensi-page .modal-resubmission-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .penilaian-kompetensi-page .modal-resubmission-notice strong {
+    font-size: 11px;
+  }
+
+  .penilaian-kompetensi-page .modal-resubmission-notice p {
+    font-size: 10px;
+  }
+
+  /* MODAL VIDEO */
+
+  .penilaian-kompetensi-page .modal-video-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .penilaian-kompetensi-page .modal-video-info {
+    flex-basis: calc(100% - 58px);
+  }
+
+  .penilaian-kompetensi-page .modal-open-video {
+    width: 100%;
+
+    margin-top: 4px;
+  }
+
+  /* SCORE */
+
+  .penilaian-kompetensi-page .score-input-card {
+    padding: 16px;
+  }
+
+  .penilaian-kompetensi-page .score-input-main input {
+    width: 130px;
+    height: 65px;
+  }
+
+  /* FOOTER */
+
+  .penilaian-kompetensi-page .modal-footer {
+    min-height: 64px;
+
+    padding: 12px 17px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE SMALL MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+  .penilaian-kompetensi-page {
+    padding: 16px 12px;
+  }
+
+  .penilaian-kompetensi-page .page-header h1 {
+    font-size: 22px;
+  }
+
+  .penilaian-kompetensi-page .page-label {
+    font-size: 10px;
+  }
+
+  .penilaian-kompetensi-page .mahasiswa-card {
+    padding: 14px;
+  }
+
+  .penilaian-kompetensi-page .student-info h3 {
+    font-size: 14px;
+  }
+
+  /* STATUS */
+
+  .penilaian-kompetensi-page .submission-status-section {
+    padding-top: 12px;
+  }
+
+  .penilaian-kompetensi-page .waiting-notice,
+  .penilaian-kompetensi-page .resubmission-notice {
+    align-items: flex-start;
+  }
+
+  .penilaian-kompetensi-page .waiting-text span,
+  .penilaian-kompetensi-page .resubmission-text span {
+    font-size: 9px;
+  }
+
+  /* ACTION */
+
+  .penilaian-kompetensi-page .action-section {
+    flex-direction: column;
+  }
+
+  .penilaian-kompetensi-page .btn-video,
+  .penilaian-kompetensi-page .btn-nilai {
+    width: 100%;
+  }
+
+  /* MODAL */
+
+  .penilaian-kompetensi-page .modal-student {
+    gap: 10px;
+  }
+
+  .penilaian-kompetensi-page .modal-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .penilaian-kompetensi-page .modal-student h2 {
+    font-size: 15px;
+  }
+
+  .penilaian-kompetensi-page .modal-student p {
+    font-size: 10px;
+  }
+
+  .penilaian-kompetensi-page .btn-close-modal {
+    width: 33px;
+    height: 33px;
+  }
+
+  .penilaian-kompetensi-page .score-input-main {
+    justify-content: flex-start;
+  }
+
+  .penilaian-kompetensi-page .score-input-main input {
+    width: 115px;
+    height: 60px;
+
+    font-size: 29px;
+  }
+
+  .penilaian-kompetensi-page .score-range {
+    font-size: 9px;
+  }
+
+  .penilaian-kompetensi-page .modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .penilaian-kompetensi-page .btn-cancel,
+  .penilaian-kompetensi-page .btn-save-nilai {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   VERY SMALL SCREEN
+========================================================= */
+
+@media (max-width: 340px) {
+  .penilaian-kompetensi-page .modal-header {
+    padding: 13px;
+  }
+
+  .penilaian-kompetensi-page .modal-body {
+    padding: 13px;
+  }
+
+  .penilaian-kompetensi-page .modal-footer {
+    padding: 11px 13px;
+  }
+
+  .penilaian-kompetensi-page .modal-video-card {
+    padding: 12px;
+  }
+
+  .penilaian-kompetensi-page .modal-resubmission-notice {
+    padding: 10px;
+  }
+
+  .penilaian-kompetensi-page .score-input-card {
+    padding: 13px;
+  }
+
+  .penilaian-kompetensi-page .score-input-main {
+    gap: 7px;
+  }
+
+  .penilaian-kompetensi-page .score-input-main input {
+    width: 105px;
+    height: 56px;
+
+    font-size: 26px;
+  }
+
+  .penilaian-kompetensi-page .score-max strong {
+    font-size: 15px;
+  }
+}
