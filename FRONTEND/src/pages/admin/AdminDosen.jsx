@@ -28,6 +28,8 @@ const AdminDosen = () => {
 
   /* =====================================================
      AMBIL DATA DOSEN
+     Fungsi ini tetap dipakai untuk refresh setelah
+     tambah, edit, dan hapus data.
   ===================================================== */
 
   const fetchDosen = useCallback(async () => {
@@ -53,11 +55,51 @@ const AdminDosen = () => {
 
   /* =====================================================
      LOAD DATA SAAT HALAMAN DIBUKA
+
+     Tidak memanggil fetchDosen() langsung dari useEffect
+     agar tidak memicu warning setState synchronous
+     dari ESLint.
   ===================================================== */
 
   useEffect(() => {
-    fetchDosen();
-  }, [fetchDosen]);
+    let isMounted = true;
+
+    const loadDataAwal = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users`);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Gagal mengambil data dosen.");
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
+        if (result.success) {
+          const dataDosen = result.data.filter((user) => user.role === "dosen");
+
+          setDosen(dataDosen);
+        } else {
+          console.error("Gagal mengambil data dosen:", result.message);
+        }
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        console.error("Gagal memuat data dosen:", error);
+      }
+    };
+
+    loadDataAwal();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   /* =====================================================
      SEARCH DOSEN
@@ -387,8 +429,8 @@ const AdminDosen = () => {
                       </td>
 
                       {/* 
-                          profiles.nim digunakan
-                          sebagai penyimpanan NIDN
+                            profiles.nim digunakan
+                            sebagai penyimpanan NIDN
                         */}
 
                       <td>{item.nim || "-"}</td>

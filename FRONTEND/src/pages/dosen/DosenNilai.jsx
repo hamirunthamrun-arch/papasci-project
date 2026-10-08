@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   FaBookOpen,
   FaClipboardList,
+  FaExternalLinkAlt,
   FaGraduationCap,
   FaSearch,
   FaTasks,
@@ -18,17 +19,18 @@ import { getAllQuizResults } from "../../service/quizResultService";
 import { getModules } from "../../service/moduleService";
 import { getAssignments } from "../../service/assignmentService";
 import { getSubmissionsByAssignment } from "../../service/assignmentSubmissionService";
+import { getPedagogicScores } from "../../service/pedagogicScoreService";
 
 /* =========================================================
    KONFIGURASI SUPABASE STORAGE
 ========================================================= */
 
-const SUPABASE_URL = (
-  import.meta.env.VITE_SUPABASE_URL || ""
-).replace(/\/+$/, "");
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(
+  /\/+$/,
+  "",
+);
 
-const SUPABASE_ANON_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
 const STORAGE_BUCKET = "media-storage";
 
@@ -47,7 +49,6 @@ const getProfileAvatarUrl = (path) => {
     return "";
   }
 
-  // Jika database sudah menyimpan URL lengkap, gunakan URL tersebut.
   if (/^https?:\/\//i.test(cleanPath)) {
     return cleanPath;
   }
@@ -56,7 +57,6 @@ const getProfileAvatarUrl = (path) => {
     return "";
   }
 
-  // Mendukung path dengan atau tanpa awalan nama bucket.
   const normalizedPath = cleanPath
     .replace(/^\/+/, "")
     .replace(/^media-storage\//, "");
@@ -83,9 +83,7 @@ const getProfileHeaders = () => {
   }
 
   if (!token) {
-    throw new Error(
-      "Sesi login tidak ditemukan. Silakan login kembali.",
-    );
+    throw new Error("Sesi login tidak ditemukan. Silakan login kembali.");
   }
 
   return {
@@ -101,9 +99,7 @@ const getProfileHeaders = () => {
 const getProfilesByIds = async (userIds) => {
   const uniqueIds = [
     ...new Set(
-      userIds.filter(
-        (id) => typeof id === "string" && id.trim() !== "",
-      ),
+      userIds.filter((id) => typeof id === "string" && id.trim() !== ""),
     ),
   ];
 
@@ -147,12 +143,10 @@ function StudentAvatar({ name, avatarUrl, large = false }) {
   const [failedUrl, setFailedUrl] = useState("");
 
   const imageUrl = getProfileAvatarUrl(avatarUrl);
-  const imageFailed = Boolean(
-    imageUrl && failedUrl === imageUrl,
-  );
 
-  const initial =
-    (name || "Mahasiswa").trim().charAt(0).toUpperCase() || "M";
+  const imageFailed = Boolean(imageUrl && failedUrl === imageUrl);
+
+  const initial = (name || "Mahasiswa").trim().charAt(0).toUpperCase() || "M";
 
   return (
     <div
@@ -167,9 +161,7 @@ function StudentAvatar({ name, avatarUrl, large = false }) {
           onError={() => setFailedUrl(imageUrl)}
         />
       ) : (
-        <span className="dosen-nilai-avatar-fallback">
-          {initial}
-        </span>
+        <span className="dosen-nilai-avatar-fallback">{initial}</span>
       )}
     </div>
   );
@@ -195,7 +187,7 @@ const normalizeAssignment = (assignment) => ({
 });
 
 /* =========================================================
-   GABUNGKAN DATA NILAI DAN STATUS TUGAS
+   GABUNGKAN DATA NILAI
 ========================================================= */
 
 const buildStudentData = ({
@@ -205,6 +197,7 @@ const buildStudentData = ({
   pretestResults,
   quizResults,
   submissions,
+  pedagogicScores,
 }) => {
   return students.map((student) => {
     /* =====================================================
@@ -238,17 +231,14 @@ const buildStudentData = ({
         (result) => result.module_id === module.id,
       );
 
-      // Ambil hasil pretest terbaru.
       const latestPretest =
         modulePretests.length > 0
           ? [...modulePretests].sort(
               (a, b) =>
-                new Date(b.submitted_at || 0) -
-                new Date(a.submitted_at || 0),
+                new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0),
             )[0]
           : null;
 
-      // Ambil percobaan terakhir untuk setiap quiz.
       const quizMap = new Map();
 
       moduleQuizzes.forEach((result) => {
@@ -265,14 +255,11 @@ const buildStudentData = ({
 
       const latestQuizResults = Array.from(quizMap.values());
 
-      // Jika ada beberapa quiz dalam satu module,
-      // tampilkan nilai quiz dengan waktu pengumpulan terbaru.
       const latestQuiz =
         latestQuizResults.length > 0
           ? [...latestQuizResults].sort(
               (a, b) =>
-                new Date(b.submitted_at || 0) -
-                new Date(a.submitted_at || 0),
+                new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0),
             )[0]
           : null;
 
@@ -300,10 +287,7 @@ const buildStudentData = ({
       let status = "belum_dikumpulkan";
 
       if (isSubmitted) {
-        status =
-          submission.status === "dinilai"
-            ? "dinilai"
-            : "dikumpulkan";
+        status = submission.status === "dinilai" ? "dinilai" : "dikumpulkan";
       }
 
       return {
@@ -312,14 +296,30 @@ const buildStudentData = ({
         isSubmitted,
         status,
         score:
-          submission?.score !== null &&
-          submission?.score !== undefined
+          submission?.score !== null && submission?.score !== undefined
             ? submission.score
             : null,
         submittedAt: submission?.submitted_at ?? null,
         submissionUrl: submission?.submission_url ?? null,
       };
     });
+
+    /* =====================================================
+       NILAI KOMPETENSI PEDAGOGIK
+    ===================================================== */
+
+    const studentPedagogicScores = pedagogicScores.filter(
+      (result) => result.student_id === student.id,
+    );
+
+    const latestPedagogicScore =
+      studentPedagogicScores.length > 0
+        ? [...studentPedagogicScores].sort(
+            (a, b) =>
+              new Date(b.updated_at || b.created_at || 0) -
+              new Date(a.updated_at || a.created_at || 0),
+          )[0]
+        : null;
 
     return {
       id: student.id,
@@ -328,6 +328,18 @@ const buildStudentData = ({
       avatar_url: student.avatar_url || "",
       moduleScores,
       taskScores,
+
+      /* DATA KOMPETENSI PEDAGOGIK */
+      pedagogicScore: latestPedagogicScore?.nilai ?? null,
+
+      pedagogicStatus: latestPedagogicScore?.status ?? null,
+
+      pedagogicVideoUrl: latestPedagogicScore?.vidio_url ?? null,
+
+      pedagogicUpdatedAt:
+        latestPedagogicScore?.updated_at ??
+        latestPedagogicScore?.created_at ??
+        null,
     };
   });
 };
@@ -340,13 +352,22 @@ function DosenNilai() {
   const [students, setStudents] = useState([]);
   const [modules, setModules] = useState([]);
   const [assignments, setAssignments] = useState([]);
+
   const [pretestResults, setPretestResults] = useState([]);
+
   const [quizResults, setQuizResults] = useState([]);
+
   const [submissions, setSubmissions] = useState([]);
 
+  /* DATA KOMPETENSI PEDAGOGIK */
+  const [pedagogicScores, setPedagogicScores] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState("");
+
   const [selectedStudent, setSelectedStudent] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
 
   /* =======================================================
@@ -366,20 +387,22 @@ function DosenNilai() {
           assignmentData,
           pretestData,
           quizData,
+          pedagogicData,
         ] = await Promise.all([
           getModules(),
           getAssignments(),
           getAllPretestResults(),
           getAllQuizResults(),
+
+          /* DATA NILAI KOMPETENSI PEDAGOGIK */
+          getPedagogicScores(),
         ]);
 
         /* ===============================================
            NORMALISASI MODULE
         =============================================== */
 
-        const normalizedModules = (
-          Array.isArray(moduleData) ? moduleData : []
-        )
+        const normalizedModules = (Array.isArray(moduleData) ? moduleData : [])
           .filter(
             (module) =>
               module.status === "publik" ||
@@ -397,12 +420,26 @@ function DosenNilai() {
           Array.isArray(assignmentData) ? assignmentData : []
         ).map(normalizeAssignment);
 
+        /* ===============================================
+           NORMALISASI PRETEST
+        =============================================== */
+
         const normalizedPretests = Array.isArray(pretestData)
           ? pretestData
           : [];
 
-        const normalizedQuizzes = Array.isArray(quizData)
-          ? quizData
+        /* ===============================================
+           NORMALISASI QUIZ
+        =============================================== */
+
+        const normalizedQuizzes = Array.isArray(quizData) ? quizData : [];
+
+        /* ===============================================
+           NORMALISASI PEDAGOGIK
+        =============================================== */
+
+        const normalizedPedagogicScores = Array.isArray(pedagogicData)
+          ? pedagogicData
           : [];
 
         /* ===============================================
@@ -411,7 +448,10 @@ function DosenNilai() {
 
         const studentMap = new Map();
 
-        // Mahasiswa yang memiliki hasil pretest.
+        /* -----------------------------------------------
+           Mahasiswa dari PRETEST
+        ------------------------------------------------ */
+
         normalizedPretests.forEach((result) => {
           if (!result.student_id) return;
 
@@ -430,7 +470,10 @@ function DosenNilai() {
           }
         });
 
-        // Mahasiswa yang memiliki hasil quiz.
+        /* -----------------------------------------------
+           Mahasiswa dari QUIZ
+        ------------------------------------------------ */
+
         normalizedQuizzes.forEach((result) => {
           if (!result.student_id) return;
 
@@ -456,9 +499,7 @@ function DosenNilai() {
         const submissionResults = await Promise.all(
           normalizedAssignments.map(async (assignment) => {
             try {
-              const data = await getSubmissionsByAssignment(
-                assignment.id,
-              );
+              const data = await getSubmissionsByAssignment(assignment.id);
 
               return Array.isArray(data) ? data : [];
             } catch (submissionError) {
@@ -495,7 +536,30 @@ function DosenNilai() {
         });
 
         /* ===============================================
-           AMBIL FOTO PROFIL DARI TABEL PROFILES
+           TAMBAHKAN MAHASISWA DARI
+           KOMPETENSI PEDAGOGIK
+        =============================================== */
+
+        normalizedPedagogicScores.forEach((result) => {
+          if (!result.student_id) return;
+
+          const profile = result.profiles || {};
+
+          if (!studentMap.has(result.student_id)) {
+            studentMap.set(result.student_id, {
+              id: result.student_id,
+              nama_lengkap:
+                profile.nama_lengkap ||
+                result.nama_lengkap ||
+                "Nama tidak tersedia",
+              nim: profile.nim || result.nim || "-",
+              avatar_url: profile.avatar_url || "",
+            });
+          }
+        });
+
+        /* ===============================================
+           AMBIL FOTO PROFIL
         =============================================== */
 
         const studentIds = Array.from(studentMap.keys());
@@ -507,13 +571,9 @@ function DosenNilai() {
             const profileData = await getProfilesByIds(studentIds);
 
             profileMap = new Map(
-              profileData.map((profile) => [
-                profile.id,
-                profile,
-              ]),
+              profileData.map((profile) => [profile.id, profile]),
             );
           } catch (profileError) {
-            // Nilai tetap ditampilkan meskipun foto profil gagal diambil.
             console.error(
               "Gagal mengambil foto profil mahasiswa:",
               profileError,
@@ -525,22 +585,22 @@ function DosenNilai() {
            GABUNGKAN DATA PROFIL
         =============================================== */
 
-        const studentList = Array.from(studentMap.values()).map(
-          (student) => {
-            const profile = profileMap.get(student.id);
+        const studentList = Array.from(studentMap.values()).map((student) => {
+          const profile = profileMap.get(student.id);
 
-            return {
-              ...student,
-              nama_lengkap:
-                profile?.nama_lengkap ||
-                student.nama_lengkap ||
-                "Nama tidak tersedia",
-              nim: profile?.nim || student.nim || "-",
-              avatar_url:
-                profile?.avatar_url || student.avatar_url || "",
-            };
-          },
-        );
+          return {
+            ...student,
+
+            nama_lengkap:
+              profile?.nama_lengkap ||
+              student.nama_lengkap ||
+              "Nama tidak tersedia",
+
+            nim: profile?.nim || student.nim || "-",
+
+            avatar_url: profile?.avatar_url || student.avatar_url || "",
+          };
+        });
 
         if (cancelled) return;
 
@@ -549,10 +609,17 @@ function DosenNilai() {
         =============================================== */
 
         setModules(normalizedModules);
+
         setAssignments(normalizedAssignments);
+
         setPretestResults(normalizedPretests);
+
         setQuizResults(normalizedQuizzes);
+
         setSubmissions(allSubmissions);
+
+        setPedagogicScores(normalizedPedagogicScores);
+
         setStudents(studentList);
       } catch (loadError) {
         console.error("Gagal mengambil data nilai:", loadError);
@@ -589,6 +656,7 @@ function DosenNilai() {
       pretestResults,
       quizResults,
       submissions,
+      pedagogicScores,
     });
   }, [
     students,
@@ -597,6 +665,7 @@ function DosenNilai() {
     pretestResults,
     quizResults,
     submissions,
+    pedagogicScores,
   ]);
 
   /* =======================================================
@@ -606,7 +675,9 @@ function DosenNilai() {
   const filteredStudents = useMemo(() => {
     const keyword = searchTerm.toLowerCase().trim();
 
-    if (!keyword) return studentsWithScores;
+    if (!keyword) {
+      return studentsWithScores;
+    }
 
     return studentsWithScores.filter(
       (student) =>
@@ -620,16 +691,22 @@ function DosenNilai() {
   ======================================================= */
 
   const totalStudents = students.length;
+
   const totalModules = modules.length;
+
   const totalTasks = assignments.length;
 
   /* =======================================================
-     BUKA DAN TUTUP DETAIL
+     BUKA DETAIL
   ======================================================= */
 
   const handleViewStudent = (student) => {
     setSelectedStudent(student);
   };
+
+  /* =======================================================
+     TUTUP DETAIL
+  ======================================================= */
 
   const handleCloseDetail = () => {
     setSelectedStudent(null);
@@ -666,6 +743,7 @@ function DosenNilai() {
 
           <div>
             <span>Total Mahasiswa</span>
+
             <strong>{loading ? "..." : totalStudents}</strong>
           </div>
         </div>
@@ -677,6 +755,7 @@ function DosenNilai() {
 
           <div>
             <span>Jumlah Module</span>
+
             <strong>{loading ? "..." : totalModules}</strong>
           </div>
         </div>
@@ -688,6 +767,7 @@ function DosenNilai() {
 
           <div>
             <span>Jumlah Tugas</span>
+
             <strong>{loading ? "..." : totalTasks}</strong>
           </div>
         </div>
@@ -695,11 +775,7 @@ function DosenNilai() {
 
       {/* ERROR */}
 
-      {error && (
-        <div className="alert alert-danger">
-          {error}
-        </div>
-      )}
+      {error && <div className="alert alert-danger">{error}</div>}
 
       {/* PENCARIAN */}
 
@@ -737,29 +813,27 @@ function DosenNilai() {
         <div className="dosen-nilai-list-header">
           <div>
             <h2>Daftar Mahasiswa</h2>
-            <p>
-              Pilih mahasiswa untuk melihat detail nilai dan status tugas
-            </p>
+
+            <p>Pilih mahasiswa untuk melihat detail nilai dan status tugas</p>
           </div>
         </div>
 
         {loading ? (
           <div className="dosen-nilai-empty">
             <FaUserGraduate />
+
             <h3>Memuat data nilai...</h3>
+
             <p>
               Sedang mengambil data mahasiswa, module, quiz, pretest,
-              pengumpulan tugas, dan foto profil.
+              pengumpulan tugas, kompetensi pedagogik, dan foto profil.
             </p>
           </div>
         ) : filteredStudents.length > 0 ? (
           <div className="dosen-nilai-student-list">
             {filteredStudents.map((student) => (
-              <div
-                className="dosen-nilai-student-card"
-                key={student.id}
-              >
-                {/* IDENTITAS MAHASISWA */}
+              <div className="dosen-nilai-student-card" key={student.id}>
+                {/* IDENTITAS */}
 
                 <div className="dosen-nilai-student-info">
                   <StudentAvatar
@@ -769,6 +843,7 @@ function DosenNilai() {
 
                   <div>
                     <h3>{student.name}</h3>
+
                     <span>NIM: {student.nim}</span>
                   </div>
                 </div>
@@ -788,30 +863,26 @@ function DosenNilai() {
         ) : (
           <div className="dosen-nilai-empty">
             <FaUserGraduate />
+
             <h3>Mahasiswa tidak ditemukan</h3>
 
             <p>
-              Tidak ada mahasiswa yang sesuai dengan pencarian
-              "{searchTerm}".
+              Tidak ada mahasiswa yang sesuai dengan pencarian "{searchTerm}".
             </p>
 
-            <button
-              type="button"
-              onClick={() => setSearchTerm("")}
-            >
+            <button type="button" onClick={() => setSearchTerm("")}>
               Tampilkan Semua
             </button>
           </div>
         )}
       </div>
 
-      {/* DETAIL NILAI MAHASISWA */}
+      {/* ===================================================
+          DETAIL NILAI MAHASISWA
+      =================================================== */}
 
       {selectedStudent && (
-        <div
-          className="dosen-nilai-modal-overlay"
-          onClick={handleCloseDetail}
-        >
+        <div className="dosen-nilai-modal-overlay" onClick={handleCloseDetail}>
           <div
             className="dosen-nilai-detail-modal"
             onClick={(event) => event.stopPropagation()}
@@ -828,7 +899,9 @@ function DosenNilai() {
 
                 <div>
                   <span>DETAIL NILAI MAHASISWA</span>
+
                   <h2>{selectedStudent.name}</h2>
+
                   <p>NIM: {selectedStudent.nim}</p>
                 </div>
               </div>
@@ -846,7 +919,9 @@ function DosenNilai() {
             {/* ISI MODAL */}
 
             <div className="dosen-nilai-modal-body">
-              {/* NILAI MODULE */}
+              {/* =================================================
+                  NILAI MODULE
+              ================================================= */}
 
               <section className="dosen-nilai-section">
                 <div className="dosen-nilai-section-title">
@@ -856,6 +931,7 @@ function DosenNilai() {
 
                   <div>
                     <h3>Nilai Module</h3>
+
                     <p>Nilai pretest dan quiz setiap module</p>
                   </div>
                 </div>
@@ -874,19 +950,17 @@ function DosenNilai() {
                         <div className="dosen-nilai-module-scores">
                           <div>
                             <span>Pretest</span>
+
                             <strong>
-                              {module.pretest !== null
-                                ? module.pretest
-                                : "—"}
+                              {module.pretest !== null ? module.pretest : "—"}
                             </strong>
                           </div>
 
                           <div>
                             <span>Quiz</span>
+
                             <strong>
-                              {module.quiz !== null
-                                ? module.quiz
-                                : "—"}
+                              {module.quiz !== null ? module.quiz : "—"}
                             </strong>
                           </div>
                         </div>
@@ -898,7 +972,9 @@ function DosenNilai() {
                 </div>
               </section>
 
-              {/* STATUS DAN NILAI TUGAS */}
+              {/* =================================================
+                  STATUS DAN NILAI TUGAS
+              ================================================= */}
 
               <section className="dosen-nilai-section">
                 <div className="dosen-nilai-section-title">
@@ -908,6 +984,7 @@ function DosenNilai() {
 
                   <div>
                     <h3>Status dan Nilai Tugas</h3>
+
                     <p>
                       Informasi pengumpulan dan hasil penilaian setiap tugas
                     </p>
@@ -917,10 +994,7 @@ function DosenNilai() {
                 <div className="dosen-nilai-task-list">
                   {selectedStudent.taskScores.length > 0 ? (
                     selectedStudent.taskScores.map((task) => (
-                      <div
-                        className="dosen-nilai-task-card"
-                        key={task.taskId}
-                      >
+                      <div className="dosen-nilai-task-card" key={task.taskId}>
                         <div className="dosen-nilai-task-name">
                           <strong>{task.taskTitle}</strong>
                         </div>
@@ -951,6 +1025,82 @@ function DosenNilai() {
                   )}
                 </div>
               </section>
+
+              {/* =================================================
+                  KOMPETENSI PEDAGOGIK
+              ================================================= */}
+
+              <section className="dosen-nilai-section">
+                <div className="dosen-nilai-section-title">
+                  <div className="dosen-nilai-section-icon purple">
+                    <FaGraduationCap />
+                  </div>
+
+                  <div>
+                    <h3>Nilai Kompetensi Pedagogik</h3>
+
+                    <p>Hasil penilaian video mengajar mahasiswa</p>
+                  </div>
+                </div>
+
+                <div className="dosen-nilai-pedagogic-card">
+                  {/* NILAI */}
+
+                  <div className="dosen-nilai-pedagogic-main">
+                    <div className="dosen-nilai-pedagogic-label">
+                      Nilai Kompetensi Pedagogik
+                    </div>
+
+                    <div className="dosen-nilai-pedagogic-score">
+                      <strong>
+                        {selectedStudent.pedagogicScore !== null
+                          ? selectedStudent.pedagogicScore
+                          : "—"}
+                      </strong>
+
+                      <span>/ 100</span>
+                    </div>
+                  </div>
+
+                  {/* STATUS */}
+
+                  <div className="dosen-nilai-pedagogic-status">
+                    {selectedStudent.pedagogicStatus === "dinilai" ? (
+                      <span className="pedagogic-status graded">
+                        Sudah Dinilai
+                      </span>
+                    ) : selectedStudent.pedagogicStatus === "dikumpulkan" ? (
+                      <span className="pedagogic-status waiting">
+                        Menunggu Penilaian
+                      </span>
+                    ) : selectedStudent.pedagogicStatus ===
+                      "perlu_dinilai_ulang" ? (
+                      <span className="pedagogic-status resubmission">
+                        Menunggu Penilaian Ulang
+                      </span>
+                    ) : (
+                      <span className="pedagogic-status empty">
+                        Belum Mengumpulkan
+                      </span>
+                    )}
+                  </div>
+
+                  {/* VIDEO */}
+
+                  {selectedStudent.pedagogicVideoUrl && (
+                    <a
+                      href={selectedStudent.pedagogicVideoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dosen-nilai-pedagogic-video"
+                    >
+                      <FaExternalLinkAlt />
+
+                      <span>Lihat Video Mengajar</span>
+                    </a>
+                  )}
+                </div>
+              </section>
             </div>
 
             {/* FOOTER MODAL */}
@@ -960,15 +1110,12 @@ function DosenNilai() {
                 <FaTrophy />
 
                 <span>
-                  Status pengumpulan dan nilai ditampilkan berdasarkan
-                  data submission yang tersedia.
+                  Status pengumpulan dan nilai ditampilkan berdasarkan data yang
+                  tersedia.
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={handleCloseDetail}
-              >
+              <button type="button" onClick={handleCloseDetail}>
                 Tutup
               </button>
             </div>

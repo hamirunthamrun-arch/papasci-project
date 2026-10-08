@@ -19,54 +19,102 @@ function DosenDashboard() {
     tugas: 0,
   });
 
-  const fetchDashboardStats = async () => {
-    try {
-      // Ambil token dari localStorage atau sessionStorage berdasarkan key yang benar ("access_token")
-      const token =
-        localStorage.getItem("access_token") ||
-        sessionStorage.getItem("access_token");
-
-      const headers = {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
-
-      const [userRes, moduleRes, pretestRes, quizRes, assignmentRes] = await Promise.all([
-        fetch(`${API_URL}/users`, { headers }).then((res) => res.json()).catch(() => null),
-        fetch(`${API_URL}/modules`, { headers }).then((res) => res.json()).catch(() => null),
-        fetch(`${API_URL}/pretests`, { headers }).then((res) => res.json()).catch(() => null),
-        fetch(`${API_URL}/quiz`, { headers }).then((res) => res.json()).catch(() => null),
-        fetch(`${API_URL}/assignments`, { headers }).then((res) => res.json()).catch(() => null),
-      ]);
-
-      const getLength = (res) => {
-        if (!res) return 0;
-        if (Array.isArray(res)) return res.length;
-        if (Array.isArray(res.data)) return res.data.length;
-        return 0;
-      };
-
-      let totalMahasiswa = 0;
-      if (userRes) {
-        const users = Array.isArray(userRes) ? userRes : (userRes.data || []);
-        totalMahasiswa = users.filter(
-          (user) => user.role === "mahasiswa" || !user.role
-        ).length;
-      }
-
-      setStats({
-        mahasiswa: totalMahasiswa,
-        modules: getLength(moduleRes),
-        evaluasi: getLength(pretestRes) + getLength(quizRes),
-        tugas: getLength(assignmentRes),
-      });
-    } catch (error) {
-      console.error("Gagal memuat statistik dashboard dosen:", error);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchDashboardStats = async () => {
+      try {
+        // Ambil token dari localStorage atau sessionStorage
+        const token =
+          localStorage.getItem("access_token") ||
+          sessionStorage.getItem("access_token");
+
+        const headers = {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        const [
+          userRes,
+          moduleRes,
+          pretestRes,
+          quizRes,
+          assignmentRes,
+        ] = await Promise.all([
+          fetch(`${API_URL}/users`, { headers })
+            .then((res) => res.json())
+            .catch(() => null),
+
+          fetch(`${API_URL}/modules`, { headers })
+            .then((res) => res.json())
+            .catch(() => null),
+
+          fetch(`${API_URL}/pretests`, { headers })
+            .then((res) => res.json())
+            .catch(() => null),
+
+          fetch(`${API_URL}/quiz`, { headers })
+            .then((res) => res.json())
+            .catch(() => null),
+
+          fetch(`${API_URL}/assignments`, { headers })
+            .then((res) => res.json())
+            .catch(() => null),
+        ]);
+
+        // Fungsi untuk mengambil jumlah data
+        const getLength = (res) => {
+          if (!res) return 0;
+
+          if (Array.isArray(res)) {
+            return res.length;
+          }
+
+          if (Array.isArray(res.data)) {
+            return res.data.length;
+          }
+
+          return 0;
+        };
+
+        // Hitung jumlah mahasiswa
+        let totalMahasiswa = 0;
+
+        if (userRes) {
+          const users = Array.isArray(userRes)
+            ? userRes
+            : userRes.data || [];
+
+          totalMahasiswa = users.filter(
+            (user) =>
+              user.role === "mahasiswa" || !user.role
+          ).length;
+        }
+
+        // Update state hanya jika component masih terpasang
+        if (isMounted) {
+          setStats({
+            mahasiswa: totalMahasiswa,
+            modules: getLength(moduleRes),
+            evaluasi:
+              getLength(pretestRes) +
+              getLength(quizRes),
+            tugas: getLength(assignmentRes),
+          });
+        }
+      } catch (error) {
+        console.error(
+          "Gagal memuat statistik dashboard dosen:",
+          error
+        );
+      }
+    };
+
     fetchDashboardStats();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const statistik = [
@@ -108,10 +156,13 @@ function DosenDashboard() {
             <FaChartLine />
             DASHBOARD DOSEN
           </span>
+
           <h1>Selamat Datang, Dosen 👋</h1>
+
           <p>
-            Kelola materi pembelajaran, evaluasi, laboratorium simulasi,
-            microteaching, dan penilaian mahasiswa melalui PAPASCI.
+            Kelola materi pembelajaran, evaluasi,
+            laboratorium simulasi, microteaching, dan
+            penilaian mahasiswa melalui PAPASCI.
           </p>
         </div>
       </div>
@@ -122,7 +173,10 @@ function DosenDashboard() {
             className={`dosen-statistik-card ${item.className}`}
             key={item.title}
           >
-            <div className="dosen-statistik-icon">{item.icon}</div>
+            <div className="dosen-statistik-icon">
+              {item.icon}
+            </div>
+
             <div className="dosen-statistik-content">
               <span>{item.title}</span>
               <strong>{item.value}</strong>

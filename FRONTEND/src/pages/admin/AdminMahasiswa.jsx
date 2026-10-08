@@ -52,8 +52,47 @@ const AdminMahasiswa = () => {
   ===================================================== */
 
   useEffect(() => {
-    fetchMahasiswa();
-  }, [fetchMahasiswa]);
+    let isMounted = true;
+
+    const loadDataAwal = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users`);
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Gagal mengambil data mahasiswa.");
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
+        if (result.success) {
+          // Ambil hanya user dengan role mahasiswa
+          // User tanpa role tetap dianggap mahasiswa
+          const dataMahasiswa = result.data.filter(
+            (user) => user.role === "mahasiswa" || !user.role,
+          );
+
+          setMahasiswa(dataMahasiswa);
+        } else {
+          console.error("Gagal mengambil data mahasiswa:", result.message);
+        }
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        console.error("Gagal memuat data mahasiswa:", error);
+      }
+    };
+
+    loadDataAwal();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   /* =====================================================
      FILTER / SEARCH

@@ -225,7 +225,7 @@ function DosenSidebar({ showMobileSidebar, closeMobileSidebar }) {
             onClick={closeMobileSidebar}
           >
             <FaClipboardList />
-            <span>PenilaianKompetensi</span>
+            <span>Penilaian Kompetensi</span>
           </NavLink>
 
           {/* =================================================

@@ -11,44 +11,98 @@ import {
 
 import "../../css/admin/AdminProfil.css";
 
-const API_URL = "http://localhost:5000/api"; // Alamat base URL backend Express Anda
+const API_URL = "http://localhost:5000/api";
 
+// ======================================================
+// COMPONENT
+// ======================================================
 function AdminProfil() {
   const [isEditing, setIsEditing] = useState(false);
-  const [adminId, setAdminId] = useState(null); // Menyimpan ID admin yang sedang login
+  const [adminId, setAdminId] = useState(null);
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("Administrator");
 
-  // Contoh: Untuk sementara kita ambil data profil pertama dengan role admin atau dari localStorage
-  // Anda bisa menyesuaikan cara penyimpanan ID admin saat proses login nanti.
+  // ======================================================
+  // AMBIL DATA PROFIL ADMIN
+  // Fungsi ini hanya mengambil data dan mengembalikannya.
+  // Tidak melakukan setState.
+  // ======================================================
   const fetchAdminProfile = async () => {
     try {
       const response = await fetch(`${API_URL}/users`);
       const result = await response.json();
 
-      if (result.success && Array.isArray(result.data)) {
-        // Cari user yang rolenya admin (atau ambil data pertama jika belum ada sistem login spesifik)
-        const adminData = result.data.find(
-          (user) => user.role === "admin" || user.role === "Administrator"
-        ) || result.data[0];
-
-        if (adminData) {
-          setAdminId(adminData.id);
-          setNama(adminData.nama_lengkap || adminData.nama || "Administrator PAPASCI");
-          setEmail(adminData.email || "admin@papasci.id");
-          setRole(adminData.role ? adminData.role.charAt(0).toUpperCase() + adminData.role.slice(1) : "Administrator");
-        }
+      if (!response.ok) {
+        throw new Error(result.message || "Gagal mengambil data profil admin.");
       }
+
+      if (result.success && Array.isArray(result.data)) {
+        const adminData =
+          result.data.find(
+            (user) => user.role === "admin" || user.role === "Administrator",
+          ) || result.data[0];
+
+        return adminData || null;
+      }
+
+      return null;
     } catch (error) {
       console.error("Gagal memuat profil admin:", error);
+
+      return null;
     }
   };
 
+  // ======================================================
+  // ISI DATA KE STATE
+  // ======================================================
+  const applyAdminProfile = (adminData) => {
+    if (!adminData) {
+      return;
+    }
+
+    setAdminId(adminData.id);
+
+    setNama(
+      adminData.nama_lengkap || adminData.nama || "Administrator PAPASCI",
+    );
+
+    setEmail(adminData.email || "admin@papasci.id");
+
+    setRole(
+      adminData.role
+        ? adminData.role.charAt(0).toUpperCase() + adminData.role.slice(1)
+        : "Administrator",
+    );
+  };
+
+  // ======================================================
+  // LOAD PROFIL PERTAMA KALI
+  // ======================================================
   useEffect(() => {
-    fetchAdminProfile();
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      const adminData = await fetchAdminProfile();
+
+      if (!isMounted || !adminData) {
+        return;
+      }
+
+      applyAdminProfile(adminData);
+    };
+
+    loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+  // ======================================================
+  // SIMPAN PERUBAHAN PROFIL
+  // ======================================================
   const handleSave = async (event) => {
     event.preventDefault();
 
@@ -60,7 +114,9 @@ function AdminProfil() {
     try {
       const response = await fetch(`${API_URL}/users/${adminId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           nama: nama,
           email: email,
@@ -75,18 +131,33 @@ function AdminProfil() {
       }
 
       alert("Profil admin berhasil diperbarui.");
+
       setIsEditing(false);
-      fetchAdminProfile();
+
+      // Ambil ulang data terbaru
+      const adminData = await fetchAdminProfile();
+
+      applyAdminProfile(adminData);
     } catch (error) {
       alert("Terjadi kesalahan: " + error.message);
     }
   };
 
-  const handleCancel = () => {
+  // ======================================================
+  // BATAL EDIT
+  // ======================================================
+  const handleCancel = async () => {
     setIsEditing(false);
-    fetchAdminProfile(); // Kembalikan ke data semula
+
+    // Kembalikan data dari server
+    const adminData = await fetchAdminProfile();
+
+    applyAdminProfile(adminData);
   };
 
+  // ======================================================
+  // RENDER
+  // ======================================================
   return (
     <div className="admin-profile-page">
       {/* =================================================
@@ -101,9 +172,7 @@ function AdminProfil() {
 
           <h1>Profil Admin</h1>
 
-          <p>
-            Kelola informasi akun administrator PAPASCI.
-          </p>
+          <p>Kelola informasi akun administrator PAPASCI.</p>
         </div>
       </div>
 
@@ -179,25 +248,19 @@ function AdminProfil() {
             </div>
           </div>
         ) : (
-          <form
-            className="admin-profile-form"
-            onSubmit={handleSave}
-          >
+          <form className="admin-profile-form" onSubmit={handleSave}>
             {/* NAMA */}
             <div className="admin-profile-field">
-              <label htmlFor="adminName">
-                Nama Admin
-              </label>
+              <label htmlFor="adminName">Nama Admin</label>
 
               <div className="admin-profile-input">
                 <FaUser />
+
                 <input
                   id="adminName"
                   type="text"
                   value={nama}
-                  onChange={(event) =>
-                    setNama(event.target.value)
-                  }
+                  onChange={(event) => setNama(event.target.value)}
                   required
                 />
               </div>
@@ -205,19 +268,16 @@ function AdminProfil() {
 
             {/* EMAIL */}
             <div className="admin-profile-field">
-              <label htmlFor="adminEmail">
-                Email
-              </label>
+              <label htmlFor="adminEmail">Email</label>
 
               <div className="admin-profile-input">
                 <FaEnvelope />
+
                 <input
                   id="adminEmail"
                   type="email"
                   value={email}
-                  onChange={(event) =>
-                    setEmail(event.target.value)
-                  }
+                  onChange={(event) => setEmail(event.target.value)}
                   required
                 />
               </div>
@@ -233,8 +293,7 @@ function AdminProfil() {
               </div>
 
               <small>
-                Role administrator tidak dapat diubah
-                dari halaman ini.
+                Role administrator tidak dapat diubah dari halaman ini.
               </small>
             </div>
 
@@ -249,10 +308,7 @@ function AdminProfil() {
                 Batal
               </button>
 
-              <button
-                type="submit"
-                className="admin-profile-save-btn"
-              >
+              <button type="submit" className="admin-profile-save-btn">
                 <FaSave />
                 Simpan Perubahan
               </button>

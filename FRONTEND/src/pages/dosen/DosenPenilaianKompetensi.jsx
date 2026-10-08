@@ -34,7 +34,10 @@ const getPublicUrl = (path) => {
     return path;
   }
 
-  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+  const encodedPath = path
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/");
 
   return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodedPath}`;
 };
@@ -58,27 +61,24 @@ function DosenPenilaianKompetensi() {
   // ======================================================
   // LOAD DATA MAHASISWA
   // ======================================================
-  const loadMahasiswa = useCallback(async (showLoading = true) => {
+  const loadMahasiswa = useCallback(async () => {
     try {
-      if (showLoading) {
-        setLoading(true);
-      }
-
-      setPageError("");
-
       const data = await getPedagogicScores();
 
       setMahasiswa(data || []);
+      setPageError("");
     } catch (error) {
-      console.error("Gagal mengambil data penilaian kompetensi:", error);
+      console.error(
+        "Gagal mengambil data penilaian kompetensi:",
+        error
+      );
 
       setPageError(
-        error.message || "Gagal mengambil data penilaian mahasiswa.",
+        error.message ||
+          "Gagal mengambil data penilaian mahasiswa."
       );
     } finally {
-      if (showLoading) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   }, []);
 
@@ -86,8 +86,45 @@ function DosenPenilaianKompetensi() {
   // LOAD PERTAMA KALI
   // ======================================================
   useEffect(() => {
-    loadMahasiswa();
-  }, [loadMahasiswa]);
+    let isMounted = true;
+
+    const loadDataAwal = async () => {
+      try {
+        const data = await getPedagogicScores();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setMahasiswa(data || []);
+        setPageError("");
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        console.error(
+          "Gagal mengambil data penilaian kompetensi:",
+          error
+        );
+
+        setPageError(
+          error.message ||
+            "Gagal mengambil data penilaian mahasiswa."
+        );
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadDataAwal();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // ======================================================
   // HANYA MAHASISWA YANG SUDAH MENGUMPULKAN VIDEO
@@ -120,25 +157,28 @@ function DosenPenilaianKompetensi() {
   // ======================================================
   // TOTAL MAHASISWA YANG SUDAH MENGUMPULKAN
   // ======================================================
-  const totalMahasiswaMengumpulkan = mahasiswaMengumpulkan.length;
+  const totalMahasiswaMengumpulkan =
+    mahasiswaMengumpulkan.length;
 
   // ======================================================
   // TOTAL VIDEO YANG PERLU DINILAI ULANG
   // ======================================================
-  const totalPerluDinilaiUlang = mahasiswaMengumpulkan.filter(
-    (item) => item.status === "perlu_dinilai_ulang",
-  ).length;
+  const totalPerluDinilaiUlang =
+    mahasiswaMengumpulkan.filter(
+      (item) => item.status === "perlu_dinilai_ulang"
+    ).length;
 
   // ======================================================
   // TOTAL YANG BELUM DINILAI
   // ======================================================
-  const totalBelumDinilai = mahasiswaMengumpulkan.filter(
-    (item) =>
-      item.status === "dikumpulkan" ||
-      item.status === "perlu_dinilai_ulang" ||
-      item.nilai === null ||
-      item.nilai === undefined,
-  ).length;
+  const totalBelumDinilai =
+    mahasiswaMengumpulkan.filter(
+      (item) =>
+        item.status === "dikumpulkan" ||
+        item.status === "perlu_dinilai_ulang" ||
+        item.nilai === null ||
+        item.nilai === undefined
+    ).length;
 
   // ======================================================
   // BUKA MODAL PENILAIAN
@@ -146,7 +186,11 @@ function DosenPenilaianKompetensi() {
   const openPenilaian = (item) => {
     setSelectedMahasiswa(item);
 
-    setNilai(item.nilai !== null && item.nilai !== undefined ? item.nilai : "");
+    setNilai(
+      item.nilai !== null && item.nilai !== undefined
+        ? item.nilai
+        : ""
+    );
 
     setFormError("");
     setSuccessMessage("");
@@ -180,7 +224,9 @@ function DosenPenilaianKompetensi() {
       nilaiNumber < 0 ||
       nilaiNumber > 100
     ) {
-      setFormError("Nilai harus berada di antara 0 sampai 100.");
+      setFormError(
+        "Nilai harus berada di antara 0 sampai 100."
+      );
 
       return;
     }
@@ -197,23 +243,39 @@ function DosenPenilaianKompetensi() {
         status: "dinilai",
       });
 
-      await loadMahasiswa(false);
+      await loadMahasiswa();
 
       setSuccessMessage(
-        selectedMahasiswa.status === "perlu_dinilai_ulang"
+        selectedMahasiswa.status ===
+          "perlu_dinilai_ulang"
           ? "Nilai ulang berhasil disimpan."
-          : "Nilai berhasil disimpan.",
+          : "Nilai berhasil disimpan."
       );
 
       setSelectedMahasiswa(null);
       setNilai("");
     } catch (error) {
-      console.error("Gagal menyimpan nilai:", error);
+      console.error(
+        "Gagal menyimpan nilai:",
+        error
+      );
 
-      setFormError(error.message || "Gagal menyimpan nilai mahasiswa.");
+      setFormError(
+        error.message ||
+          "Gagal menyimpan nilai mahasiswa."
+      );
     } finally {
       setSaving(false);
     }
+  };
+
+  // ======================================================
+  // LOAD ULANG DATA DARI TOMBOL COBA LAGI
+  // ======================================================
+  const handleRetry = () => {
+    setLoading(true);
+    setPageError("");
+    loadMahasiswa();
   };
 
   // ======================================================
@@ -233,8 +295,9 @@ function DosenPenilaianKompetensi() {
         <h1>Penilaian Mahasiswa</h1>
 
         <p>
-          Tinjau video mengajar mahasiswa yang telah mengumpulkan tugas dan
-          berikan nilai kompetensi pedagogik.
+          Tinjau video mengajar mahasiswa yang telah
+          mengumpulkan tugas dan berikan nilai kompetensi
+          pedagogik.
         </p>
       </div>
 
@@ -242,7 +305,9 @@ function DosenPenilaianKompetensi() {
           SUCCESS MESSAGE
       ================================================== */}
       {successMessage && (
-        <div className="alert alert-success">{successMessage}</div>
+        <div className="alert alert-success">
+          {successMessage}
+        </div>
       )}
 
       {/* ==================================================
@@ -255,7 +320,7 @@ function DosenPenilaianKompetensi() {
           <button
             type="button"
             className="btn btn-sm btn-outline-danger mt-2"
-            onClick={() => loadMahasiswa()}
+            onClick={handleRetry}
           >
             Coba Lagi
           </button>
@@ -275,7 +340,11 @@ function DosenPenilaianKompetensi() {
           <div className="summary-content">
             <span>Sudah Mengumpulkan</span>
 
-            <strong>{loading ? "..." : totalMahasiswaMengumpulkan}</strong>
+            <strong>
+              {loading
+                ? "..."
+                : totalMahasiswaMengumpulkan}
+            </strong>
 
             <small>mahasiswa</small>
           </div>
@@ -290,9 +359,15 @@ function DosenPenilaianKompetensi() {
           <div className="summary-content">
             <span>Belum Dinilai</span>
 
-            <strong>{loading ? "..." : totalBelumDinilai}</strong>
+            <strong>
+              {loading
+                ? "..."
+                : totalBelumDinilai}
+            </strong>
 
-            <small>dari {totalMahasiswaMengumpulkan} mahasiswa</small>
+            <small>
+              dari {totalMahasiswaMengumpulkan} mahasiswa
+            </small>
           </div>
         </div>
 
@@ -305,9 +380,15 @@ function DosenPenilaianKompetensi() {
           <div className="summary-content">
             <span>Perlu Dinilai Ulang</span>
 
-            <strong>{loading ? "..." : totalPerluDinilaiUlang}</strong>
+            <strong>
+              {loading
+                ? "..."
+                : totalPerluDinilaiUlang}
+            </strong>
 
-            <small>video diperbarui mahasiswa</small>
+            <small>
+              video diperbarui mahasiswa
+            </small>
           </div>
         </div>
       </div>
@@ -349,7 +430,10 @@ function DosenPenilaianKompetensi() {
 
             <h3>Memuat data mahasiswa...</h3>
 
-            <p>Sedang mengambil data pengumpulan video dari server.</p>
+            <p>
+              Sedang mengambil data pengumpulan video
+              dari server.
+            </p>
           </div>
         ) : filteredMahasiswa.length === 0 ? (
           <div className="empty-state">
@@ -383,20 +467,30 @@ function DosenPenilaianKompetensi() {
           filteredMahasiswa.map((item) => {
             const hasVideo = Boolean(item.vidio_url);
 
-            const hasNilai = item.nilai !== null && item.nilai !== undefined;
+            const hasNilai =
+              item.nilai !== null &&
+              item.nilai !== undefined;
 
-            const perluDinilaiUlang = item.status === "perlu_dinilai_ulang";
+            const perluDinilaiUlang =
+              item.status === "perlu_dinilai_ulang";
 
-            const nama = item.profiles?.nama_lengkap || "Nama tidak tersedia";
+            const nama =
+              item.profiles?.nama_lengkap ||
+              "Nama tidak tersedia";
 
-            const nim = item.profiles?.nim || "-";
+            const nim =
+              item.profiles?.nim || "-";
 
-            const avatarUrl = getPublicUrl(item.profiles?.avatar_url);
+            const avatarUrl = getPublicUrl(
+              item.profiles?.avatar_url
+            );
 
             return (
               <div
                 className={`mahasiswa-card ${
-                  perluDinilaiUlang ? "mahasiswa-card-resubmission" : ""
+                  perluDinilaiUlang
+                    ? "mahasiswa-card-resubmission"
+                    : ""
                 }`}
                 key={item.id}
               >
@@ -411,15 +505,17 @@ function DosenPenilaianKompetensi() {
                         alt={`Foto ${nama}`}
                         className="student-avatar-image"
                         onError={(e) => {
-                          e.currentTarget.style.display = "none";
+                          e.currentTarget.style.display =
+                            "none";
 
                           const fallback =
                             e.currentTarget.parentElement?.querySelector(
-                              ".student-avatar-fallback",
+                              ".student-avatar-fallback"
                             );
 
                           if (fallback) {
-                            fallback.style.display = "flex";
+                            fallback.style.display =
+                              "flex";
                           }
                         }}
                       />
@@ -428,10 +524,14 @@ function DosenPenilaianKompetensi() {
                     <div
                       className="student-avatar-fallback"
                       style={{
-                        display: avatarUrl ? "none" : "flex",
+                        display: avatarUrl
+                          ? "none"
+                          : "flex",
                       }}
                     >
-                      {nama.charAt(0).toUpperCase()}
+                      {nama
+                        .charAt(0)
+                        .toUpperCase()}
                     </div>
                   </div>
 
@@ -453,11 +553,13 @@ function DosenPenilaianKompetensi() {
                       </div>
 
                       <div className="resubmission-text">
-                        <strong>Video Diperbarui</strong>
+                        <strong>
+                          Video Diperbarui
+                        </strong>
 
                         <span>
-                          Mahasiswa mengirim video baru. Silakan berikan nilai
-                          ulang.
+                          Mahasiswa mengirim video baru.
+                          Silakan berikan nilai ulang.
                         </span>
                       </div>
                     </div>
@@ -468,9 +570,14 @@ function DosenPenilaianKompetensi() {
                       </div>
 
                       <div className="waiting-text">
-                        <strong>Menunggu Penilaian</strong>
+                        <strong>
+                          Menunggu Penilaian
+                        </strong>
 
-                        <span>Video sudah dikumpulkan dan belum dinilai.</span>
+                        <span>
+                          Video sudah dikumpulkan dan
+                          belum dinilai.
+                        </span>
                       </div>
                     </div>
                   ) : null}
@@ -481,7 +588,9 @@ function DosenPenilaianKompetensi() {
                 ======================================== */}
                 <div
                   className={`score-section ${
-                    hasNilai ? "has-score" : "no-score"
+                    hasNilai
+                      ? "has-score"
+                      : "no-score"
                   }`}
                 >
                   <div className="section-label">
@@ -496,7 +605,9 @@ function DosenPenilaianKompetensi() {
                     </div>
                   ) : perluDinilaiUlang ? (
                     <div className="score-empty score-resubmission">
-                      <span>Nilai ulang diperlukan</span>
+                      <span>
+                        Nilai ulang diperlukan
+                      </span>
                     </div>
                   ) : (
                     <div className="score-empty">
@@ -534,12 +645,20 @@ function DosenPenilaianKompetensi() {
                   <button
                     type="button"
                     className={`btn-nilai ${
-                      perluDinilaiUlang ? "btn-nilai-ulang" : ""
+                      perluDinilaiUlang
+                        ? "btn-nilai-ulang"
+                        : ""
                     }`}
                     disabled={!hasVideo}
-                    onClick={() => openPenilaian(item)}
+                    onClick={() =>
+                      openPenilaian(item)
+                    }
                   >
-                    {perluDinilaiUlang ? <FaSyncAlt /> : <FaStar />}
+                    {perluDinilaiUlang ? (
+                      <FaSyncAlt />
+                    ) : (
+                      <FaStar />
+                    )}
 
                     <span>
                       {perluDinilaiUlang
@@ -560,31 +679,49 @@ function DosenPenilaianKompetensi() {
           MODAL PENILAIAN
       ================================================== */}
       {selectedMahasiswa && (
-        <div className="modal-overlay" onClick={closePenilaian}>
-          <div className="penilaian-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="modal-overlay"
+          onClick={closePenilaian}
+        >
+          <div
+            className="penilaian-modal"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
             {/* ============================================
                 MODAL HEADER
             ============================================ */}
             <div className="modal-header">
               <div className="modal-student">
                 <div className="modal-avatar">
-                  {getPublicUrl(selectedMahasiswa.profiles?.avatar_url) ? (
+                  {getPublicUrl(
+                    selectedMahasiswa.profiles
+                      ?.avatar_url
+                  ) ? (
                     <img
-                      src={getPublicUrl(selectedMahasiswa.profiles?.avatar_url)}
+                      src={getPublicUrl(
+                        selectedMahasiswa.profiles
+                          ?.avatar_url
+                      )}
                       alt={`Foto ${
-                        selectedMahasiswa.profiles?.nama_lengkap || "Mahasiswa"
+                        selectedMahasiswa.profiles
+                          ?.nama_lengkap ||
+                        "Mahasiswa"
                       }`}
                       className="modal-avatar-image"
                       onError={(e) => {
-                        e.currentTarget.style.display = "none";
+                        e.currentTarget.style.display =
+                          "none";
 
                         const fallback =
                           e.currentTarget.parentElement?.querySelector(
-                            ".modal-avatar-fallback",
+                            ".modal-avatar-fallback"
                           );
 
                         if (fallback) {
-                          fallback.style.display = "flex";
+                          fallback.style.display =
+                            "flex";
                         }
                       }}
                     />
@@ -594,27 +731,38 @@ function DosenPenilaianKompetensi() {
                     className="modal-avatar-fallback"
                     style={{
                       display: getPublicUrl(
-                        selectedMahasiswa.profiles?.avatar_url,
+                        selectedMahasiswa.profiles
+                          ?.avatar_url
                       )
                         ? "none"
                         : "flex",
                     }}
                   >
-                    {(selectedMahasiswa.profiles?.nama_lengkap || "M")
+                    {(
+                      selectedMahasiswa.profiles
+                        ?.nama_lengkap || "M"
+                    )
                       .charAt(0)
                       .toUpperCase()}
                   </div>
                 </div>
 
                 <div>
-                  <span className="modal-label">PENILAIAN KOMPETENSI</span>
+                  <span className="modal-label">
+                    PENILAIAN KOMPETENSI
+                  </span>
 
                   <h2>
-                    {selectedMahasiswa.profiles?.nama_lengkap ||
+                    {selectedMahasiswa.profiles
+                      ?.nama_lengkap ||
                       "Nama tidak tersedia"}
                   </h2>
 
-                  <p>NIM {selectedMahasiswa.profiles?.nim || "-"}</p>
+                  <p>
+                    NIM{" "}
+                    {selectedMahasiswa.profiles?.nim ||
+                      "-"}
+                  </p>
                 </div>
               </div>
 
@@ -634,19 +782,24 @@ function DosenPenilaianKompetensi() {
             ============================================ */}
             <div className="modal-body">
               {/* PEMBERITAHUAN VIDEO BARU */}
-              {selectedMahasiswa.status === "perlu_dinilai_ulang" && (
+              {selectedMahasiswa.status ===
+                "perlu_dinilai_ulang" && (
                 <div className="modal-resubmission-notice">
                   <div className="modal-resubmission-icon">
                     <FaExclamationCircle />
                   </div>
 
                   <div>
-                    <strong>Video telah diperbarui</strong>
+                    <strong>
+                      Video telah diperbarui
+                    </strong>
 
                     <p>
-                      Mahasiswa telah mengganti video mengajarnya. Nilai
-                      sebelumnya sudah tidak berlaku untuk video ini. Silakan
-                      menonton video baru dan memberikan nilai ulang.
+                      Mahasiswa telah mengganti video
+                      mengajarnya. Nilai sebelumnya sudah
+                      tidak berlaku untuk video ini. Silakan
+                      menonton video baru dan memberikan
+                      nilai ulang.
                     </p>
                   </div>
                 </div>
@@ -659,16 +812,20 @@ function DosenPenilaianKompetensi() {
                 </div>
 
                 <div className="modal-video-info">
-                  <strong>Video Mengajar</strong>
+                  <strong>
+                    Video Mengajar
+                  </strong>
 
                   <span>
-                    Tonton video sebelum menentukan nilai kompetensi pedagogik
-                    mahasiswa.
+                    Tonton video sebelum menentukan nilai
+                    kompetensi pedagogik mahasiswa.
                   </span>
                 </div>
 
                 <a
-                  href={selectedMahasiswa.vidio_url}
+                  href={
+                    selectedMahasiswa.vidio_url
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="modal-open-video"
@@ -687,8 +844,8 @@ function DosenPenilaianKompetensi() {
                     </span>
 
                     <p>
-                      Masukkan nilai berdasarkan hasil penilaian video mengajar
-                      mahasiswa.
+                      Masukkan nilai berdasarkan hasil
+                      penilaian video mengajar mahasiswa.
                     </p>
                   </div>
 
@@ -702,7 +859,9 @@ function DosenPenilaianKompetensi() {
                     min="0"
                     max="100"
                     value={nilai}
-                    onChange={(e) => setNilai(e.target.value)}
+                    onChange={(e) =>
+                      setNilai(e.target.value)
+                    }
                     placeholder="0"
                     autoFocus
                     disabled={saving}
@@ -717,7 +876,9 @@ function DosenPenilaianKompetensi() {
                 <div className="score-range">
                   <span>0</span>
 
-                  <span>Nilai berada pada rentang 0–100</span>
+                  <span>
+                    Nilai berada pada rentang 0–100
+                  </span>
 
                   <span>100</span>
                 </div>
@@ -749,7 +910,8 @@ function DosenPenilaianKompetensi() {
                 onClick={handleSaveNilai}
                 disabled={saving}
               >
-                {selectedMahasiswa.status === "perlu_dinilai_ulang" ? (
+                {selectedMahasiswa.status ===
+                "perlu_dinilai_ulang" ? (
                   <FaSyncAlt />
                 ) : (
                   <FaSave />
@@ -758,7 +920,8 @@ function DosenPenilaianKompetensi() {
                 <span>
                   {saving
                     ? "Menyimpan..."
-                    : selectedMahasiswa.status === "perlu_dinilai_ulang"
+                    : selectedMahasiswa.status ===
+                        "perlu_dinilai_ulang"
                       ? "Simpan Nilai Ulang"
                       : "Simpan Nilai"}
                 </span>

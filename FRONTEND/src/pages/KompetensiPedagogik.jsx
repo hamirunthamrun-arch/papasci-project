@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Container, Spinner, Alert } from "react-bootstrap";
 import {
   FaClipboardCheck,
@@ -44,19 +44,10 @@ function KompetensiPedagogik() {
   const [successMessage, setSuccessMessage] = useState("");
 
   // =====================================================
-  // LOAD DATA SAAT HALAMAN DIBUKA
-  // =====================================================
-
-  useEffect(() => {
-    loadKompetensi();
-    loadScore();
-  }, []);
-
-  // =====================================================
   // AMBIL DATA KOMPETENSI
   // =====================================================
 
-  const loadKompetensi = async () => {
+  const loadKompetensi = useCallback(async () => {
     try {
       setLoadingKompetensi(true);
       setKompetensiError("");
@@ -73,13 +64,13 @@ function KompetensiPedagogik() {
     } finally {
       setLoadingKompetensi(false);
     }
-  };
+  }, []);
 
   // =====================================================
   // AMBIL DATA VIDEO / NILAI MAHASISWA
   // =====================================================
 
-  const loadScore = async () => {
+  const loadScore = useCallback(async () => {
     try {
       setLoadingScore(true);
       setSubmitError("");
@@ -111,7 +102,22 @@ function KompetensiPedagogik() {
     } finally {
       setLoadingScore(false);
     }
-  };
+  }, []);
+
+  // =====================================================
+  // LOAD DATA SAAT HALAMAN DIBUKA
+  // =====================================================
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadKompetensi();
+      loadScore();
+    }, 0);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [loadKompetensi, loadScore]);
 
   // =====================================================
   // SUBMIT / PERBARUI VIDEO
@@ -147,6 +153,14 @@ function KompetensiPedagogik() {
       return;
     }
 
+    // ===================================================
+    // SIMPAN KONDISI SEBELUM SUBMIT
+    // ===================================================
+
+    const isResubmission =
+      scoreData?.status === "dinilai" ||
+      (scoreData?.nilai !== null && scoreData?.nilai !== undefined);
+
     try {
       setSubmitting(true);
 
@@ -170,10 +184,7 @@ function KompetensiPedagogik() {
       // PESAN BERDASARKAN KONDISI SEBELUM SUBMIT
       // =================================================
 
-      if (
-        scoreData?.status === "dinilai" ||
-        (scoreData?.nilai !== null && scoreData?.nilai !== undefined)
-      ) {
+      if (isResubmission) {
         setSuccessMessage(
           "Video berhasil diperbarui. Video baru akan dinilai ulang oleh dosen.",
         );
